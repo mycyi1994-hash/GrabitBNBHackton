@@ -15,9 +15,10 @@ It is being built for the **BNB Chain Smart Money Era: Build the Era** hackathon
 - Side-by-side comparison
 - Three-step Hire / Activate prototype
 - Agent management dashboard with pause and revoke interactions
+- Live BSC ERC-8004 registry records from 8004scan, limited to two focused candidates on the home screen
 - Server-side 8004scan proxy route with a safe mock fallback
 
-All displayed performance records are representative prototype data. No real funds are moved and the current wallet, ERC-8183 and Altana actions are interaction previews.
+The home registry list is live 8004scan data. Detailed performance records are still representative prototype data. No real funds are moved and the current wallet, ERC-8183 and Altana actions are interaction previews.
 
 ## Run locally
 
@@ -31,24 +32,26 @@ Open http://localhost:3000.
 
 ## 8004scan integration
 
-Create an API key in the 8004scan Builder Hub and set:
+Anonymous 8004scan access works without configuration. For higher rate limits,
+create an API key in the 8004scan Builder Hub and set:
 
 ~~~bash
 SCAN_8004_API_KEY=your_server_only_key
 ~~~
 
-The browser calls /api/agents; the server route calls 8004scan with the X-API-Key header. The API key is never exposed through a NEXT_PUBLIC variable.
+The browser calls /api/agents; the server route calls 8004scan anonymously or
+adds the X-API-Key header when a key is configured. The key is never exposed
+through a NEXT_PUBLIC variable. See the [official Builder Hub](https://8004scan.io/developers).
 
 Supported prototype queries:
 
 - GET /api/agents
-- GET /api/agents?q=liquidity
-- GET /api/agents?owner_address=0x...
-- GET /api/agents?category=Grid%20Trading in mock mode
+- GET /api/agents?limit=2
+- GET /api/agents?q=PancakeSwap
 
 ## Planned onchain path
 
-1. Pull and classify live BSC ERC-8004 identities through 8004scan.
+1. Classify the connected BSC ERC-8004 identities into the four marketplace categories.
 2. Validate endpoints and recent activity before listing an agent as live.
 3. Create an ERC-8183 job and fund its $U escrow during Hire.
 4. Grant an Altana session with a contract allowlist, token spend cap and expiry.
@@ -69,4 +72,3 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the system flow.
 ## License
 
 License to be selected before the public hackathon submission.
-

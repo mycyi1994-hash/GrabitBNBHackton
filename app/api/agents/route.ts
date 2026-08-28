@@ -1,6 +1,5 @@
 import { agents } from '@/lib/agents';
-
-const API_BASE = process.env.SCAN_8004_API_BASE_URL ?? 'https://api.8004scan.io/api/v1';
+import { getLiveBscAgents } from '@/lib/scan8004';
 
 function mockResponse(requestUrl: string) {
   const url = new URL(requestUrl);
@@ -23,38 +22,28 @@ function mockResponse(requestUrl: string) {
 }
 
 export async function GET(request: Request) {
-  const apiKey = process.env.SCAN_8004_API_KEY;
-  if (!apiKey) return mockResponse(request.url);
-
   const requestUrl = new URL(request.url);
   const query = requestUrl.searchParams.get('q')?.trim();
-  const upstream = new URL(query ? API_BASE + '/agents/search/semantic' : API_BASE + '/agents');
-  if (query) upstream.searchParams.set('q', query);
-
-  for (const key of ['page', 'limit', 'owner_address']) {
-    const value = requestUrl.searchParams.get(key);
-    if (value) upstream.searchParams.set(key, value);
-  }
+  const requestedLimit = Number(requestUrl.searchParams.get('limit') ?? 2);
+  const limit = Number.isFinite(requestedLimit)
+    ? Math.min(Math.max(requestedLimit, 1), 20)
+    : 2;
 
   try {
-    const response = await fetch(upstream, {
-      headers: { Accept: 'application/json', 'X-API-Key': apiKey },
+    const result = await getLiveBscAgents(limit, query);
+    return Response.json({
+      source: '8004scan-live',
+      chainId: 56,
+      count: result.items.length,
+      total: result.total,
+      agents: result.items,
     });
-
-    if (!response.ok) {
-      return Response.json(
-        { error: '8004scan request failed', status: response.status },
-        { status: 502 },
-      );
-    }
-
-    const data = await response.json();
-    return Response.json({ source: '8004scan', chainId: 56, data });
-  } catch {
-    return Response.json(
-      { error: '8004scan is temporarily unreachable' },
-      { status: 502 },
-    );
+  } catch (error) {
+    const fallback = (await mockResponse(request.url).json()) as Record<string, unknown>;
+    return Response.json({
+      ...fallback,
+      source: 'prototype-fallback',
+      notice: error instanceof Error ? error.message : '8004scan is temporarily unreachable',
+    });
   }
 }
-

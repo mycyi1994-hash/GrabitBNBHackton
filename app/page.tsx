@@ -1,176 +1,143 @@
-import { MetricBars } from '@/components/metric-bars';
-import { PrototypeNote } from '@/components/prototype-note';
 import { SiteHeader } from '@/components/site-header';
-import { agents, featuredAgentSlugs } from '@/lib/agents';
+import { agents } from '@/lib/agents';
+import { getLiveBscAgents, type RegistryAgent } from '@/lib/scan8004';
 
 const categories = [
-  ['[R]', 'Liquidity', 'Rebalancing', 'Keep concentrated LP positions productive as markets move.', '42'],
-  ['[G]', 'Trading', 'Grid Trading', 'Run disciplined range strategies without watching every tick.', '31'],
-  ['[Y]', 'Yield', 'Yield Optimisation', 'Route capital toward stronger risk-adjusted yield.', '58'],
-  ['[H]', 'Protection', 'Health Factor', 'Act before lending positions reach liquidation risk.', '27'],
+  ['[R]', 'Rebalancing'],
+  ['[G]', 'Grid Trading'],
+  ['[Y]', 'Yield Optimisation'],
+  ['[H]', 'Health Factor'],
 ];
 
-function Verified() {
-  return <span className="verified" aria-label="Verified onchain">✓</span>;
+type DisplayAgent = {
+  id: string;
+  name: string;
+  description: string;
+  owner: string;
+  service: string;
+  updated: string;
+  href: string;
+  live: boolean;
+};
+
+function toDisplayAgent(agent: RegistryAgent): DisplayAgent {
+  return {
+    id: '#' + agent.token_id,
+    name: agent.name || 'Unnamed BSC Agent',
+    description: agent.description || 'No description published in the registry.',
+    owner: agent.owner_address.slice(0, 8) + '...' + agent.owner_address.slice(-4),
+    service: agent.supported_protocols[0] || (agent.x402_supported ? 'X402' : 'Custom'),
+    updated: new Date(agent.updated_at).toISOString().slice(0, 10),
+    href: 'https://8004scan.io/agents/bsc/' + agent.token_id,
+    live: true,
+  };
 }
 
-export default function Home() {
+function fallbackAgents(): DisplayAgent[] {
+  return agents.slice(0, 2).map((agent) => ({
+    id: agent.identity.split('#')[1] ? '#' + agent.identity.split('#')[1] : 'DEMO',
+    name: agent.name,
+    description: agent.tagline,
+    owner: agent.wallet,
+    service: agent.protocol,
+    updated: 'DEMO RECORD',
+    href: '/agents/' + agent.slug,
+    live: false,
+  }));
+}
+
+export default async function Home() {
+  let rows = fallbackAgents();
+  let total = 0;
+  let connected = false;
+
+  try {
+    const registry = await getLiveBscAgents(2, 'PancakeSwap DeFi agent');
+    if (registry.items.length) {
+      rows = registry.items.map(toDisplayAgent);
+      total = registry.total;
+      connected = true;
+    }
+  } catch {
+    connected = false;
+  }
+
   return (
-    <main>
+    <main className="win95-desktop">
       <SiteHeader />
 
-      <section className="hero">
-        <div className="hero-grid" aria-hidden="true" />
-        <div className="orbit orbit-one" aria-hidden="true" />
-        <div className="orbit orbit-two" aria-hidden="true" />
+      <div className="win95-shortcuts" aria-label="Desktop shortcuts">
+        <a href="#agent-window"><span className="shortcut-icon">A:\</span><b>Agent Explorer</b></a>
+        <a href="/dashboard"><span className="shortcut-icon">W:\</span><b>My Wallet</b></a>
+      </div>
 
-        <div className="hero-content">
-          <div className="hero-copy">
-            <div className="live-label"><span className="live-dot" /> NETWORK_STATUS: ONLINE // 158 AGENTS</div>
-            <PrototypeNote />
-            <pre className="ascii-logo" aria-label="Agent Market">
-{'+--------------------------------+\n|  A G E N T   M A R K E T  9 8  |\n|  SMART MONEY // VERIFIED BSC    |\n+--------------------------------+'}
-            </pre>
-            <h1>
-              SMART MONEY
-              <span>COMMAND CENTER</span>
-            </h1>
-            <p className="hero-description">
-              C:\AGENTS&gt; discover / compare / hire autonomous DeFi agents
-              with verifiable performance and revocable permissions_
-            </p>
+      <section className="win95-window" id="agent-window" aria-label="BNB Agent Explorer">
+        <header className="win95-titlebar">
+          <div><span className="titlebar-icon">A</span><strong>BNB Agent Explorer</strong></div>
+          <div className="window-controls" aria-hidden="true"><span>_</span><span>□</span><span>×</span></div>
+        </header>
 
-            <div className="search-row">
-              <label className="search-box">
-                <span className="search-icon">⌕</span>
-                <span className="sr-only">Search agents</span>
-                <input aria-label="Search agents" placeholder="SEARCH QUERY..." />
-              </label>
-              <a href="#explore" className="primary-button">
-                EXECUTE <span>►</span>
-              </a>
+        <nav className="win95-menubar" aria-label="Application menu">
+          <span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span><u>A</u>gent</span><span><u>H</u>elp</span>
+        </nav>
+
+        <div className="win95-toolbar">
+          <a href="/">← Back</a>
+          <a href="/compare">Compare</a>
+          <label><span>Address</span><input readOnly value="C:\BNB\AGENTS" aria-label="Current folder" /></label>
+        </div>
+
+        <div className="win95-window-body">
+          <aside className="win95-tree">
+            <h2>All Agent Types</h2>
+            <ul>
+              {categories.map(([icon, name]) => <li key={name}><span>{icon}</span>{name}</li>)}
+            </ul>
+            <div className={'registry-box ' + (connected ? 'is-live' : 'is-demo')}>
+              <span className="registry-light" />
+              <div><strong>8004scan</strong><small>{connected ? 'CONNECTED / BSC 56' : 'OFFLINE / DEMO MODE'}</small></div>
             </div>
+          </aside>
 
-            <div className="trust-row">
-              <span><Verified /> ERC-8004 identities</span>
-              <span><Verified /> ERC-8183 settlement</span>
-              <span><Verified /> Revocable access</span>
-            </div>
-          </div>
-
-          <div className="market-console" aria-label="Live BSC agent market">
-            <div className="console-header">
+          <section className="win95-folder">
+            <header className="folder-heading">
               <div>
-                <p className="console-label">Live market</p>
-                <p>C:\BNB\LOGS\MARKET.TXT</p>
+                <p>BNB SMART CHAIN / ERC-8004</p>
+                <h1>Registered agents</h1>
               </div>
-              <span className="onchain-pill">CONNECTED</span>
-            </div>
+              <span>{connected ? total.toLocaleString() + ' records' : 'fallback records'}</span>
+            </header>
 
-            <div className="console-stats">
-              <div><span>Live agents</span><strong>158</strong><small>+12 this week</small></div>
-              <div><span>Jobs settled</span><strong>8,942</strong><small>96.8% success</small></div>
-              <div><span>Value managed</span><strong>$4.2M</strong><small>Across BSC</small></div>
-            </div>
-
-            <div className="executions">
-              <div className="executions-heading">
-                <p className="console-label">Recent executions</p>
-                <span>Updated 12s ago</span>
-              </div>
-              {[
-                ['RangePilot', 'Rebalanced CAKE / USDT', '+$184.20', '2s ago'],
-                ['Sentinel HF', 'Protected Venus position', 'HF 1.82', '18s ago'],
-                ['GridForge', 'Filled BNB grid order', '+0.42%', '31s ago'],
-              ].map(([name, action, value, time]) => (
-                <div className="execution-row" key={name}>
-                  <span className="execution-dot" />
-                  <div>
-                    <strong>{name}</strong>
-                    <span>{action}</span>
+            <div className="win95-agent-list">
+              {rows.map((agent, index) => (
+                <article className="win95-agent-row" key={agent.id + agent.name}>
+                  <span className="file-icon">{String(index + 1).padStart(2, '0')}</span>
+                  <div className="file-main">
+                    <h2>{agent.name}</h2>
+                    <p>{agent.description}</p>
                   </div>
-                  <div className="execution-value">
-                    <strong>{value}</strong>
-                    <span>{time}</span>
-                  </div>
-                </div>
+                  <dl>
+                    <div><dt>ID</dt><dd>{agent.id}</dd></div>
+                    <div><dt>Service</dt><dd>{agent.service}</dd></div>
+                    <div><dt>Owner</dt><dd>{agent.owner}</dd></div>
+                  </dl>
+                  <a href={agent.href} target={agent.live ? '_blank' : undefined} rel={agent.live ? 'noreferrer' : undefined}>Open</a>
+                </article>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
 
-      <section id="explore" className="section">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">C:\MARKET\CATEGORIES</p>
-            <h2>SELECT AGENT CLASS_</h2>
-          </div>
-          <p>
-            Every category is backed by live BSC agents. Compare outcomes,
-            permissions and cost before committing capital.
-          </p>
-        </div>
-
-        <div className="category-grid">
-          {categories.map(([icon, eyebrow, name, description, count]) => (
-            <a className="category-card" href="#agents" key={name}>
-              <div className="category-top">
-                <span className="category-icon">{icon}</span>
-                <span>{count} agents</span>
-              </div>
-              <div className="category-copy">
-                <p>{eyebrow}</p>
-                <h3>{name}</h3>
-                <span>{description}</span>
-              </div>
-              <strong className="category-arrow">→</strong>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      <section id="agents" className="agents-section">
-        <div className="section agents-inner">
-          <div className="section-heading compact">
-            <div>
-              <p className="eyebrow">C:\MARKET\TOP_AGENTS</p>
-              <h2>VERIFIED EXECUTABLES</h2>
+            <div className="win95-actions">
+              <a href="/compare">Compare reference agents</a>
+              <a href="/activate?agent=range-pilot">Run activation demo</a>
             </div>
-            <a className="view-all" href="#">View all agents →</a>
-          </div>
-
-          <div className="agent-grid">
-            {agents.filter((agent) => featuredAgentSlugs.includes(agent.slug)).map((agent) => (
-              <article className="agent-card" key={agent.name}>
-                <div className="agent-header">
-                  <div className="agent-identity">
-                    <span className={'agent-avatar ' + agent.tone}>{agent.initials}</span>
-                    <div>
-                      <h3>{agent.name} <Verified /></h3>
-                      <p>{agent.tagline}</p>
-                    </div>
-                  </div>
-                  <a className="agent-open" href={'/agents/' + agent.slug} aria-label={'Open ' + agent.name}>↗</a>
-                </div>
-
-                <div className="agent-metric">
-                  <div className="metric-top">
-                    <div><strong>{agent.returnValue}</strong><span>{agent.returnLabel}</span></div>
-                    <span className="risk-pill">{agent.risk} risk</span>
-                  </div>
-                  <MetricBars values={agent.chart} />
-                </div>
-
-                <div className="agent-facts">
-                  <div><span>Jobs</span><strong>{agent.jobs.toLocaleString()}</strong></div>
-                  <div><span>Hire from</span><strong>{agent.fee.toFixed(2)} $U</strong></div>
-                  <div><span>Identity</span><strong>ERC-8004</strong></div>
-                </div>
-              </article>
-            ))}
-          </div>
+          </section>
         </div>
+
+        <footer className="win95-statusbar">
+          <span>{rows.length} object(s)</span>
+          <span>{connected ? 'LIVE DATA / ' + rows[0]?.updated : 'PROTOTYPE FALLBACK'}</span>
+          <span>BNB CHAIN ID: 56</span>
+        </footer>
       </section>
     </main>
   );
