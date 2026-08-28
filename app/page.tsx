@@ -4,10 +4,10 @@ import { SiteHeader } from '@/components/site-header';
 import { agents, featuredAgentSlugs } from '@/lib/agents';
 
 const categories = [
-  ['R', 'Liquidity', 'Rebalancing', 'Keep concentrated LP positions productive as markets move.', '42'],
-  ['G', 'Trading', 'Grid Trading', 'Run disciplined range strategies without watching every tick.', '31'],
-  ['Y', 'Yield', 'Yield Optimisation', 'Route capital toward stronger risk-adjusted yield.', '58'],
-  ['H', 'Protection', 'Health Factor', 'Act before lending positions reach liquidation risk.', '27'],
+  ['[R]', 'Liquidity', 'Rebalancing', 'Keep concentrated LP positions productive as markets move.', '42'],
+  ['[G]', 'Trading', 'Grid Trading', 'Run disciplined range strategies without watching every tick.', '31'],
+  ['[Y]', 'Yield', 'Yield Optimisation', 'Route capital toward stronger risk-adjusted yield.', '58'],
+  ['[H]', 'Protection', 'Health Factor', 'Act before lending positions reach liquidation risk.', '27'],
 ];
 
 function Verified() {
@@ -26,25 +26,28 @@ export default function Home() {
 
         <div className="hero-content">
           <div className="hero-copy">
-            <div className="live-label"><span className="live-dot" /> 158 live agents on BSC</div>
+            <div className="live-label"><span className="live-dot" /> NETWORK_STATUS: ONLINE // 158 AGENTS</div>
             <PrototypeNote />
+            <pre className="ascii-logo" aria-label="Agent Market">
+{'+--------------------------------+\n|  A G E N T   M A R K E T  9 8  |\n|  SMART MONEY // VERIFIED BSC    |\n+--------------------------------+'}
+            </pre>
             <h1>
-              Put smart money
-              <span>to work.</span>
+              SMART MONEY
+              <span>COMMAND CENTER</span>
             </h1>
             <p className="hero-description">
-              Discover, compare and hire autonomous DeFi agents with verifiable
-              performance, transparent risk and onchain permissions.
+              C:\AGENTS&gt; discover / compare / hire autonomous DeFi agents
+              with verifiable performance and revocable permissions_
             </p>
 
             <div className="search-row">
               <label className="search-box">
                 <span className="search-icon">⌕</span>
                 <span className="sr-only">Search agents</span>
-                <input aria-label="Search agents" placeholder="What should your agent do?" />
+                <input aria-label="Search agents" placeholder="SEARCH QUERY..." />
               </label>
               <a href="#explore" className="primary-button">
-                Explore agents <span>↗</span>
+                EXECUTE <span>►</span>
               </a>
             </div>
 
@@ -59,9 +62,9 @@ export default function Home() {
             <div className="console-header">
               <div>
                 <p className="console-label">Live market</p>
-                <p>Verified BSC agent activity</p>
+                <p>C:\BNB\LOGS\MARKET.TXT</p>
               </div>
-              <span className="onchain-pill">Onchain</span>
+              <span className="onchain-pill">CONNECTED</span>
             </div>
 
             <div className="console-stats">
@@ -100,8 +103,8 @@ export default function Home() {
       <section id="explore" className="section">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">Explore the network</p>
-            <h2>Find your edge.</h2>
+            <p className="eyebrow">C:\MARKET\CATEGORIES</p>
+            <h2>SELECT AGENT CLASS_</h2>
           </div>
           <p>
             Every category is backed by live BSC agents. Compare outcomes,
@@ -131,8 +134,8 @@ export default function Home() {
         <div className="section agents-inner">
           <div className="section-heading compact">
             <div>
-              <p className="eyebrow">Verified and working</p>
-              <h2>Agents gaining traction</h2>
+              <p className="eyebrow">C:\MARKET\TOP_AGENTS</p>
+              <h2>VERIFIED EXECUTABLES</h2>
             </div>
             <a className="view-all" href="#">View all agents →</a>
           </div>

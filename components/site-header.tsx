@@ -7,9 +7,9 @@ export function SiteHeader({ active = 'explore', compact = false }: SiteHeaderPr
   return (
     <nav className={'topbar' + (compact ? ' topbar-compact' : '')}>
       <a href="/" className="brand" aria-label="Agent Market home">
-        <span className="brand-mark">AM</span>
-        <span>Agent Market</span>
-        <span className="chain-pill">BSC Testnet</span>
+        <span className="brand-mark">▦</span>
+        <span>AGENTMKT.EXE</span>
+        <span className="chain-pill">BSC TESTNET</span>
       </a>
 
       <div className="nav-links">
@@ -20,9 +20,8 @@ export function SiteHeader({ active = 'explore', compact = false }: SiteHeaderPr
       </div>
 
       <button className="wallet-button" type="button">
-        <span className="wallet-dot" /> Connect wallet
+        <span className="wallet-dot" /> CONNECT_WALLET
       </button>
     </nav>
   );
 }
-

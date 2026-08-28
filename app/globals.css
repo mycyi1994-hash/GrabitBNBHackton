@@ -751,3 +751,879 @@ h1 span { display: block; color: rgb(18 20 15 / 30%); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; }
 }
+
+/* Agent Market 98 */
+:root {
+  --win-bg: #c0c0c0;
+  --win-light: #ffffff;
+  --win-mid: #808080;
+  --win-dark: #000000;
+  --win-blue: #000080;
+  --win-teal: #008080;
+  --dos-green: #00ff66;
+  --dos-amber: #ffff00;
+}
+
+html {
+  background: var(--win-teal);
+}
+
+body {
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    var(--win-teal);
+  background-size: 4px 4px;
+  color: #000;
+  font-family: Tahoma, "MS Sans Serif", Arial, sans-serif;
+  font-size: 11px;
+  image-rendering: pixelated;
+}
+
+main { min-height: 100vh; }
+
+.topbar {
+  position: sticky;
+  top: 6px;
+  z-index: 50;
+  width: calc(100% - 12px);
+  max-width: none;
+  height: 42px;
+  margin: 6px;
+  padding: 3px;
+  background: var(--win-bg);
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  box-shadow: 1px 1px 0 var(--win-mid);
+}
+
+.brand {
+  align-self: stretch;
+  min-width: 210px;
+  padding: 0 10px 0 4px;
+  gap: 7px;
+  color: #fff;
+  background: linear-gradient(90deg, var(--win-blue), #1084d0);
+  font: bold 12px/1 "Courier New", monospace;
+  letter-spacing: .08em;
+}
+
+.brand-mark {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #fff;
+  border-radius: 0;
+  background: #000;
+  color: var(--dos-green);
+  font: bold 16px/22px "Courier New", monospace;
+  box-shadow: none;
+}
+
+.chain-pill {
+  border: 1px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  border-radius: 0;
+  background: #000;
+  color: var(--dos-green);
+  font: bold 10px/1 "Courier New", monospace;
+}
+
+.nav { gap: 3px; }
+.nav a,
+.wallet-button,
+.primary-button,
+.secondary-button,
+.search-bar button,
+.compare-add,
+.filter-button,
+.category-card {
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  border-radius: 0;
+  background: var(--win-bg);
+  color: #000;
+  box-shadow: 1px 1px 0 var(--win-mid);
+  font-family: Tahoma, "MS Sans Serif", Arial, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.nav a { padding: 8px 10px; font-size: 10px; }
+.nav a:hover { background: var(--win-blue); color: #fff; }
+.wallet-button { height: 30px; padding: 0 10px; font-size: 10px; }
+.nav a:active,
+.wallet-button:active,
+.primary-button:active,
+.secondary-button:active,
+.search-bar button:active,
+.category-card:active {
+  border-color: var(--win-dark) var(--win-light) var(--win-light) var(--win-dark);
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.hero {
+  overflow: visible;
+  border: 0;
+  background: transparent;
+}
+
+.hero-grid,
+.hero-orbit { display: none; }
+
+.hero-content {
+  width: calc(100% - 24px);
+  max-width: 1320px;
+  min-height: auto;
+  margin: 12px auto;
+  padding: 0;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.hero-copy {
+  position: relative;
+  max-width: none;
+  padding: 34px 12px 14px;
+  background: var(--win-bg);
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  box-shadow: 2px 2px 0 rgb(0 0 0 / 35%);
+}
+
+.hero-copy::before {
+  content: "C:/BNB/AGENTMKT/WELCOME.EXE";
+  position: absolute;
+  inset: 3px 3px auto;
+  height: 23px;
+  padding: 0 7px;
+  color: #fff;
+  background: linear-gradient(90deg, var(--win-blue), #1084d0);
+  font: bold 11px/23px "Courier New", monospace;
+  letter-spacing: .04em;
+}
+
+.hero-copy::after {
+  content: "_  []  X";
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  color: #000;
+  background: var(--win-bg);
+  padding: 1px 4px;
+  font: bold 10px/14px "Courier New", monospace;
+  border: 1px solid;
+  border-color: #fff #000 #000 #fff;
+}
+
+.hero-copy > .prototype-note {
+  width: fit-content;
+  margin: 0 0 10px;
+  padding: 5px 8px;
+  border: 2px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  border-radius: 0;
+  background: #fff;
+  color: #000;
+  font: bold 10px/1 "Courier New", monospace;
+}
+
+.live-label {
+  width: fit-content;
+  margin-top: 10px;
+  padding: 5px 7px;
+  border: 2px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  border-radius: 0;
+  background: #000;
+  color: var(--dos-green);
+  font: bold 10px/1 "Courier New", monospace;
+}
+
+.live-label::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 0;
+  background: var(--dos-green);
+  box-shadow: 0 0 6px var(--dos-green);
+}
+
+.ascii-logo {
+  margin: 10px 0 0;
+  padding: 10px;
+  overflow: hidden;
+  border: 2px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  background: #000;
+  color: var(--dos-green);
+  font: bold clamp(9px, 1vw, 12px)/1.35 "Courier New", monospace;
+  letter-spacing: .02em;
+  text-shadow: 0 0 5px rgb(0 255 102 / 55%);
+}
+
+.hero h1,
+.section-heading h2 {
+  font-family: "Courier New", monospace;
+  font-weight: 900;
+  letter-spacing: -.07em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  margin-top: 16px;
+  color: #000080;
+  font-size: clamp(2.8rem, 6vw, 6.4rem);
+  line-height: .8;
+  text-shadow: 2px 2px 0 #fff;
+}
+
+.hero h1 span { color: #000; }
+
+.hero-description {
+  max-width: none;
+  margin: 22px 0 0;
+  padding: 10px;
+  border: 2px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  background: #000;
+  color: var(--dos-green);
+  font: 12px/1.6 "Courier New", monospace;
+}
+
+.search-bar {
+  margin-top: 12px;
+  gap: 4px;
+}
+
+.search-bar input {
+  height: 38px;
+  border: 2px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  border-radius: 0;
+  background: #fff;
+  color: #000;
+  font: bold 11px/1 "Courier New", monospace;
+}
+
+.search-bar input::placeholder { color: #555; }
+.search-bar button { height: 38px; padding: 0 18px; }
+
+.trust-row {
+  margin-top: 12px;
+  gap: 5px;
+}
+
+.trust-row > span {
+  gap: 6px;
+  padding: 4px 7px;
+  border: 1px solid;
+  border-color: var(--win-light) var(--win-mid) var(--win-mid) var(--win-light);
+  background: #d8d8d8;
+  color: #000;
+  font: 9px/1 "Courier New", monospace;
+}
+
+.market-console {
+  max-width: none;
+  min-height: 100%;
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  border-radius: 0;
+  background: #000;
+  color: var(--dos-green);
+  box-shadow: 2px 2px 0 rgb(0 0 0 / 35%);
+  font-family: "Courier New", monospace;
+}
+
+.market-console::before { display: none; }
+
+.console-header {
+  margin: 3px;
+  padding: 7px 9px;
+  border: 0;
+  background: linear-gradient(90deg, var(--win-blue), #1084d0);
+  color: #fff;
+}
+
+.console-header p,
+.console-label { color: #fff !important; font-family: "Courier New", monospace; }
+.console-header h2 { font: bold 14px/1.2 "Courier New", monospace; }
+
+.console-status {
+  border-radius: 0;
+  background: #c0c0c0;
+  color: #000;
+  border: 1px solid;
+  border-color: #fff #000 #000 #fff;
+}
+
+.console-stats { border-color: #166b38; }
+.console-stats > div { min-height: 112px; padding: 16px; }
+.console-stats > div + div { border-color: #166b38; }
+.console-stats span { color: #62c991; font: 9px/1 "Courier New", monospace; }
+.console-stats strong { color: var(--dos-green); font-family: "Courier New", monospace; text-shadow: 0 0 6px rgb(0 255 102 / 50%); }
+.console-stats small { color: var(--dos-amber); font-family: "Courier New", monospace; }
+
+.activity-feed { padding: 13px; }
+.activity-feed .console-label { color: var(--dos-green) !important; }
+.activity-feed li { border-color: #124d2b; }
+.activity-feed span,
+.activity-feed small { color: #62c991; font-family: "Courier New", monospace; }
+.activity-feed strong { color: var(--dos-green); font-family: "Courier New", monospace; }
+
+.section,
+.agents-inner {
+  width: calc(100% - 24px);
+  max-width: 1320px;
+  margin: 12px auto;
+  padding: 34px 10px 10px;
+  background: var(--win-bg);
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  box-shadow: 2px 2px 0 rgb(0 0 0 / 35%);
+}
+
+.section { position: relative; }
+.section::before,
+.agents-inner::before {
+  content: "AGENT MARKET 98 / DIRECTORY";
+  position: absolute;
+  inset: 3px 3px auto;
+  height: 23px;
+  padding: 0 7px;
+  background: linear-gradient(90deg, var(--win-blue), #1084d0);
+  color: #fff;
+  font: bold 11px/23px "Courier New", monospace;
+}
+
+.agents-section {
+  border: 0;
+  background: transparent;
+}
+
+.agents-inner { position: relative; }
+.agents-inner::before { content: "AGENT MARKET 98 / VERIFIED_EXECUTABLES"; }
+
+.section-heading {
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 2px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  background: #fff;
+}
+
+.section-heading h2 {
+  margin-top: 5px;
+  color: var(--win-blue);
+  font-size: clamp(1.7rem, 4vw, 3.5rem);
+  line-height: .95;
+}
+
+.section-heading > p {
+  color: #000;
+  font: 11px/1.55 "Courier New", monospace;
+}
+
+.eyebrow {
+  color: #555;
+  font: bold 9px/1 "Courier New", monospace;
+  letter-spacing: .08em;
+}
+
+.category-grid {
+  gap: 6px;
+  border: 0;
+  background: transparent;
+}
+
+.category-card {
+  min-height: 250px;
+  padding: 8px;
+  transition: none;
+}
+
+.category-card + .category-card { border-left-width: 2px; }
+.category-card:hover { background: #d8d8d8; }
+
+.category-top {
+  margin: -2px -2px 12px;
+  padding: 5px;
+  color: #fff;
+  background: var(--win-blue);
+  border: 0;
+  font: bold 9px/1 "Courier New", monospace;
+}
+
+.category-icon {
+  width: 28px;
+  height: 24px;
+  border: 1px solid #fff;
+  border-radius: 0;
+  background: #000;
+  color: var(--dos-green);
+  font: bold 11px/22px "Courier New", monospace;
+}
+
+.category-copy p,
+.category-copy span { color: #444; font-family: "Courier New", monospace; }
+.category-copy h3 { color: #000; font: bold 22px/1 "Courier New", monospace; letter-spacing: -.04em; }
+.category-arrow { color: var(--win-blue); font: bold 22px/1 "Courier New", monospace; }
+
+.view-all {
+  padding: 7px 10px;
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  background: var(--win-bg);
+  color: #000;
+  font: bold 10px/1 "Courier New", monospace;
+}
+
+.agent-grid { gap: 7px; }
+
+.agent-card {
+  padding: 8px;
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  border-radius: 0;
+  background: var(--win-bg);
+  box-shadow: 1px 1px 0 var(--win-mid);
+  transition: none;
+}
+
+.agent-card:hover { transform: none; box-shadow: 1px 1px 0 var(--win-mid); }
+
+.agent-header {
+  margin: -2px -2px 8px;
+  padding: 5px;
+  color: #fff;
+  background: linear-gradient(90deg, var(--win-blue), #1084d0);
+}
+
+.agent-identity { gap: 8px; }
+.agent-identity h3 { color: #fff; font: bold 12px/1.2 "Courier New", monospace; }
+.agent-identity p { color: #ddd; font: 9px/1.3 "Courier New", monospace; }
+
+.agent-avatar,
+.agent-avatar.warm,
+.agent-avatar.cool,
+.agent-avatar.mono {
+  border: 1px solid #fff;
+  border-radius: 0;
+  background: #000;
+  color: var(--dos-green);
+  font: bold 11px/1 "Courier New", monospace;
+}
+
+.agent-open {
+  width: 22px;
+  height: 20px;
+  border: 1px solid;
+  border-color: #fff #000 #000 #fff;
+  border-radius: 0;
+  background: var(--win-bg);
+  color: #000;
+  font: bold 11px/18px "Courier New", monospace;
+}
+
+.agent-metric {
+  padding: 11px;
+  border: 2px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  background: #000;
+}
+
+.metric-top strong { color: var(--dos-green); font-family: "Courier New", monospace; text-shadow: 0 0 5px rgb(0 255 102 / 45%); }
+.metric-top span { color: #62c991; font-family: "Courier New", monospace; }
+.risk-pill { border-radius: 0; background: #ffff00; color: #000 !important; }
+.metric-bars i { background: var(--dos-green); border-radius: 0; }
+
+.agent-facts {
+  gap: 3px;
+  margin-top: 7px;
+  border: 0;
+}
+
+.agent-facts > div {
+  padding: 7px;
+  border: 1px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  background: #d8d8d8;
+}
+
+.agent-facts span,
+.agent-facts strong { font-family: "Courier New", monospace; }
+
+@media (max-width: 920px) {
+  .topbar { height: auto; }
+  .brand { min-width: 170px; }
+  .hero-content { width: calc(100% - 12px); grid-template-columns: 1fr; padding: 0; }
+  .section,
+  .agents-inner { width: calc(100% - 12px); }
+  .category-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .topbar { top: 2px; width: calc(100% - 4px); margin: 2px; }
+  .nav { display: none; }
+  .chain-pill { display: none; }
+  .hero-content { margin: 6px auto; }
+  .hero-copy { padding-inline: 8px; }
+  .hero-copy::before { content: "WELCOME.EXE"; }
+  .hero h1 { font-size: clamp(2.5rem, 15vw, 4.4rem); }
+  .ascii-logo { font-size: 7px; }
+  .console-stats { grid-template-columns: 1fr; }
+  .console-stats > div { min-height: 80px; }
+  .console-stats > div + div { border-top: 1px solid #166b38; border-left: 0; }
+  .section-heading { align-items: flex-start; padding: 8px; }
+  .category-grid { grid-template-columns: 1fr; }
+  .category-card + .category-card { border-left-width: 2px; }
+  .agent-grid { grid-template-columns: 1fr; }
+}
+
+/* Windows 98 application screens */
+.subpage,
+.dashboard-page {
+  min-height: 100vh;
+  background: transparent;
+}
+
+.detail-shell,
+.compare-shell,
+.activate-shell,
+.dashboard-shell {
+  position: relative;
+  width: calc(100% - 24px);
+  max-width: 1360px;
+  margin: 12px auto;
+  padding: 38px 12px 80px;
+  background: var(--win-bg);
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  box-shadow: 2px 2px 0 rgb(0 0 0 / 40%);
+}
+
+.detail-shell::before,
+.compare-shell::before,
+.activate-shell::before,
+.dashboard-shell::before {
+  content: "AGENTMKT.EXE / ACTIVE_WINDOW";
+  position: absolute;
+  inset: 3px 3px auto;
+  height: 24px;
+  padding: 0 7px;
+  color: #fff;
+  background: linear-gradient(90deg, var(--win-blue), #1084d0);
+  font: bold 11px/24px "Courier New", monospace;
+}
+
+.compare-shell::before { content: "AGENTMKT.EXE / COMPARE.EXE"; }
+.activate-shell::before { content: "AGENTMKT.EXE / ACTIVATE.EXE"; }
+.dashboard-shell::before { content: "AGENTMKT.EXE / DASHBOARD.EXE"; }
+
+.breadcrumb,
+.back-link {
+  width: fit-content;
+  margin-top: 8px;
+  padding: 5px 7px;
+  border: 2px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  background: #fff;
+  color: #000;
+  font: bold 9px/1 "Courier New", monospace;
+}
+
+.detail-header,
+.dashboard-header,
+.activate-header,
+.compare-hero {
+  margin-top: 10px;
+  padding: 18px 12px;
+  border: 2px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  background: #fff;
+}
+
+.detail-header h1,
+.dashboard-header h1,
+.activate-header h1,
+.compare-hero h1 {
+  color: var(--win-blue);
+  font-family: "Courier New", monospace;
+  font-weight: 900;
+  letter-spacing: -.07em;
+  text-shadow: 2px 2px 0 #d7d7d7;
+  text-transform: uppercase;
+}
+
+.detail-avatar,
+.detail-avatar.gold,
+.detail-avatar.blue,
+.detail-avatar.green,
+.detail-avatar.violet,
+.owner-avatar {
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  border-radius: 0;
+  background: #000;
+  color: var(--dos-green);
+  font-family: "Courier New", monospace;
+}
+
+.category-badge,
+.protocol-pill,
+.verified,
+.status-badge {
+  border: 1px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  border-radius: 0;
+  background: var(--win-bg);
+  color: #000;
+  font-family: "Courier New", monospace;
+}
+
+.detail-actions .primary-button,
+.detail-actions .secondary-button,
+.hire-card .primary-button,
+.compare-actions .primary-button,
+.form-actions .primary-button,
+.form-actions .secondary-button,
+.dashboard-header .primary-button,
+.success-actions > a {
+  min-height: 38px;
+  border-radius: 0;
+}
+
+.primary-button {
+  background: var(--win-blue);
+  color: #fff;
+}
+
+.secondary-button { min-height: 38px; }
+
+.detail-metrics,
+.portfolio-grid {
+  margin-top: 7px;
+  border: 2px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  border-radius: 0;
+  background: #000;
+}
+
+.detail-metrics > div,
+.portfolio-grid > div { min-height: 100px; padding: 16px; }
+.detail-metrics > div + div,
+.portfolio-grid > div + div { border-color: #16522d; }
+.detail-metrics span,
+.detail-metrics small,
+.portfolio-grid span,
+.portfolio-grid small { color: #62c991; font-family: "Courier New", monospace; }
+.detail-metrics strong,
+.portfolio-grid strong,
+.portfolio-grid strong.positive { color: var(--dos-green); font-family: "Courier New", monospace; text-shadow: 0 0 5px rgb(0 255 102 / 45%); }
+
+.detail-panel,
+.dashboard-panel,
+.compare-agent-card,
+.comparison-table,
+.compare-note,
+.form-panel,
+.activation-summary,
+.managed-agent-card,
+.danger-card,
+.success-dialog,
+.receipt,
+.hire-card {
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  border-radius: 0;
+  background: var(--win-bg);
+  box-shadow: 1px 1px 0 var(--win-mid);
+}
+
+.panel-heading,
+.form-heading,
+.managed-agent-head {
+  margin: -20px -20px 14px;
+  padding: 6px 8px;
+  background: var(--win-blue);
+  color: #fff;
+}
+
+.detail-panel,
+.dashboard-panel { padding: 20px; }
+.panel-heading h2,
+.form-heading h2,
+.managed-agent-head h2 { color: #fff; font-family: "Courier New", monospace; }
+.panel-heading .eyebrow,
+.form-heading > span,
+.managed-agent-head p { color: #ddd; }
+
+.range-tabs {
+  border: 1px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  border-radius: 0;
+  background: var(--win-bg);
+}
+
+.range-tabs button { border-radius: 0; font-family: "Courier New", monospace; }
+.range-tabs button.active { background: var(--win-blue); }
+
+.large-chart,
+.dashboard-chart,
+.compare-return,
+.summary-metric,
+.review-agent {
+  border: 2px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  border-radius: 0;
+  background: #000;
+  color: var(--dos-green);
+}
+
+.chart-value span,
+.compare-return div > span,
+.summary-metric > span,
+.summary-metric small,
+.review-agent p { color: #62c991; font-family: "Courier New", monospace; }
+.chart-value strong,
+.compare-return strong,
+.summary-metric strong,
+.review-agent h3 { color: var(--dos-green); font-family: "Courier New", monospace; }
+.mini-chart i { border-radius: 0; background: var(--dos-green); }
+.performance-foot { color: #333; font-family: "Courier New", monospace; }
+.legend { border-radius: 0; }
+
+.highlight-grid > div,
+.allowlist-box,
+.input-affix,
+.field textarea,
+.field > select,
+.compare-agent select,
+.connect-card,
+.revoke-note {
+  border: 2px solid;
+  border-color: var(--win-mid) var(--win-light) var(--win-light) var(--win-mid);
+  border-radius: 0;
+  background: #fff;
+}
+
+.highlight-grid span,
+.highlight-grid strong,
+.jobs-row,
+.identity-list,
+.review-list,
+.activation-summary dl,
+.managed-agent-card dl,
+.action-timeline { font-family: "Courier New", monospace; }
+
+.jobs-table,
+.jobs-row,
+.identity-list > div,
+.review-list > div,
+.activation-summary dl > div,
+.managed-agent-card dl > div,
+.timeline-row { border-color: var(--win-mid); }
+
+.permission-card,
+.permission-intro {
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-mid) var(--win-mid) var(--win-light);
+  border-radius: 0;
+  background: #000;
+  color: var(--dos-green);
+  font-family: "Courier New", monospace;
+}
+
+.permission-heading p,
+.permission-intro strong { color: var(--dos-green); }
+.permission-heading div span,
+.permission-list p,
+.permission-intro p { color: #62c991; }
+.permission-heading > strong,
+.permission-list > div > span,
+.permission-card > a { color: var(--dos-amber); }
+.shield-mark { border-radius: 0; background: var(--dos-green); color: #000; }
+
+.hire-card { background: #ffff00; }
+.compare-picker { gap: 7px; }
+.compare-agent-card { padding: 8px; }
+.compare-agent-head {
+  margin: -2px -2px 8px;
+  padding: 7px;
+  background: var(--win-blue);
+  color: #fff;
+}
+.compare-agent-head h2 { color: #fff; font-family: "Courier New", monospace; }
+.compare-agent-head p { color: #ddd; }
+.versus { border: 2px solid #fff; border-radius: 0; background: #000; color: var(--dos-green); }
+.comparison-table { overflow-x: auto; }
+.comparison-row { border-color: var(--win-mid); font-family: "Courier New", monospace; }
+.comparison-head { background: var(--win-blue); color: #fff; }
+.comparison-head > * { color: #fff !important; }
+.compare-note { background: #ffffcc; }
+
+.stepper > div::before { background: var(--win-mid); }
+.stepper span {
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  border-radius: 0;
+  background: var(--win-bg);
+  font-family: "Courier New", monospace;
+}
+.stepper > div.active span { background: var(--win-blue); }
+.stepper p { background: var(--win-bg); font-family: "Courier New", monospace; }
+.form-panel { padding: 20px; }
+.field > span,
+.field input,
+.field textarea,
+.field select { font-family: "Courier New", monospace; }
+.connect-card.connected { background: #ccffcc; }
+.wallet-symbol { border-radius: 0; background: #000; color: var(--dos-green); }
+.activation-summary { padding: 18px; }
+.success-overlay { background: rgb(0 0 0 / 72%); backdrop-filter: none; }
+.success-dialog { text-align: left; }
+.success-mark { margin-inline: 0; border-radius: 0; background: var(--dos-green); color: #000; }
+.receipt { background: #fff; }
+
+.dashboard-notice {
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  border-radius: 0;
+  background: #ffffcc;
+  font-family: "Courier New", monospace;
+}
+.status-badge.active { background: var(--dos-green); }
+.danger-card { background: #ffcccc; }
+.danger-card button {
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  border-radius: 0;
+  background: var(--win-bg);
+}
+.danger-card button:last-child { background: #800000; color: #fff; }
+
+@media (max-width: 1023px) {
+  .detail-shell,
+  .compare-shell,
+  .activate-shell,
+  .dashboard-shell { width: calc(100% - 12px); padding-inline: 8px; }
+}
+
+@media (max-width: 639px) {
+  .detail-shell,
+  .compare-shell,
+  .activate-shell,
+  .dashboard-shell { margin: 6px auto; padding: 36px 7px 58px; }
+  .detail-header,
+  .dashboard-header,
+  .activate-header,
+  .compare-hero { padding: 12px 8px; }
+  .detail-avatar { border-radius: 0; }
+  .detail-metrics > div:nth-child(3),
+  .detail-metrics > div:nth-child(4),
+  .portfolio-grid > div:nth-child(3),
+  .portfolio-grid > div:nth-child(4) { border-color: #16522d; }
+  .comparison-row { min-width: 520px; }
+}
