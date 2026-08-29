@@ -1,6 +1,6 @@
+import Link from 'next/link';
 import { SiteHeader } from '@/components/site-header';
-import { marketplaceCandidates, type CandidateSnapshot } from '@/lib/marketplace-candidates';
-import { getRegistryAgent } from '@/lib/scan8004';
+import { loadMarketplaceRecords } from '@/lib/marketplace-data';
 
 const categories = [
   ['[R]', 'Rebalancing'],
@@ -9,53 +9,9 @@ const categories = [
   ['[H]', 'Health Factor'],
 ];
 
-type DisplayAgent = {
-  id: string;
-  category: string;
-  name: string;
-  description: string;
-  owner: string;
-  service: string;
-  price: string;
-  updated: string;
-  href: string;
-  state: 'SOURCE-BACKED' | 'STALE SNAPSHOT';
-};
-
-async function loadCandidate(snapshot: CandidateSnapshot): Promise<DisplayAgent> {
-  try {
-    const agent = await getRegistryAgent(snapshot.tokenId);
-    return {
-      id: '#' + snapshot.tokenId,
-      category: snapshot.category,
-      name: agent.name || snapshot.name,
-      description: agent.description || snapshot.description,
-      owner: agent.owner_address.slice(0, 8) + '...' + agent.owner_address.slice(-4),
-      service: snapshot.serviceId,
-      price: snapshot.price,
-      updated: new Date(agent.updated_at).toISOString().slice(0, 16).replace('T', ' ') + ' UTC',
-      href: '/registry/' + snapshot.tokenId,
-      state: 'SOURCE-BACKED',
-    };
-  } catch {
-    return {
-      id: '#' + snapshot.tokenId,
-      category: snapshot.category,
-      name: snapshot.name,
-      description: snapshot.description,
-      owner: snapshot.owner.slice(0, 8) + '...' + snapshot.owner.slice(-4),
-      service: snapshot.serviceId,
-      price: snapshot.price,
-      updated: snapshot.observedAt.slice(0, 16).replace('T', ' ') + ' UTC',
-      href: '/registry/' + snapshot.tokenId,
-      state: 'STALE SNAPSHOT',
-    };
-  }
-}
-
 export default async function Home() {
-  const rows = await Promise.all(marketplaceCandidates.map(loadCandidate));
-  const available = rows.filter((row) => row.state === 'SOURCE-BACKED').length;
+  const rows = await loadMarketplaceRecords();
+  const available = rows.filter((row) => row.sourceState === 'LIVE REGISTRY').length;
 
   return (
     <main className="win95-desktop">
@@ -77,8 +33,8 @@ export default async function Home() {
         </nav>
 
         <div className="win95-toolbar">
-          <a href="/">← Back</a>
-          <a href="/compare">Compare</a>
+          <Link href="/">← Back</Link>
+          <a href="/compare">Leaderboard</a>
           <label><span>Address</span><input readOnly value="C:\BNB\AGENTS" aria-label="Current folder" /></label>
         </div>
 
@@ -123,17 +79,17 @@ export default async function Home() {
                 <article className="win95-agent-row" key={agent.id + agent.name}>
                   <span className="file-icon">{String(index + 1).padStart(2, '0')}</span>
                   <div className="file-main">
-                    <h2>{agent.name}</h2>
-                    <p>{agent.description}</p>
-                    <small>{agent.state} · {agent.service} · observed {agent.updated}</small>
+                    <h2>{agent.displayName}</h2>
+                    <p>{agent.displayDescription}</p>
+                    <small>{agent.sourceState} · {agent.serviceId} · PREFLIGHT ONLY</small>
                   </div>
                   <dl>
-                    <div><dt>ID</dt><dd>{agent.id}</dd></div>
+                    <div><dt>ID</dt><dd>#{agent.tokenId}</dd></div>
                     <div><dt>Category</dt><dd>{agent.category}</dd></div>
                     <div><dt>Quote</dt><dd>{agent.price}</dd></div>
-                    <div><dt>Owner</dt><dd>{agent.owner}</dd></div>
+                    <div><dt>Owner</dt><dd>{agent.displayOwner}</dd></div>
                   </dl>
-                  <a href={agent.href}>Evidence</a>
+                  <a href={'/registry/' + agent.tokenId}>Evidence</a>
                 </article>
               ))}
             </div>
@@ -147,7 +103,7 @@ export default async function Home() {
 
         <footer className="win95-statusbar">
           <span>{rows.length} category candidate(s)</span>
-          <span>{available}/4 SOURCE-BACKED · TASK-TESTED 0/4</span>
+          <span>{available}/4 REGISTRY · NEGOTIATED 4/4 · DELIVERED 0/4</span>
           <span>BNB CHAIN ID: 56 · NO MOCK FALLBACK</span>
         </footer>
       </section>

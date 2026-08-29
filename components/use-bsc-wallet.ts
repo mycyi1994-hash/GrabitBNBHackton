@@ -111,10 +111,12 @@ export function useBscWallet() {
 
   useEffect(() => {
     const provider = window.ethereum;
-    setHasProvider(Boolean(provider));
-    if (!provider) return;
+    const providerTimer = window.setTimeout(() => setHasProvider(Boolean(provider)), 0);
+    if (!provider) return () => window.clearTimeout(providerTimer);
 
-    void refresh().catch(() => undefined);
+    const refreshTimer = window.setTimeout(() => {
+      void refresh().catch(() => undefined);
+    }, 0);
     const handleAccounts = (value: unknown) => {
       const accounts = Array.isArray(value) ? value.map(String) : [];
       setAccount(accounts[0] ?? null);
@@ -123,6 +125,8 @@ export function useBscWallet() {
     provider.on?.('accountsChanged', handleAccounts);
     provider.on?.('chainChanged', handleChain);
     return () => {
+      window.clearTimeout(providerTimer);
+      window.clearTimeout(refreshTimer);
       provider.removeListener?.('accountsChanged', handleAccounts);
       provider.removeListener?.('chainChanged', handleChain);
     };

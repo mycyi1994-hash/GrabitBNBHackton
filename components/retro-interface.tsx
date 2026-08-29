@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 type AudioWindow = Window & typeof globalThis & {
   webkitAudioContext?: typeof AudioContext;
@@ -10,7 +10,7 @@ export function RetroInterface({ children }: { children: ReactNode }) {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const audioRef = useRef<AudioContext | null>(null);
 
-  function playTone(frequency: number, duration = 0.07) {
+  const playTone = useCallback((frequency: number, duration = 0.07) => {
     if (!soundEnabled) return;
     const AudioContextClass = window.AudioContext ?? (window as AudioWindow).webkitAudioContext;
     if (!AudioContextClass) return;
@@ -27,11 +27,14 @@ export function RetroInterface({ children }: { children: ReactNode }) {
     gain.connect(context.destination);
     oscillator.start();
     oscillator.stop(context.currentTime + duration);
-  }
+  }, [soundEnabled]);
 
   useEffect(() => {
     const preference = window.localStorage.getItem('agent-market-sfx');
-    if (preference === 'off') setSoundEnabled(false);
+    const timer = window.setTimeout(() => {
+      if (preference === 'off') setSoundEnabled(false);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -82,7 +85,7 @@ export function RetroInterface({ children }: { children: ReactNode }) {
 
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
-  }, [soundEnabled]);
+  }, [playTone]);
 
   function toggleSound() {
     const next = !soundEnabled;

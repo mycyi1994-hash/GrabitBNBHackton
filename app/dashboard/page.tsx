@@ -1,105 +1,91 @@
-'use client';
-
-import { useState } from 'react';
-import { MetricBars } from '@/components/metric-bars';
+import type { Metadata } from 'next';
 import { PrototypeNote } from '@/components/prototype-note';
 import { SiteHeader } from '@/components/site-header';
-import { agents } from '@/lib/agents';
+import { loadMarketplaceRecords } from '@/lib/marketplace-data';
 
-export default function DashboardPage() {
-  const agent = agents[0];
-  const [status, setStatus] = useState<'Active' | 'Paused' | 'Revoked'>('Active');
-  const [notice, setNotice] = useState('');
+export const metadata: Metadata = {
+  title: 'Verification dashboard — Agent Market',
+  description: 'Track registry coverage, A2A preflight and real execution readiness for four BSC agent categories.',
+};
 
-  function updateStatus(next: 'Paused' | 'Revoked') {
-    setStatus(next);
-    setNotice(next === 'Paused' ? 'Automation paused. Existing session permissions remain active.' : 'Session revoked in the prototype. No further actions are authorised.');
-  }
+export default async function DashboardPage() {
+  const agents = await loadMarketplaceRecords();
+  const liveRegistry = agents.filter((agent) => agent.sourceState === 'LIVE REGISTRY').length;
 
   return (
     <main className="subpage dashboard-page">
       <SiteHeader active="dashboard" />
-      <div className="dashboard-shell">
+      <div className="dashboard-shell evidence-shell">
         <PrototypeNote />
-        <header className="dashboard-header">
-          <div><p className="eyebrow">Control centre</p><h1>Your agents.</h1><p>Track performance, inspect every action and revoke access at any time.</p></div>
-          <a className="primary-button" href="/#agents">Hire another agent <span>↗</span></a>
+        <header className="dashboard-header evidence-dashboard-header">
+          <div>
+            <p className="eyebrow">Verification control centre</p>
+            <h1>What is actually working?</h1>
+            <p>The dashboard separates live identity evidence from work that still needs a funded onchain test.</p>
+          </div>
+          <a className="primary-button" href="/compare">Open leaderboard <span>→</span></a>
         </header>
 
-        {notice && <div className={'dashboard-notice ' + status.toLowerCase()}><span>{status === 'Revoked' ? '!' : 'Ⅱ'}</span><p>{notice}</p><button onClick={() => setNotice('')} aria-label="Dismiss notice">×</button></div>}
-
-        <section className="portfolio-grid">
-          <div><span>Managed capital</span><strong>$250.00</strong><small>Testnet portfolio</small></div>
-          <div><span>Net PnL</span><strong className="positive">+$12.84</strong><small>+5.14% since activation</small></div>
-          <div><span>Agent actions</span><strong>24</strong><small>23 settled · 1 monitoring</small></div>
-          <div><span>Risk budget used</span><strong>18%</strong><small>18 / 100 USDT daily cap</small></div>
+        <section className="portfolio-grid readiness-grid" aria-label="Project readiness">
+          <div><span>Registry identities</span><strong>{liveRegistry} / 4</strong><small>8004scan · BSC 56</small></div>
+          <div><span>A2A negotiation</span><strong>4 / 4</strong><small>Accepted quote observed</small></div>
+          <div><span>Delivered tasks</span><strong className="pending-value">0 / 4</strong><small>Paid canaries required</small></div>
+          <div><span>Onchain jobs</span><strong className="pending-value">0 / 1</strong><small>ERC-8183 settlement required</small></div>
         </section>
 
-        <div className="dashboard-grid">
-          <div className="dashboard-main">
-            <section className="dashboard-panel">
-              <div className="panel-heading">
-                <div><p className="eyebrow">Active allocation</p><h2>Portfolio performance</h2></div>
-                <div className="range-tabs"><button>24H</button><button>7D</button><button className="active">30D</button></div>
-              </div>
-              <div className="dashboard-chart">
-                <div className="chart-value"><span>Total value</span><strong>$262.84</strong></div>
-                <MetricBars values={[42, 47, 45, 54, 51, 60, 65, 62, 73, 78, 83, 91]} />
-              </div>
-              <div className="performance-foot"><span><i className="legend agent" /> Portfolio</span><span><i className="legend benchmark" /> BNB benchmark</span><strong>Updated 12s ago</strong></div>
-            </section>
-
-            <section className="dashboard-panel">
-              <div className="panel-heading">
-                <div><p className="eyebrow">Execution log</p><h2>Agent actions</h2></div>
-                <a className="table-link" href="#">Export receipts</a>
-              </div>
-              <div className="action-timeline">
-                {[
-                  ['Monitoring', 'Checked CAKE / USDT range', 'No action required · position 68% in range', '12s ago'],
-                  ['Settled', 'Rebalanced liquidity position', 'New range $2.31 – $2.89 · fee 0.08 $U', '18m ago'],
-                  ['Settled', 'Collected and compounded fees', 'Added 3.42 USDT to liquidity', '4h ago'],
-                  ['Monitoring', 'Risk gate evaluation', 'Price impact 0.08% · below 0.5% limit', '8h ago'],
-                ].map(([type, title, detail, time]) => (
-                  <div className="timeline-row" key={title}>
-                    <span className={type.toLowerCase()} />
-                    <div><strong>{title}</strong><p>{detail}</p></div>
-                    <div><b>{type}</b><small>{time}</small></div>
+        <div className="dashboard-grid verification-dashboard-grid">
+          <section className="dashboard-panel">
+            <header className="panel-heading">
+              <div><p className="eyebrow">Agent readiness</p><h2>Execution queue</h2></div>
+              <span className="protocol-pill">HIRES LOCKED</span>
+            </header>
+            <div className="readiness-list">
+              {agents.map((agent, index) => (
+                <article className="readiness-row" key={agent.tokenId}>
+                  <span className="readiness-number">{String(index + 1).padStart(2, '0')}</span>
+                  <div>
+                    <h3>{agent.displayName}</h3>
+                    <p>{agent.category} · service {agent.serviceId}</p>
                   </div>
-                ))}
-              </div>
-            </section>
-          </div>
+                  <dl>
+                    <div><dt>Identity</dt><dd className="gate-pass">PASS</dd></div>
+                    <div><dt>Endpoint</dt><dd className="gate-pass">PASS</dd></div>
+                    <div><dt>Quote</dt><dd className="gate-pass">{agent.price}</dd></div>
+                    <div><dt>Result</dt><dd className="gate-pending">PENDING</dd></div>
+                  </dl>
+                  <a href={'/registry/' + agent.tokenId}>Evidence</a>
+                </article>
+              ))}
+            </div>
+          </section>
 
-          <aside className="dashboard-sidebar">
-            <section className="managed-agent-card">
-              <div className="managed-agent-head"><span className={'agent-avatar ' + agent.tone}>{agent.initials}</span><div><h2>{agent.name} <span className="verified">✓</span></h2><p>{agent.tagline}</p></div><span className={'status-badge ' + status.toLowerCase()}>{status}</span></div>
-              <dl>
-                <div><dt>Allocation</dt><dd>250 USDT</dd></div>
-                <div><dt>Position</dt><dd>CAKE / USDT</dd></div>
-                <div><dt>Session expiry</dt><dd>6d 18h</dd></div>
-                <div><dt>Job ID</dt><dd>#AM-2048</dd></div>
-              </dl>
-              <a href={'/agents/' + agent.slug}>View agent profile ↗</a>
+          <aside className="dashboard-sidebar verification-sidebar">
+            <section className="managed-agent-card empty-agent-card">
+              <p className="eyebrow">Active agents</p>
+              <strong>0</strong>
+              <h2>No funded agent jobs</h2>
+              <p>The earlier testnet self-transfer was only an activation proof. It is not counted as a hire or completed agent task.</p>
             </section>
 
             <section className="permission-card dashboard-permissions">
-              <div className="permission-heading"><span className="shield-mark">A</span><div><p>Session permissions</p><span>0x84A1...19D7</span></div><strong>{status === 'Revoked' ? 'Revoked' : 'Onchain'}</strong></div>
-              <div className="permission-list">
-                <div><span>✓</span><p>Pancake V3 Position Manager</p></div>
-                <div><span>✓</span><p>Spend ≤ 100 USDT / day</p></div>
-                <div><span>✓</span><p>Expires in 6d 18h</p></div>
+              <div className="permission-heading">
+                <span className="shield-mark">G</span>
+                <div><p>Next execution gate</p><span>Stage 4</span></div>
+                <strong>LOCKED</strong>
               </div>
-              <a href="#">Inspect in Altana ↗</a>
+              <div className="permission-list">
+                <div><span>1</span><p>Fund one 0.10 $U canary safely</p></div>
+                <div><span>2</span><p>Receive and inspect the task result</p></div>
+                <div><span>3</span><p>Record the ERC-8183 job receipt</p></div>
+              </div>
+              <a href="/activate">Inspect execution gate →</a>
             </section>
 
-            <section className="danger-card">
-              <p className="eyebrow">Agent controls</p>
-              <h3>Stay in control.</h3>
-              <p>Pause automation while preserving the session, or revoke all authority immediately.</p>
+            <section className="evidence-warning compact-warning">
+              <span>!</span>
               <div>
-                <button disabled={status !== 'Active'} onClick={() => updateStatus('Paused')}>Pause agent</button>
-                <button disabled={status === 'Revoked'} onClick={() => updateStatus('Revoked')}>Revoke session</button>
+                <strong>Provider concentration</strong>
+                <p>All four selected identities currently point to the same provider wallet. Diversification remains open work.</p>
               </div>
             </section>
           </aside>

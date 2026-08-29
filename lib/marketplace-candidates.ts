@@ -14,8 +14,17 @@ export type CandidateSnapshot = {
   serviceId: string;
   price: string;
   endpoint: string;
+  agentCard: string;
   observedAt: string;
 };
+
+export const verificationGate = {
+  identityRegistered: true,
+  endpointReachable: true,
+  quoteAccepted: true,
+  taskDelivered: false,
+  jobSettled: false,
+} as const;
 
 export const marketplaceCandidates: CandidateSnapshot[] = [
   {
@@ -28,6 +37,7 @@ export const marketplaceCandidates: CandidateSnapshot[] = [
     serviceId: 'rebalance_plan',
     price: '0.10 $U',
     endpoint: 'https://agent.brainonbnb.com/a2a',
+    agentCard: 'https://agent.brainonbnb.com/.well-known/agent-card.json',
     observedAt: '2026-08-29T13:52:42Z',
   },
   {
@@ -40,6 +50,7 @@ export const marketplaceCandidates: CandidateSnapshot[] = [
     serviceId: 'grid_plan',
     price: '0.10 $U',
     endpoint: 'https://agent.brainonbnb.com/a2a',
+    agentCard: 'https://agent.brainonbnb.com/.well-known/agent-card.json',
     observedAt: '2026-08-29T13:52:42Z',
   },
   {
@@ -52,6 +63,7 @@ export const marketplaceCandidates: CandidateSnapshot[] = [
     serviceId: 'yield_plan',
     price: '0.10 $U',
     endpoint: 'https://agent.brainonbnb.com/a2a',
+    agentCard: 'https://agent.brainonbnb.com/.well-known/agent-card.json',
     observedAt: '2026-08-29T13:52:42Z',
   },
   {
@@ -64,6 +76,7 @@ export const marketplaceCandidates: CandidateSnapshot[] = [
     serviceId: 'health_factor',
     price: '0.10 $U',
     endpoint: 'https://agent.brainonbnb.com/a2a',
+    agentCard: 'https://agent.brainonbnb.com/.well-known/agent-card.json',
     observedAt: '2026-08-29T13:52:42Z',
   },
 ];
