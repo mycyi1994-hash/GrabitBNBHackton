@@ -15,15 +15,15 @@ It is being built for the **BNB Chain Smart Money Era: Build the Era** hackathon
 - Side-by-side comparison
 - Three-step Hire / Activate prototype
 - Agent management dashboard with pause and revoke interactions
-- Live BSC ERC-8004 registry records from 8004scan, limited to two focused candidates on the home screen
+- Four curated BSC ERC-8004 identities, one per required category, loaded from 8004scan on the home screen
 - Internal live-agent detail pages with owner, registry contract, health and verification status
 - EIP-1193 browser-wallet connection with automatic BSC Testnet network switching
 - Wallet-side BSC Testnet RPC recovery with current official endpoint fallbacks
 - A real 0 BNB self-transaction that records an activation proof and links to its BscScan receipt
 - Windows 95 / ASCII workstation interface with larger type, equalised panels, page transitions and optional UI sound
-- Server-side 8004scan proxy route with a safe mock fallback
+- Server-side 8004scan proxy route with explicit unavailable/stale responses and no silent mock fallback
 
-The home registry list and registry detail pages are live 8004scan data. Detailed performance records are still representative prototype data. The activation proof is a real BSC Testnet transaction that uses testnet gas, but it moves no protocol funds and grants no agent spending authority. ERC-8183 and Altana actions remain interaction previews.
+The home registry list and registry detail pages use source-backed 8004scan identities. The four selected services also returned successful non-funded A2A negotiations, but no paid category task has been completed yet. Detailed performance records on legacy prototype routes remain representative data. The activation proof is a real BSC Testnet transaction that uses testnet gas, but it moves no protocol funds and grants no agent spending authority. ERC-8183 and Altana actions remain interaction previews.
 
 ## Run locally
 
@@ -64,6 +64,19 @@ Supported prototype queries:
 6. Settle, dispute, refund or revoke from the user-facing controls.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the system flow.
+
+## Phase 1 strategy baseline
+
+The scope and evidence rules were frozen on 2026-08-29:
+
+- [Requirements matrix](docs/REQUIREMENTS_MATRIX.md)
+- [Product scope freeze](docs/SCOPE_FREEZE.md)
+- [Data and verification methodology](docs/DATA_METHODOLOGY.md)
+- [Live Agent verification registry](docs/LIVE_AGENT_REGISTRY.json)
+- [Live Agent discovery report](docs/AGENT_DISCOVERY_REPORT.md)
+- [Current delivery progress](docs/PROGRESS.md)
+
+Registration alone is insufficient. Metadata, endpoint and category-task checks are required; Direct Hire also requires execution evidence.
 
 ## Data integrity rules
 

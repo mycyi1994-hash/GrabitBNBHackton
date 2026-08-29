@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "1.0",
+  "updatedAt": "2026-08-29T13:52:42Z",
+  "policy": {
+    "marketplaceMinimumLevel": "TASK_TESTED",
+    "directHireMinimumLevel": "ONCHAIN_EXECUTING",
+    "allowSilentMockFallback": false,
+    "mainTrackBscTestnetAcceptance": "needs-organizer-confirmation"
+  },
+  "coverage": {
+    "requiredCategories": 4,
+    "categoriesWithRegisteredIdentity": 4,
+    "categoriesWithReachableNegotiation": 4,
+    "categoriesWithMarketplaceEligibleAgent": 0,
+    "categoriesWithDirectHireAgent": 0
+  },
+  "categories": [
+    {
+      "category": "Rebalancing",
+      "status": "candidate_reachable",
+      "candidates": [
+        {
+          "name": "Brain on BNB — Portfolio Rebalance Pricer",
+          "chainId": 56,
+          "agentId": "304494",
+          "owner": "0x73809f69916fcf7ddc5bb1315fbdf96a569a5963",
+          "provider": "0x73809F69916FcF7Ddc5BB1315fBdf96A569a5963",
+          "sourceUrl": "https://8004scan.io/agents/bsc/304494",
+          "endpoint": "https://agent.brainonbnb.com/a2a",
+          "service": "rebalance_plan",
+          "price": "0.10 $U",
+          "verificationLevel": "REACHABLE",
+          "preflight": {
+            "identity": true,
+            "agentCard": true,
+            "a2aList": true,
+            "negotiateAccepted": true,
+            "categoryTaskDelivered": false,
+            "erc8183JobCompleted": false
+          },
+          "marketplaceEligible": false,
+          "directHireEligible": false
+        },
+        {
+          "name": "DeFiMatrix.agent",
+          "chainId": 56,
+          "agentId": "171927",
+          "sourceUrl": "https://8004scan.io/agents/bsc/171927",
+          "claim": "Portfolio rebalancing and yield strategy",
+          "verificationLevel": "DISCOVERED_ONLY",
+          "marketplaceEligible": false,
+          "directHireEligible": false,
+          "nextChecks": ["identity", "metadata", "endpoint", "category-task", "execution"]
+        }
+      ]
+    },
+    {
+      "category": "Grid Trading",
+      "status": "candidate_reachable",
+      "candidates": [
+        {
+          "name": "Brain on BNB — BSC Grid Planner",
+          "chainId": 56,
+          "agentId": "302258",
+          "owner": "0x73809f69916fcf7ddc5bb1315fbdf96a569a5963",
+          "provider": "0x73809F69916FcF7Ddc5BB1315fBdf96A569a5963",
+          "sourceUrl": "https://8004scan.io/agents/bsc/302258",
+          "endpoint": "https://agent.brainonbnb.com/a2a",
+          "service": "grid_plan",
+          "price": "0.10 $U",
+          "verificationLevel": "REACHABLE",
+          "preflight": {
+            "identity": true,
+            "agentCard": true,
+            "a2aList": true,
+            "negotiateAccepted": true,
+            "categoryTaskDelivered": false,
+            "erc8183JobCompleted": false
+          },
+          "marketplaceEligible": false,
+          "directHireEligible": false
+        }
+      ]
+    },
+    {
+      "category": "Yield Optimisation",
+      "status": "candidate_reachable",
+      "candidates": [
+        {
+          "name": "Brain on BNB — Venus Yield Ranking",
+          "chainId": 56,
+          "agentId": "304493",
+          "owner": "0x73809f69916fcf7ddc5bb1315fbdf96a569a5963",
+          "provider": "0x73809F69916FcF7Ddc5BB1315fBdf96A569a5963",
+          "sourceUrl": "https://8004scan.io/agents/bsc/304493",
+          "endpoint": "https://agent.brainonbnb.com/a2a",
+          "service": "yield_plan",
+          "price": "0.10 $U",
+          "verificationLevel": "REACHABLE",
+          "preflight": {
+            "identity": true,
+            "agentCard": true,
+            "a2aList": true,
+            "negotiateAccepted": true,
+            "categoryTaskDelivered": false,
+            "erc8183JobCompleted": false
+          },
+          "marketplaceEligible": false,
+          "directHireEligible": false
+        },
+        {
+          "name": "DeFi Trading Agent SperaxOS",
+          "chainId": 56,
+          "agentId": "6441",
+          "sourceUrl": "https://8004scan.io/agents/bsc/6441",
+          "claim": "Yield optimisation, swaps and farming",
+          "verificationLevel": "DISCOVERED_ONLY",
+          "marketplaceEligible": false,
+          "directHireEligible": false,
+          "nextChecks": ["identity", "metadata", "endpoint", "category-task", "execution"]
+        },
+        {
+          "name": "Tator Trader",
+          "chainId": 56,
+          "agentId": "6428",
+          "sourceUrl": "https://8004scan.io/agents/bsc/6428",
+          "claim": "Trading and yield-position management",
+          "verificationLevel": "DISCOVERED_ONLY",
+          "marketplaceEligible": false,
+          "directHireEligible": false,
+          "nextChecks": ["bsc-capability", "metadata", "endpoint", "category-task", "execution"]
+        }
+      ]
+    },
+    {
+      "category": "Health Factor Monitoring",
+      "status": "candidate_reachable",
+      "candidates": [
+        {
+          "name": "Brain on BNB — Venus Health Factor Monitor",
+          "chainId": 56,
+          "agentId": "302257",
+          "owner": "0x73809f69916fcf7ddc5bb1315fbdf96a569a5963",
+          "provider": "0x73809F69916FcF7Ddc5BB1315fBdf96A569a5963",
+          "sourceUrl": "https://8004scan.io/agents/bsc/302257",
+          "endpoint": "https://agent.brainonbnb.com/a2a",
+          "service": "health_factor",
+          "price": "0.10 $U",
+          "verificationLevel": "REACHABLE",
+          "preflight": {
+            "identity": true,
+            "agentCard": true,
+            "a2aList": true,
+            "negotiateAccepted": true,
+            "categoryTaskDelivered": false,
+            "erc8183JobCompleted": false
+          },
+          "marketplaceEligible": false,
+          "directHireEligible": false
+        }
+      ]
+    }
+  ]
+}
