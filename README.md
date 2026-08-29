@@ -18,7 +18,9 @@ It is being built for the **BNB Chain Smart Money Era: Build the Era** hackathon
 - Live BSC ERC-8004 registry records from 8004scan, limited to two focused candidates on the home screen
 - Internal live-agent detail pages with owner, registry contract, health and verification status
 - EIP-1193 browser-wallet connection with automatic BSC Testnet network switching
+- Wallet-side BSC Testnet RPC recovery with current official endpoint fallbacks
 - A real 0 BNB self-transaction that records an activation proof and links to its BscScan receipt
+- Windows 95 / ASCII workstation interface with larger type, equalised panels, page transitions and optional UI sound
 - Server-side 8004scan proxy route with a safe mock fallback
 
 The home registry list and registry detail pages are live 8004scan data. Detailed performance records are still representative prototype data. The activation proof is a real BSC Testnet transaction that uses testnet gas, but it moves no protocol funds and grants no agent spending authority. ERC-8183 and Altana actions remain interaction previews.

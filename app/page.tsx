@@ -93,6 +93,21 @@ export default async function Home() {
             <ul>
               {categories.map(([icon, name]) => <li key={name}><span>{icon}</span>{name}</li>)}
             </ul>
+            <figure className="ascii-workstation" aria-label="ASCII Agent Market workstation">
+              <pre aria-hidden="true">{String.raw`
+ .------------------.
+/  AGENT MARKET 98 /|
++-----------------+ |
+| C:\> scan_8004  | |
+| [BSC] [ONLINE]   |/
++-----------------+
+     |  |   |  |
+  .--+--+---+--+--.
+  | [_KEYBOARD__] |
+  '---------------'
+              `}</pre>
+              <figcaption>LOCAL AGENT WORKSTATION</figcaption>
+            </figure>
             <div className={'registry-box ' + (connected ? 'is-live' : 'is-demo')}>
               <span className="registry-light" />
               <div><strong>8004scan</strong><small>{connected ? 'CONNECTED / BSC 56' : 'OFFLINE / DEMO MODE'}</small></div>

@@ -23,13 +23,31 @@ export const BSC_TESTNET = {
   chainId: 97,
   chainHex: '0x61',
   name: 'BNB Smart Chain Testnet',
-  rpcUrl: 'https://data-seed-prebsc-1-s1.bnbchain.org:8545',
+  rpcUrl: 'https://bsc-testnet-dataseed.bnbchain.org',
+  rpcUrls: [
+    'https://bsc-testnet-dataseed.bnbchain.org',
+    'https://bsc-testnet.bnbchain.org',
+    'https://bsc-prebsc-dataseed.bnbchain.org',
+  ],
   explorerUrl: 'https://testnet.bscscan.com',
 };
 
 function providerError(error: unknown) {
   if (error && typeof error === 'object' && 'message' in error) {
-    return String(error.message);
+    const message = String(error.message);
+    const normalized = message.toLowerCase();
+    if (
+      normalized.includes('not valid json') ||
+      normalized.includes('unsupported_operation') ||
+      normalized.includes('failed to fetch') ||
+      normalized.includes('network request failed')
+    ) {
+      return 'Your wallet saved an unusable BSC Testnet RPC. Choose Repair network, then approve the updated network settings.';
+    }
+    if (normalized.includes('user rejected') || providerCode(error) === 4001) {
+      return 'The wallet request was cancelled. No transaction was sent.';
+    }
+    return message;
   }
   return 'The wallet request was not completed.';
 }
@@ -52,21 +70,25 @@ async function requireProvider() {
   return provider;
 }
 
+async function addBscTestnet(provider: Eip1193Provider) {
+  await provider.request({
+    method: 'wallet_addEthereumChain',
+    params: [{
+      chainId: BSC_TESTNET.chainHex,
+      chainName: BSC_TESTNET.name,
+      nativeCurrency: { name: 'Test BNB', symbol: 'tBNB', decimals: 18 },
+      rpcUrls: BSC_TESTNET.rpcUrls,
+      blockExplorerUrls: [BSC_TESTNET.explorerUrl],
+    }],
+  });
+}
+
 async function switchToBscTestnet(provider: Eip1193Provider) {
   try {
     await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: BSC_TESTNET.chainHex }] });
   } catch (error) {
     if (providerCode(error) !== 4902) throw error;
-    await provider.request({
-      method: 'wallet_addEthereumChain',
-      params: [{
-        chainId: BSC_TESTNET.chainHex,
-        chainName: BSC_TESTNET.name,
-        nativeCurrency: { name: 'Test BNB', symbol: 'tBNB', decimals: 18 },
-        rpcUrls: [BSC_TESTNET.rpcUrl],
-        blockExplorerUrls: [BSC_TESTNET.explorerUrl],
-      }],
-    });
+    await addBscTestnet(provider);
   }
 }
 
@@ -126,6 +148,23 @@ export function useBscWallet() {
     }
   }, []);
 
+  const repairNetwork = useCallback(async () => {
+    setConnecting(true);
+    setError(null);
+    try {
+      const provider = await requireProvider();
+      await addBscTestnet(provider);
+      await switchToBscTestnet(provider);
+      await refresh();
+    } catch (nextError) {
+      const message = providerError(nextError);
+      setError(message);
+      throw nextError;
+    } finally {
+      setConnecting(false);
+    }
+  }, [refresh]);
+
   const sendActivationProof = useCallback(async (payload: string) => {
     const provider = await requireProvider();
     let selected = account;
@@ -163,6 +202,7 @@ export function useBscWallet() {
     error,
     isTestnet: chainId === BSC_TESTNET.chainId,
     connect,
+    repairNetwork,
     sendActivationProof,
     waitForReceipt,
   };

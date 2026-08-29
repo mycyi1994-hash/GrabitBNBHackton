@@ -20,7 +20,7 @@ export function ActivateClient({ initialSlug, registryToken }: { initialSlug?: s
   const [txHash, setTxHash] = useState<string | null>(null);
   const [txStatus, setTxStatus] = useState('Submitted');
   const [txError, setTxError] = useState<string | null>(null);
-  const { account, hasProvider, connecting, isTestnet, error: walletError, connect, sendActivationProof, waitForReceipt } = useBscWallet();
+  const { account, hasProvider, connecting, isTestnet, error: walletError, connect, repairNetwork, sendActivationProof, waitForReceipt } = useBscWallet();
   const connected = Boolean(account && isTestnet);
   const agent = useMemo(() => agents.find((item) => item.slug === slug) ?? agents[0], [slug]);
 
@@ -116,7 +116,13 @@ export function ActivateClient({ initialSlug, registryToken }: { initialSlug?: s
                     <span><strong>{connected && account ? account.slice(0, 8) + '...' + account.slice(-6) : hasProvider ? 'Connect wallet to continue' : 'Browser wallet not detected'}</strong><small>{connected ? 'BSC Testnet · Self-custodial' : 'Connection does not send a transaction'}</small></span>
                     <b>{connecting ? 'Waiting...' : connected ? 'Connected' : 'Connect'}</b>
                   </button>
-                  {(walletError || txError) && <p className="wallet-error" role="alert">{txError ?? walletError}</p>}
+                  {walletError && (
+                    <div className="wallet-inline-recovery" role="alert">
+                      <p>{walletError}</p>
+                      <button type="button" onClick={() => void repairNetwork().catch(() => undefined)} disabled={connecting}>Repair BSC Testnet</button>
+                    </div>
+                  )}
+                  {txError && <p className="wallet-error" role="alert">{txError}</p>}
                   <p className="faucet-note">Proof transactions require a small amount of test gas. <a href="https://docs.bnbchain.org/bnb-smart-chain/developers/faucet/" target="_blank" rel="noreferrer">Get tBNB from the official guide ↗</a></p>
                 </div>
               )}
