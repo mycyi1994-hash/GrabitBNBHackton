@@ -1,6 +1,6 @@
 'use client';
+/* eslint-disable @next/next/no-html-link-for-pages */
 
-import Link from 'next/link';
 import { BSC_TESTNET, useBscWallet } from '@/components/use-bsc-wallet';
 
 type SiteHeaderProps = {
@@ -35,13 +35,13 @@ export function SiteHeader({ active = 'explore', compact = false }: SiteHeaderPr
         </aside>
       )}
       <nav className={'topbar win95-taskbar' + (compact ? ' topbar-compact' : '')} aria-label="Windows taskbar navigation">
-        <Link href="/" className="brand" aria-label="Agent Market home">
+        <a href="/" className="brand" aria-label="Agent Market home">
           <span className="brand-mark">▦</span>
           <span>Start</span>
-        </Link>
+        </a>
 
         <div className="nav-links">
-          <Link className={active === 'explore' ? 'active' : ''} href="/">Agent Explorer</Link>
+          <a className={active === 'explore' ? 'active' : ''} href="/">Agent Explorer</a>
           <a className={active === 'compare' ? 'active' : ''} href="/compare">Leaderboard</a>
           <a className={active === 'dashboard' ? 'active' : ''} href="/dashboard">Dashboard</a>
         </div>

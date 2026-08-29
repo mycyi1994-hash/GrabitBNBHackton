@@ -1,4 +1,4 @@
-import Link from 'next/link';
+/* eslint-disable @next/next/no-html-link-for-pages */
 import { SiteHeader } from '@/components/site-header';
 import { loadMarketplaceRecords } from '@/lib/marketplace-data';
 
@@ -33,7 +33,7 @@ export default async function Home() {
         </nav>
 
         <div className="win95-toolbar">
-          <Link href="/">← Back</Link>
+          <a href="/">← Back</a>
           <a href="/compare">Leaderboard</a>
           <label><span>Address</span><input readOnly value="C:\BNB\AGENTS" aria-label="Current folder" /></label>
         </div>

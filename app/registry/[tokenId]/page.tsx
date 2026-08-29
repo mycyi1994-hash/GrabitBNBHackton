@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+/* eslint-disable @next/next/no-html-link-for-pages */
 import { notFound } from 'next/navigation';
 import { SiteHeader } from '@/components/site-header';
 import { getRegistryAgent } from '@/lib/scan8004';
@@ -50,7 +50,7 @@ export default async function RegistryAgentPage({ params }: RegistryPageProps) {
           <span><u>F</u>ile</span><span><u>V</u>iew</span><span><u>T</u>rust</span><span><u>H</u>elp</span>
         </nav>
         <div className="win95-toolbar">
-          <Link href="/">← Agent Explorer</Link>
+          <a href="/">← Agent Explorer</a>
           <a href={officialUrl} target="_blank" rel="noreferrer">8004scan</a>
           <label><span>Address</span><input readOnly value={'C:\\BNB\\AGENTS\\' + tokenId} aria-label="Current registry record" /></label>
         </div>
