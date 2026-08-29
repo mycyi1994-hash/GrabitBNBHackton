@@ -16,9 +16,12 @@ It is being built for the **BNB Chain Smart Money Era: Build the Era** hackathon
 - Three-step Hire / Activate prototype
 - Agent management dashboard with pause and revoke interactions
 - Live BSC ERC-8004 registry records from 8004scan, limited to two focused candidates on the home screen
+- Internal live-agent detail pages with owner, registry contract, health and verification status
+- EIP-1193 browser-wallet connection with automatic BSC Testnet network switching
+- A real 0 BNB self-transaction that records an activation proof and links to its BscScan receipt
 - Server-side 8004scan proxy route with a safe mock fallback
 
-The home registry list is live 8004scan data. Detailed performance records are still representative prototype data. No real funds are moved and the current wallet, ERC-8183 and Altana actions are interaction previews.
+The home registry list and registry detail pages are live 8004scan data. Detailed performance records are still representative prototype data. The activation proof is a real BSC Testnet transaction that uses testnet gas, but it moves no protocol funds and grants no agent spending authority. ERC-8183 and Altana actions remain interaction previews.
 
 ## Run locally
 
@@ -53,8 +56,8 @@ Supported prototype queries:
 
 1. Classify the connected BSC ERC-8004 identities into the four marketplace categories.
 2. Validate endpoints and recent activity before listing an agent as live.
-3. Create an ERC-8183 job and fund its $U escrow during Hire.
-4. Grant an Altana session with a contract allowlist, token spend cap and expiry.
+3. Replace the activation proof with an ERC-8183 job and funded $U escrow during Hire.
+4. Grant and revoke an Altana session with a contract allowlist, token spend cap and expiry.
 5. Track job status and deliverables in Dashboard.
 6. Settle, dispute, refund or revoke from the user-facing controls.
 
@@ -68,6 +71,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the system flow.
 - Keep API credentials server-side.
 - Mark mock, testnet and mainnet records clearly.
 - Never present a simulated action as an onchain transaction.
+- Label proof transactions separately from funded jobs and permission grants.
 
 ## License
 

@@ -3,28 +3,64 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { PrototypeNote } from '@/components/prototype-note';
 import { SiteHeader } from '@/components/site-header';
+import { BSC_TESTNET, useBscWallet } from '@/components/use-bsc-wallet';
 import { agents } from '@/lib/agents';
 
-export function ActivateClient({ initialSlug }: { initialSlug?: string }) {
+export function ActivateClient({ initialSlug, registryToken }: { initialSlug?: string; registryToken?: string }) {
   const startingSlug = initialSlug && agents.some((agent) => agent.slug === initialSlug) ? initialSlug : agents[0].slug;
   const [slug, setSlug] = useState(startingSlug);
   const [step, setStep] = useState(1);
-  const [connected, setConnected] = useState(false);
   const [amount, setAmount] = useState('250');
   const [spendCap, setSpendCap] = useState('100');
   const [expiry, setExpiry] = useState('7');
   const [slippage, setSlippage] = useState('0.5');
   const [confirmed, setConfirmed] = useState(false);
   const [activated, setActivated] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [txStatus, setTxStatus] = useState('Submitted');
+  const [txError, setTxError] = useState<string | null>(null);
+  const { account, hasProvider, connecting, isTestnet, error: walletError, connect, sendActivationProof, waitForReceipt } = useBscWallet();
+  const connected = Boolean(account && isTestnet);
   const agent = useMemo(() => agents.find((item) => item.slug === slug) ?? agents[0], [slug]);
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
     if (step < 3) {
       setStep((value) => value + 1);
       return;
     }
-    setActivated(true);
+    setSubmitting(true);
+    setTxError(null);
+    try {
+      const proof = [
+        'AGENT_MARKET_ACTIVATION_V1',
+        'registry=' + (registryToken ?? 'reference'),
+        'agent=' + agent.slug,
+        'allocation=' + amount + 'USDT',
+        'spendCap=' + spendCap + 'USDT',
+        'expiry=' + expiry + 'd',
+      ].join('|');
+      const hash = await sendActivationProof(proof);
+      setTxHash(hash);
+      setTxStatus('Submitted');
+      setActivated(true);
+      window.localStorage.setItem('agent-market-last-proof', JSON.stringify({
+        hash,
+        agent: agent.name,
+        registryToken: registryToken ?? null,
+        account,
+        chainId: BSC_TESTNET.chainId,
+        createdAt: new Date().toISOString(),
+      }));
+      void waitForReceipt(hash).then((receipt) => {
+        if (receipt) setTxStatus('Confirmed');
+      }).catch(() => undefined);
+    } catch (nextError) {
+      setTxError(nextError instanceof Error ? nextError.message : 'The testnet transaction was not completed.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -75,23 +111,25 @@ export function ActivateClient({ initialSlug }: { initialSlug?: string }) {
                     <span>Instruction</span>
                     <textarea defaultValue={'Run ' + agent.strategy.toLowerCase() + ' Pause and return funds if any configured risk gate is breached.'} />
                   </label>
-                  <button className={connected ? 'connect-card connected' : 'connect-card'} type="button" onClick={() => setConnected(true)}>
+                  <button className={connected ? 'connect-card connected' : 'connect-card'} type="button" onClick={() => void connect().catch(() => undefined)} disabled={connecting}>
                     <span className="wallet-symbol">{connected ? '✓' : '◇'}</span>
-                    <span><strong>{connected ? '0x71A4...8C2F connected' : 'Connect wallet to continue'}</strong><small>{connected ? 'BSC Testnet · Self-custodial' : 'No transaction will be sent yet'}</small></span>
-                    <b>{connected ? 'Connected' : 'Connect'}</b>
+                    <span><strong>{connected && account ? account.slice(0, 8) + '...' + account.slice(-6) : hasProvider ? 'Connect wallet to continue' : 'Browser wallet not detected'}</strong><small>{connected ? 'BSC Testnet · Self-custodial' : 'Connection does not send a transaction'}</small></span>
+                    <b>{connecting ? 'Waiting...' : connected ? 'Connected' : 'Connect'}</b>
                   </button>
+                  {(walletError || txError) && <p className="wallet-error" role="alert">{txError ?? walletError}</p>}
+                  <p className="faucet-note">Proof transactions require a small amount of test gas. <a href="https://docs.bnbchain.org/bnb-smart-chain/developers/faucet/" target="_blank" rel="noreferrer">Get tBNB from the official guide ↗</a></p>
                 </div>
               )}
 
               {step === 2 && (
                 <div className="form-panel">
                   <div className="form-heading"><h2>Permission boundaries</h2><span>Step 2 of 3</span></div>
-                  <div className="permission-intro"><span className="shield-mark">A</span><p><strong>Powered by Altana sessions</strong>Your agent can only call approved contracts, spend within its cap and act before expiry.</p></div>
+                  <div className="permission-intro"><span className="shield-mark">P</span><p><strong>Testnet permission manifest</strong>The proof records these proposed limits. Contract-level enforcement is not enabled yet.</p></div>
                   <label className="field">
                     <span>Allowed contracts</span>
                     <div className="allowlist-box">
-                      <div><span className="verified">✓</span><p><strong>{agent.protocol}</strong><small>Verified protocol integration</small></p><code>0x13f4...A920</code></div>
-                      <div><span className="verified">✓</span><p><strong>$U escrow contract</strong><small>ERC-8183 task settlement only</small></p><code>0x98d1...C071</code></div>
+                      <div><span className="verified">i</span><p><strong>{agent.protocol}</strong><small>Proposed integration target</small></p><code>REFERENCE_ONLY</code></div>
+                      <div><span className="verified">i</span><p><strong>Activation proof</strong><small>Zero-value self-transaction only</small></p><code>BSC_TESTNET</code></div>
                     </div>
                   </label>
                   <div className="form-grid">
@@ -106,7 +144,7 @@ export function ActivateClient({ initialSlug }: { initialSlug?: string }) {
                       </select>
                     </label>
                   </div>
-                  <div className="revoke-note"><span>↺</span><p><strong>Revocable in one transaction</strong>You can stop this agent and revoke its session from your dashboard at any time.</p></div>
+                  <div className="revoke-note"><span>i</span><p><strong>No spending authority is granted</strong>This milestone records a proof only. Altana session creation and revocation remain the next integration.</p></div>
                 </div>
               )}
 
@@ -124,19 +162,19 @@ export function ActivateClient({ initialSlug }: { initialSlug?: string }) {
                     <div><dt>Session expiry</dt><dd>{expiry} days</dd></div>
                     <div><dt>Max price impact</dt><dd>{slippage}%</dd></div>
                     <div><dt>Agent job fee</dt><dd>{agent.fee.toFixed(2)} $U</dd></div>
-                    <div><dt>Settlement</dt><dd>ERC-8183 escrow</dd></div>
+                    <div><dt>Settlement</dt><dd>Proof transaction only</dd></div>
                   </dl>
                   <label className="confirm-row">
                     <input type="checkbox" checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} />
-                    <span>I reviewed the contract allowlist, spend limit and expiry. I understand this prototype does not move real funds.</span>
+                    <span>I understand this sends a 0 BNB self-transaction on BSC Testnet. It uses testnet gas but grants no spending authority and moves no protocol funds.</span>
                   </label>
                 </div>
               )}
 
               <div className="form-actions">
                 {step > 1 ? <button className="secondary-button" type="button" onClick={() => setStep((value) => value - 1)}>Back</button> : <span />}
-                <button className="primary-button" type="submit" disabled={(step === 1 && !connected) || (step === 3 && !confirmed)}>
-                  {step === 3 ? 'Activate on testnet' : 'Continue'} <span>→</span>
+                <button className="primary-button" type="submit" disabled={(step === 1 && !connected) || (step === 3 && (!confirmed || !connected || submitting))}>
+                  {step === 3 ? submitting ? 'Waiting for wallet...' : 'Send proof transaction' : 'Continue'} <span>→</span>
                 </button>
               </div>
             </form>
@@ -157,20 +195,20 @@ export function ActivateClient({ initialSlug }: { initialSlug?: string }) {
         </div>
       </div>
 
-      {activated && (
+      {activated && txHash && (
         <div className="success-overlay" role="dialog" aria-modal="true" aria-labelledby="success-title">
           <div className="success-dialog">
             <span className="success-mark">✓</span>
-            <p className="eyebrow">Testnet preview</p>
-            <h2 id="success-title">{agent.name} is activated.</h2>
-            <p>A scoped session and ERC-8183 job preview were created. No real transaction or funds were used.</p>
+            <p className="eyebrow">BSC Testnet receipt</p>
+            <h2 id="success-title">Activation proof submitted.</h2>
+            <p>A real zero-value self-transaction was sent on BSC Testnet. This proves wallet intent only; no agent authority or protocol funds were granted.</p>
             <div className="receipt">
-              <div><span>Job ID</span><strong>#AM-2048</strong></div>
-              <div><span>Session</span><strong>0x84A1...19D7</strong></div>
+              <div><span>Status</span><strong>{txStatus}</strong></div>
+              <div><span>Transaction</span><strong>{txHash.slice(0, 10)}...{txHash.slice(-8)}</strong></div>
               <div><span>Spend cap</span><strong>{spendCap} USDT/day</strong></div>
             </div>
             <div className="success-actions">
-              <a className="secondary-button" href={'/agents/' + agent.slug}>Back to agent</a>
+              <a className="secondary-button" href={BSC_TESTNET.explorerUrl + '/tx/' + txHash} target="_blank" rel="noreferrer">Open BscScan</a>
               <a className="primary-button" href="/dashboard">Open dashboard <span>→</span></a>
             </div>
           </div>

@@ -7,11 +7,10 @@ export const metadata: Metadata = {
 };
 
 type ActivatePageProps = {
-  searchParams: Promise<{ agent?: string }>;
+  searchParams: Promise<{ agent?: string; registry?: string }>;
 };
 
 export default async function ActivatePage({ searchParams }: ActivatePageProps) {
   const query = await searchParams;
-  return <ActivateClient initialSlug={query.agent} />;
+  return <ActivateClient initialSlug={query.agent} registryToken={query.registry} />;
 }
-

@@ -28,7 +28,7 @@ function toDisplayAgent(agent: RegistryAgent): DisplayAgent {
     owner: agent.owner_address.slice(0, 8) + '...' + agent.owner_address.slice(-4),
     service: agent.supported_protocols[0] || (agent.x402_supported ? 'X402' : 'Custom'),
     updated: new Date(agent.updated_at).toISOString().slice(0, 10),
-    href: 'https://8004scan.io/agents/bsc/' + agent.token_id,
+    href: '/registry/' + agent.token_id,
     live: true,
   };
 }
@@ -121,7 +121,7 @@ export default async function Home() {
                     <div><dt>Service</dt><dd>{agent.service}</dd></div>
                     <div><dt>Owner</dt><dd>{agent.owner}</dd></div>
                   </dl>
-                  <a href={agent.href} target={agent.live ? '_blank' : undefined} rel={agent.live ? 'noreferrer' : undefined}>Open</a>
+                  <a href={agent.href}>Open</a>
                 </article>
               ))}
             </div>
