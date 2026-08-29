@@ -2596,3 +2596,546 @@ html.page-is-leaving .page-transition-stage {
     animation: none;
   }
 }
+
+/* Wide, low-glare accessibility pass */
+:root {
+  --win-bg: #d3d0c6;
+  --win-light: #f7f4ea;
+  --win-mid: #77766f;
+  --win-dark: #171815;
+  --win-blue: #263d78;
+  --win-teal: #3f6966;
+  --dos-green: #8de2a8;
+  --dos-amber: #f0d76c;
+}
+
+html,
+body,
+.win95-desktop,
+.subpage,
+.dashboard-page {
+  background-color: var(--win-teal);
+}
+
+body {
+  background-image:
+    linear-gradient(90deg, rgb(255 255 255 / 1.5%) 1px, transparent 1px),
+    linear-gradient(rgb(255 255 255 / 1.5%) 1px, transparent 1px);
+  background-size: 8px 8px;
+  color: #171815;
+  font-family: Arial, Tahoma, "MS Sans Serif", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.win95-window :is(p, li, dt, dd, a, button, input, small, span),
+.detail-shell :is(p, li, dt, dd, a, button, input, select, textarea, small, span),
+.compare-shell :is(p, li, dt, dd, a, button, input, select, textarea, small, span),
+.activate-shell :is(p, li, dt, dd, a, button, input, select, textarea, small, span),
+.dashboard-shell :is(p, li, dt, dd, a, button, input, select, textarea, small, span) {
+  font-weight: 600;
+}
+
+.win95-window :is(h1, h2, h3, strong),
+.detail-shell :is(h1, h2, h3, strong),
+.compare-shell :is(h1, h2, h3, strong),
+.activate-shell :is(h1, h2, h3, strong),
+.dashboard-shell :is(h1, h2, h3, strong) {
+  font-weight: 800;
+}
+
+.page-transition-stage::after {
+  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 2%) 0 1px, transparent 1px 5px);
+  mix-blend-mode: normal;
+}
+
+@keyframes desktop-boot-in {
+  0% { opacity: .35; transform: scaleY(.25) scaleX(.94); filter: brightness(1.28) contrast(1.12); }
+  45% { opacity: 1; transform: scaleY(.72) scaleX(1); filter: brightness(1.12); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+
+@keyframes desktop-shutdown {
+  0% { opacity: 1; transform: none; filter: none; }
+  70% { opacity: .72; transform: scaleY(.12) scaleX(.95); filter: brightness(1.25); }
+  100% { opacity: 0; transform: scaleY(.01) scaleX(.38); filter: brightness(1.4); }
+}
+
+.win95-desktop,
+.registry-desktop {
+  padding: 18px 18px 76px;
+}
+
+.win95-shortcuts {
+  position: static;
+  display: flex;
+  width: 100%;
+  margin: 0 auto 12px;
+  gap: 8px;
+}
+
+.win95-shortcuts a {
+  display: flex;
+  width: auto;
+  min-height: 58px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 2px solid;
+  border-color: var(--win-light) var(--win-dark) var(--win-dark) var(--win-light);
+  background: var(--win-bg);
+  color: #111;
+  font-size: 14px;
+  text-align: left;
+  text-shadow: none;
+}
+
+.shortcut-icon {
+  width: 48px;
+  height: 40px;
+  flex: 0 0 auto;
+  background: var(--win-blue);
+  font-size: 13px;
+}
+
+.win95-window,
+.registry-window {
+  width: 100%;
+  max-width: none;
+  background: var(--win-bg);
+}
+
+.detail-shell,
+.compare-shell,
+.activate-shell,
+.dashboard-shell {
+  width: calc(100% - 20px);
+  max-width: none;
+  margin: 10px;
+  font-size: 16px;
+}
+
+.win95-window-body {
+  min-height: 640px;
+  grid-template-columns: 290px minmax(0, 1fr);
+  background: #f3f0e8;
+}
+
+.registry-detail-body {
+  min-height: 640px;
+  grid-template-columns: 290px minmax(0, 1fr);
+  background: #f3f0e8;
+}
+
+.win95-tree,
+.win95-folder,
+.registry-properties,
+.registry-description,
+.wallet-recovery dl,
+.receipt {
+  background: #f3f0e8;
+}
+
+.registry-profile,
+.topbar.win95-taskbar,
+.win95-window,
+.registry-window,
+.sfx-toggle,
+.wallet-recovery,
+.wallet-recovery-actions button,
+.wallet-recovery-actions a,
+.wallet-inline-recovery button {
+  background: var(--win-bg);
+}
+
+.win95-titlebar {
+  height: 34px;
+  background: var(--win-blue);
+  font-size: 16px;
+}
+
+.win95-menubar {
+  padding: 9px 12px 8px;
+  font-size: 15px;
+}
+
+.win95-toolbar {
+  padding: 7px;
+}
+
+.win95-toolbar > a,
+.win95-actions a {
+  min-height: 40px;
+  padding: 9px 14px;
+  font-size: 14px;
+}
+
+.win95-toolbar label span,
+.win95-toolbar input {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.win95-toolbar input {
+  height: 38px;
+  background: #f8f6ef;
+}
+
+.win95-tree {
+  padding: 22px 16px;
+}
+
+.win95-tree h2 {
+  font-size: 19px;
+}
+
+.win95-tree li {
+  min-height: 46px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.win95-tree li span {
+  font-size: 15px;
+}
+
+.ascii-workstation {
+  background: #121914;
+  color: var(--dos-green);
+  text-shadow: none;
+}
+
+.ascii-workstation pre {
+  font-size: 13px;
+}
+
+.ascii-workstation figcaption {
+  color: var(--dos-amber);
+  font-size: 12px;
+}
+
+.registry-box {
+  background: #e3e0d7;
+}
+
+.registry-box strong { font-size: 15px; }
+.registry-box small { font-size: 13px; }
+
+.folder-heading p,
+.folder-heading > span {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.folder-heading h1 {
+  font-size: clamp(36px, 3vw, 48px);
+}
+
+.win95-agent-list {
+  grid-auto-rows: minmax(136px, 1fr);
+}
+
+.win95-agent-row {
+  min-height: 136px;
+  grid-template-columns: 58px minmax(0, 1fr) 270px 88px;
+  gap: 17px;
+  padding: 16px;
+}
+
+.file-icon {
+  width: 52px;
+  height: 46px;
+  font-size: 15px;
+}
+
+.file-main h2 {
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.file-main p {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.win95-agent-row dl {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.win95-agent-row dl div {
+  grid-template-columns: 74px 1fr;
+}
+
+.win95-agent-row > a {
+  padding: 11px 9px;
+  font-size: 14px;
+}
+
+.win95-statusbar {
+  grid-template-columns: 190px 1fr 190px;
+}
+
+.win95-statusbar span {
+  min-height: 31px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.topbar.win95-taskbar {
+  height: 50px;
+}
+
+.topbar.win95-taskbar .brand {
+  min-width: 110px;
+  font-size: 16px;
+}
+
+.topbar.win95-taskbar .nav-links a {
+  min-width: 150px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.topbar.win95-taskbar .wallet-button {
+  height: 40px;
+  font-size: 14px;
+}
+
+.taskbar-clock {
+  min-width: 92px;
+  height: 40px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sfx-toggle {
+  bottom: 54px;
+  min-width: 88px;
+  min-height: 38px;
+  font-size: 13px;
+}
+
+.wallet-recovery {
+  bottom: 54px;
+}
+
+.wallet-recovery header {
+  background: var(--win-blue);
+  font-size: 15px;
+}
+
+.wallet-recovery > p,
+.wallet-inline-recovery p {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.wallet-recovery dl {
+  font-size: 13px;
+}
+
+.wallet-recovery-actions button,
+.wallet-recovery-actions a,
+.wallet-inline-recovery button {
+  font-size: 14px;
+}
+
+.registry-large-icon {
+  background: var(--win-blue);
+}
+
+.registry-profile h1 { font-size: 23px; }
+.registry-profile p,
+.registry-state { font-size: 14px; }
+.registry-tabs > * { font-size: 14px; }
+.registry-description h2 { font-size: 18px; }
+.registry-description p { font-size: 15px; }
+.registry-fields > div {
+  min-height: 54px;
+  grid-template-columns: 155px minmax(0, 1fr);
+  font-size: 13px;
+  font-weight: 700;
+}
+.registry-warning {
+  background: #fff2bc;
+}
+.registry-warning strong { font-size: 15px; }
+.registry-warning p { font-size: 14px; }
+
+.detail-header,
+.dashboard-header,
+.activate-header,
+.compare-hero,
+.section-heading {
+  background: #f3f0e8;
+}
+
+.detail-header h1,
+.dashboard-header h1,
+.activate-header h1,
+.compare-hero h1,
+.section-heading h2 {
+  color: var(--win-blue);
+  text-shadow: 1px 1px 0 #d0cec4;
+}
+
+.eyebrow,
+.breadcrumb,
+.back-link,
+.detail-metrics span,
+.detail-metrics small,
+.portfolio-grid span,
+.portfolio-grid small,
+.panel-heading .eyebrow,
+.form-heading > span,
+.managed-agent-head p {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.detail-identity > div > p,
+.activate-header > p:last-child,
+.dashboard-header > div > p:last-child,
+.compare-hero > p:last-child,
+.detail-description,
+.strategy-copy,
+.permission-list p,
+.permission-intro p,
+.jobs-row,
+.identity-list,
+.review-list,
+.activation-summary dl,
+.managed-agent-card dl,
+.action-timeline,
+.comparison-row,
+.compare-note p,
+.dashboard-notice {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.panel-heading,
+.form-heading,
+.managed-agent-head,
+.compare-agent-head,
+.detail-shell::before,
+.compare-shell::before,
+.activate-shell::before,
+.dashboard-shell::before {
+  background: var(--win-blue);
+}
+
+.panel-heading h2,
+.form-heading h2,
+.managed-agent-head h2 {
+  font-size: 20px;
+}
+
+.detail-metrics,
+.portfolio-grid,
+.large-chart,
+.dashboard-chart,
+.compare-return,
+.summary-metric,
+.review-agent,
+.permission-card,
+.permission-intro,
+.agent-metric,
+.market-console {
+  background: #121914;
+}
+
+.detail-metrics strong,
+.portfolio-grid strong,
+.chart-value strong,
+.compare-return strong,
+.summary-metric strong,
+.review-agent h3,
+.metric-top strong {
+  color: var(--dos-green);
+  text-shadow: none;
+}
+
+.mini-chart i,
+.metric-bars i {
+  background: var(--dos-green);
+}
+
+.compare-agent-head h2 { font-size: 20px; }
+.compare-agent-head p,
+.compare-actions > a:first-child,
+.compare-agent label > span { font-size: 14px; }
+.compare-agent select,
+.field select,
+.field input,
+.field textarea { font-size: 16px; font-weight: 700; }
+.field > span { font-size: 14px; font-weight: 700; }
+.connect-card strong { font-size: 16px; }
+.connect-card small,
+.connect-card b,
+.wallet-error,
+.faucet-note { font-size: 14px; }
+.compare-note,
+.dashboard-notice {
+  background: #fff2bc;
+}
+
+@media (max-width: 900px) {
+  .win95-desktop,
+  .registry-desktop {
+    padding: 10px 10px 76px;
+  }
+
+  .win95-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .win95-shortcuts a {
+    width: 100%;
+  }
+
+  .win95-window-body,
+  .registry-detail-body {
+    grid-template-columns: 1fr;
+  }
+
+  .win95-agent-row {
+    grid-template-columns: 54px minmax(0, 1fr) 82px;
+  }
+
+  .win95-agent-row dl {
+    display: none;
+  }
+
+  .topbar.win95-taskbar .nav-links a {
+    min-width: 0;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 560px) {
+  body { font-size: 15px; }
+  .win95-desktop,
+  .registry-desktop { padding-inline: 5px; }
+  .detail-shell,
+  .compare-shell,
+  .activate-shell,
+  .dashboard-shell {
+    width: calc(100% - 8px);
+    margin-inline: 4px;
+  }
+  .win95-shortcuts a { min-height: 52px; padding: 6px 8px; font-size: 13px; }
+  .shortcut-icon { width: 42px; height: 36px; }
+  .folder-heading h1 { font-size: 32px; }
+  .file-main h2 { font-size: 18px; }
+  .file-main p { font-size: 14px; }
+  .win95-agent-row { grid-template-columns: 50px minmax(0, 1fr); }
+  .win95-agent-row > a { grid-column: 1 / -1; }
+  .topbar.win95-taskbar .nav-links a:nth-child(2) { display: none; }
+}
