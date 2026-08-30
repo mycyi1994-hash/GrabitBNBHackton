@@ -22,7 +22,7 @@ It is being built for the **BNB Chain Smart Money Era: Build the Era** hackathon
 - Live BSC Testnet checks for chain 97, proxy implementations, kernel token, policy allowlist and dispute window
 - Testnet wallet preflight for tBNB and test $U, with direct faucet links and zero automatic transactions
 - Testnet-only reference provider with a signed two-hour quote, onchain Job validation and server-held signing key
-- Four category-specific reference engines: rebalance sizing, grid construction, live indexed Venus yield ranking and health-factor stress testing
+- Four category-specific reference engines: rebalance sizing, grid construction, direct onchain Venus Core yield ranking and health-factor stress testing
 - A one-card Agent result view ordered as verdict, key metrics, next actions, risks and onchain evidence
 - One-click read-only strategy preview with no wallet, signature, Job or payment, clearly separated from delivered onchain results
 - Five explicit chain-97 client transactions followed by user-triggered provider submission and optimistic settlement

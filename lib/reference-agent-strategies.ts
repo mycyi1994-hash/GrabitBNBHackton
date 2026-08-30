@@ -1,3 +1,6 @@
+import { createPublicClient, formatUnits, http, type Address } from 'viem';
+import { bsc } from 'viem/chains';
+
 export type StrategyMetric = {
   label: string;
   value: string;
@@ -13,7 +16,7 @@ export type StrategyResult = {
   task: string;
   verdict: string;
   summary: string;
-  dataQuality: 'LIVE_INDEXED' | 'LIVE_CHAIN_PLUS_DEMO_INPUTS';
+  dataQuality: 'LIVE_ONCHAIN' | 'LIVE_CHAIN_PLUS_DEMO_INPUTS';
   metrics: StrategyMetric[];
   actions: string[];
   risks: string[];
@@ -39,16 +42,37 @@ type StrategyContext = {
   observedAt: string;
 };
 
-type VenusMarket = {
-  address?: unknown;
-  name?: unknown;
-  underlyingSymbol?: unknown;
-  supplyApy?: unknown;
-  totalSupplyApyDecimal?: unknown;
-  liquidityCents?: unknown;
-  isListed?: unknown;
-  isPriceInvalid?: unknown;
-};
+const VENUS_CORE_COMPTROLLER = '0xfD36E2c2a6789Db23113685031d7F16329158384';
+const VENUS_CORE_STABLE_MARKETS = [
+  { symbol: 'USDT', name: 'Venus USDT', address: '0xfD5840Cd36d94D7229439859C0112a4185BC0255', decimals: 18 },
+  { symbol: 'USDC', name: 'Venus USDC', address: '0xecA88125a5ADbe82614ffC12D0DB554E2e2867C8', decimals: 18 },
+  { symbol: 'FDUSD', name: 'Venus FDUSD', address: '0xC4eF4229FEc74Ccfe17B2bdeF7715fAC740BA0ba', decimals: 18 },
+  { symbol: 'USD1', name: 'Venus USD1', address: '0x0C1DA220D301155b87318B90692Da8dc43B67340', decimals: 18 },
+  { symbol: 'U', name: 'Venus U', address: '0x3d5E269787d562b74aCC55F18Bd26C5D09Fa245E', decimals: 18 },
+] as const;
+const VENUS_VTOKEN_ABI = [
+  {
+    type: 'function',
+    name: 'supplyRatePerBlock',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    type: 'function',
+    name: 'getCash',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    type: 'function',
+    name: 'comptroller',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'address' }],
+  },
+] as const;
 
 function percent(value: number, digits = 2) {
   return value.toFixed(digits) + '%';
@@ -60,6 +84,12 @@ function usd(value: number) {
     currency: 'USD',
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+function supplyApyPercent(ratePerBlock: bigint) {
+  const blocksPerDay = 80 * 60 * 24;
+  const dailyRate = Number(ratePerBlock) / 1e18 * blocksPerDay;
+  return (Math.pow(1 + dailyRate, 365) - 1) * 100;
 }
 
 function base(context: StrategyContext) {
@@ -177,66 +207,84 @@ function gridResult(context: StrategyContext): StrategyResult {
 }
 
 async function yieldResult(context: StrategyContext): Promise<StrategyResult> {
-  const response = await fetch('https://api.venus.io/markets?chainId=56&underlyingSymbol=USDT&limit=50', {
-    headers: { 'accept-version': 'stable' },
-    signal: AbortSignal.timeout(8_000),
+  const client = createPublicClient({
+    chain: bsc,
+    transport: http('https://bsc-dataseed.bnbchain.org', { timeout: 12_000, retryCount: 1 }),
   });
-  if (!response.ok) throw new Error('Venus market API returned HTTP ' + response.status + '.');
-  const payload = await response.json() as { result?: VenusMarket[] };
-  const markets = (Array.isArray(payload.result) ? payload.result : [])
-    .filter((market) => market.isListed === true && market.isPriceInvalid !== true)
-    .map((market) => {
-      const decimal = Number(market.totalSupplyApyDecimal);
-      const fallback = Number(market.supplyApy);
-      const apyPercent = Number.isFinite(decimal)
-        ? decimal * 100
-        : Number.isFinite(fallback) ? fallback : 0;
-      const liquidityCents = Number(market.liquidityCents);
-      return {
-        address: String(market.address || ''),
-        name: String(market.name || 'Unnamed Venus market'),
-        symbol: String(market.underlyingSymbol || 'USDT'),
-        apyPercent,
-        liquidityUsd: Number.isFinite(liquidityCents) ? liquidityCents / 100 : 0,
-      };
-    })
+  const venusSourceBlock = await client.getBlockNumber();
+  const markets = (await Promise.all(VENUS_CORE_STABLE_MARKETS.map(async (market) => {
+    const [ratePerBlock, cash, comptroller] = await Promise.all([
+      client.readContract({
+        address: market.address as Address,
+        abi: VENUS_VTOKEN_ABI,
+        functionName: 'supplyRatePerBlock',
+        blockNumber: venusSourceBlock,
+      }),
+      client.readContract({
+        address: market.address as Address,
+        abi: VENUS_VTOKEN_ABI,
+        functionName: 'getCash',
+        blockNumber: venusSourceBlock,
+      }),
+      client.readContract({
+        address: market.address as Address,
+        abi: VENUS_VTOKEN_ABI,
+        functionName: 'comptroller',
+        blockNumber: venusSourceBlock,
+      }),
+    ]);
+    if (comptroller.toLowerCase() !== VENUS_CORE_COMPTROLLER.toLowerCase()) return null;
+    return {
+      address: market.address,
+      name: market.name,
+      symbol: market.symbol,
+      apyPercent: supplyApyPercent(ratePerBlock),
+      liquidityUsd: Number(formatUnits(cash, market.decimals)),
+      ratePerBlock: ratePerBlock.toString(),
+    };
+  })))
+    .filter((market): market is NonNullable<typeof market> => Boolean(market))
     .sort((left, right) => right.apyPercent - left.apyPercent);
-  if (!markets.length) throw new Error('Venus returned no listed USDT supply markets.');
+  if (!markets.length) throw new Error('No verified Venus Core stablecoin markets were readable onchain.');
   const best = markets[0];
 
   return {
     ...base(context),
     category: 'Yield Optimisation',
-    verdict: 'BEST INDEXED MARKET: ' + best.name,
-    summary: 'The official Venus indexed API currently ranks ' + best.name + ' first for USDT supply APY. No funds were moved.',
-    dataQuality: 'LIVE_INDEXED',
+    verdict: 'BEST BASE RATE: ' + best.name,
+    summary: 'Direct Venus Core contract reads rank ' + best.symbol + ' first among five stablecoin markets by base supply APY. Rewards are excluded and no funds were moved.',
+    dataQuality: 'LIVE_ONCHAIN',
     metrics: [
-      { label: 'BEST APY', value: percent(best.apyPercent), note: best.name },
-      { label: 'LIQUIDITY', value: usd(best.liquidityUsd), note: 'indexed available liquidity' },
-      { label: 'MARKETS', value: String(markets.length), note: 'listed USDT markets checked' },
+      { label: 'BEST BASE APY', value: percent(best.apyPercent), note: best.name + ', rewards excluded' },
+      { label: 'LIQUIDITY', value: usd(best.liquidityUsd), note: 'onchain getCash, assuming stablecoin peg' },
+      { label: 'MARKETS', value: String(markets.length), note: 'Venus Core stablecoins checked' },
       { label: 'EXECUTION GAS', value: context.gasPriceGwei + ' gwei', note: 'BSC Testnet source block' },
     ],
     actions: [
-      'Compare the best indexed APY with the wallet current market.',
+      'Compare the best live base APY with the wallet current market.',
       'Calculate annual yield edge from the actual position size.',
       'Move only when the projected yield edge exceeds gas and switching risk.',
     ],
     risks: [
-      'Indexed Venus API data can lag the chain and is not an execution quote.',
+      'Base APY excludes XVS and other reward incentives.',
+      'Supply pause, cap, oracle and executable quote checks are still required before a transaction.',
       'APY is variable and can change immediately after the observation.',
     ],
     assumptions: [
-      'Ranking includes listed BNB Chain markets whose underlying symbol is USDT.',
+      'Ranking compares five current BNB Chain Venus Core stablecoin vTokens.',
+      'Available token cash is shown as USD under a one-dollar stablecoin peg assumption.',
       'No account position size was supplied, so a time-to-break-even is not claimed.',
     ],
     details: {
-      rankedMarkets: markets.slice(0, 4),
-      apiVersion: 'stable',
-      apiWarning: 'Indexed data is evidence for ranking only; contract reads are required before execution.',
+      rankedMarkets: markets,
+      venusCoreComptroller: VENUS_CORE_COMPTROLLER,
+      venusSourceBlock: venusSourceBlock.toString(),
+      rateMethod: 'supplyRatePerBlock with daily compounding at 80 BNB Chain blocks per minute',
+      executionWarning: 'Live contract rates are evidence for ranking only; pause, cap, oracle and account checks are required before execution.',
     },
     evidence: {
       ...base(context).evidence,
-      externalSource: 'https://api.venus.io/markets?chainId=56&underlyingSymbol=USDT',
+      externalSource: 'https://github.com/VenusProtocol/venus-protocol-documentation/blob/main/deployed-contracts/markets.md',
     },
   };
 }
