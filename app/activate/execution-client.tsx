@@ -11,6 +11,7 @@ import {
   walletError,
 } from '@/components/use-bsc-wallet';
 import { bindJobId, ERC8183, ERC8183_TESTNET, type ProviderCall, type SafeHirePlan } from '@/lib/erc8183';
+import { TestnetHireConsole } from '@/app/activate/testnet-execution-client';
 
 type HireExecutionConsoleProps = {
   tokenId: string;
@@ -114,12 +115,13 @@ export function HireExecutionConsole(props: HireExecutionConsoleProps) {
         </div>
       </section>
       {network === 'testnet'
-        ? <TestnetReadinessConsole tokenId={props.tokenId} agentName={props.agentName} />
+        ? <TestnetHireConsole {...props} />
         : <MainnetHireExecutionConsole {...props} />}
     </>
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- retained temporarily for rollback of the new live Testnet console
 function TestnetReadinessConsole({ tokenId, agentName }: Pick<HireExecutionConsoleProps, 'tokenId' | 'agentName'>) {
   const wallet = useBscWallet();
   const [report, setReport] = useState<TestnetReadinessReport | null>(null);

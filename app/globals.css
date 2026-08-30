@@ -3948,6 +3948,267 @@ body {
   .transaction-step header { display: block; }
 }
 
+/* BSC Testnet reference-provider execution */
+.hire-execution-console {
+  display: grid;
+  gap: 10px;
+  border: 3px solid;
+  border-color: #fff #555 #555 #fff;
+  background: var(--win-bg);
+  padding: 10px;
+  color: #111;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.execution-mode-banner,
+.hire-step-panel {
+  border: 2px solid;
+  border-color: #777 #fff #fff #777;
+}
+
+.execution-mode-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #111912;
+  padding: 13px;
+  color: #fff;
+}
+
+.execution-mode-banner strong {
+  color: var(--dos-green);
+  font: 900 18px/1.2 "Courier New", monospace;
+}
+
+.execution-mode-banner p {
+  margin: 4px 0 0;
+  color: #dbe4dc;
+  font-size: 15px;
+}
+
+.status-lamp {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  border: 2px solid #071007;
+  border-radius: 50%;
+  background: #777;
+  box-shadow: inset 1px 1px #ddd;
+}
+
+.status-lamp.is-live { background: #38d35d; box-shadow: 0 0 8px #38d35d; }
+.status-lamp.is-busy { background: #ffd21f; animation: provider-lamp 900ms steps(2, end) infinite; }
+
+@keyframes provider-lamp {
+  50% { opacity: .3; }
+}
+
+.hire-step-panel {
+  min-width: 0;
+  background: #f3f0e8;
+  padding: 12px;
+}
+
+.hire-step-heading {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  margin: -12px -12px 12px;
+  background: var(--win-blue);
+  padding: 8px 10px;
+  color: #fff;
+}
+
+.hire-step-heading > span {
+  display: grid;
+  width: 44px;
+  height: 38px;
+  place-items: center;
+  border: 2px solid #fff;
+  font: 900 17px/1 "Courier New", monospace;
+}
+
+.hire-step-heading strong,
+.hire-step-heading small { display: block; }
+.hire-step-heading strong { font-size: 18px; }
+.hire-step-heading small { margin-top: 3px; font: 800 13px/1.25 "Courier New", monospace; }
+
+.retro-button {
+  min-height: 42px;
+  border: 3px solid;
+  border-color: #fff #555 #555 #fff;
+  background: var(--win-bg);
+  padding: 8px 13px;
+  color: #111;
+  font: 900 14px/1.2 "Courier New", monospace;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.retro-button.primary {
+  background: #000080;
+  color: #fff;
+}
+
+.retro-button.compact { min-height: 36px; padding: 6px 10px; font-size: 12px; }
+.retro-button:active:not(:disabled) { border-color: #555 #fff #fff #555; transform: translate(1px, 1px); }
+.retro-button:disabled { color: #777; text-shadow: 1px 1px #fff; }
+
+.hire-field,
+.hire-field > span { display: block; }
+.hire-field > span { margin-bottom: 7px; font: 900 14px/1.2 "Courier New", monospace; }
+.hire-field textarea {
+  width: 100%;
+  resize: vertical;
+  border: 2px solid;
+  border-color: #777 #fff #fff #777;
+  background: #fff;
+  padding: 11px;
+  color: #111;
+  font: 800 16px/1.5 "Courier New", monospace;
+}
+
+.hire-facts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2px;
+  margin-top: 9px;
+  background: #777;
+}
+
+.hire-facts-grid > div { min-width: 0; background: #e4e1d8; padding: 9px; }
+.hire-facts-grid span,
+.hire-facts-grid strong { display: block; overflow-wrap: anywhere; }
+.hire-facts-grid span { color: #555; font: 900 11px/1.2 "Courier New", monospace; }
+.hire-facts-grid strong { margin-top: 4px; font: 900 15px/1.25 "Courier New", monospace; }
+.hire-alert.is-success { background: #d8ecd3; }
+
+.provider-address-box {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  margin-top: 9px;
+  border: 2px solid #000;
+  background: #111912;
+  padding: 9px;
+  color: #fff;
+}
+
+.provider-address-box span,
+.provider-address-box code { display: block; }
+.provider-address-box span { color: var(--dos-green); font: 900 11px/1.2 "Courier New", monospace; }
+.provider-address-box code { margin-top: 4px; font: 800 13px/1.35 "Courier New", monospace; overflow-wrap: anywhere; }
+
+.hire-action-row,
+.testnet-faucet-row,
+.hire-footer-actions,
+.provider-action-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.hire-action-row > span { font: 900 13px/1.3 "Courier New", monospace; overflow-wrap: anywhere; }
+.integrity-list { margin: 9px 0 0; padding: 0; list-style: none; }
+.integrity-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px dotted #777;
+  padding: 7px;
+  font: 800 13px/1.3 "Courier New", monospace;
+}
+.integrity-list li.is-pass strong { color: #135926; }
+.integrity-list li.is-fail strong { color: #7a210d; }
+.integrity-list span { color: #555; text-align: right; overflow-wrap: anywhere; }
+.testnet-faucet-row { margin-top: 9px; }
+
+.hire-confirmation {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 8px;
+  border: 3px double #7a210d;
+  background: #fff2bc;
+  padding: 11px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+.hire-confirmation input { width: 20px; height: 20px; accent-color: #000080; }
+.transaction-step-list { margin-top: 9px; }
+.transaction-step-list .transaction-step {
+  grid-template-columns: 48px minmax(0, 1fr) minmax(108px, auto);
+  align-items: center;
+  min-height: 82px;
+}
+.transaction-step-index {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  background: #60615c;
+  color: #fff;
+  font: 900 16px/1 "Courier New", monospace;
+}
+.transaction-step.is-confirmed .transaction-step-index { background: #135926; }
+.transaction-step.is-pending .transaction-step-index { background: var(--win-blue); }
+.transaction-step-copy strong,
+.transaction-step-copy small { display: block; }
+.transaction-step-copy strong { font-size: 17px; }
+.transaction-step-copy small { margin-top: 4px; }
+.transaction-step-copy em { display: block; }
+
+.provider-action-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.provider-action-button { width: 100%; min-height: 52px; }
+.testnet-result-panel {
+  margin-top: 9px;
+  border: 3px solid;
+  border-color: #777 #fff #fff #777;
+  background: #111912;
+  color: #fff;
+}
+.testnet-result-panel > div { border-bottom: 1px solid #536256; padding: 10px; }
+.testnet-result-panel strong,
+.testnet-result-panel span { display: block; }
+.testnet-result-panel strong { color: var(--dos-green); font: 900 15px/1.2 "Courier New", monospace; }
+.testnet-result-panel span { margin-top: 3px; color: #d3dbd4; font-size: 13px; }
+.testnet-result-panel pre {
+  max-height: 330px;
+  overflow: auto;
+  margin: 0;
+  padding: 12px;
+  color: var(--dos-amber);
+  font: 800 13px/1.5 "Courier New", monospace;
+  white-space: pre-wrap;
+}
+
+.execution-status-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 3px solid;
+  border-color: #777 #fff #fff #777;
+  background: #111912;
+  padding: 11px;
+  color: #fff;
+  font: 800 14px/1.4 "Courier New", monospace;
+}
+
+@media (max-width: 720px) {
+  .hire-step-heading { grid-template-columns: 46px minmax(0, 1fr); }
+  .hire-step-heading > .retro-button { grid-column: 1 / -1; }
+  .hire-facts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .transaction-step-list .transaction-step { grid-template-columns: 42px minmax(0, 1fr); }
+  .transaction-step-list .transaction-step > .retro-button { grid-column: 1 / -1; width: 100%; }
+  .provider-action-grid { grid-template-columns: 1fr; }
+  .provider-address-box { grid-template-columns: 1fr; }
+}
+
 /* One-screen Grabit command center */
 .command-desktop {
   padding: 14px 14px 70px;

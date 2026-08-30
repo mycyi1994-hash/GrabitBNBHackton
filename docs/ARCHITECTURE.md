@@ -37,7 +37,8 @@ flowchart TD
 - 8004scan credentials stay in the server runtime.
 - The marketplace never stores an unrestricted user private key.
 - The server returns no execution plan unless provider, service, chain, addresses, amount, selectors and live contract checks all pass.
-- The current provider quote is unsigned; the UI exposes this instead of implying cryptographic quote authentication.
+- The external Mainnet provider quote is unsigned; the UI exposes this instead of implying cryptographic authentication.
+- The Grabit Testnet reference provider signs its chain-97 quote. Its server-only key can submit only Jobs that match the configured provider, router, policy, budget and Grabit reference description.
 - Each transaction is simulated immediately before `eth_sendTransaction` and requires a separate user action.
 - Approval is exactly 0.10 $U, never unlimited. Only the Fund call moves $U; all five calls can spend BNB gas.
 - Local resume data contains Job IDs and transaction hashes only, never wallet secrets.
