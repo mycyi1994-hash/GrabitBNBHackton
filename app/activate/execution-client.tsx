@@ -3,12 +3,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   BSC_MAINNET,
+  BSC_TESTNET,
+  ensureBscNetwork,
   ensureBscMainnet,
   getInjectedProvider,
   useBscWallet,
   walletError,
 } from '@/components/use-bsc-wallet';
-import { bindJobId, ERC8183, type ProviderCall, type SafeHirePlan } from '@/lib/erc8183';
+import { bindJobId, ERC8183, ERC8183_TESTNET, type ProviderCall, type SafeHirePlan } from '@/lib/erc8183';
 
 type HireExecutionConsoleProps = {
   tokenId: string;
@@ -33,6 +35,35 @@ type StoredProgress = {
   task: string;
   jobId: string | null;
   steps: RuntimeStep[];
+};
+
+type TestnetReadinessReport = {
+  observedAt: string;
+  network: {
+    chainId: number;
+    name: string;
+    blockNumber: number;
+    explorerUrl: string;
+  };
+  contracts: {
+    kernel: string;
+    router: string;
+    policy: string;
+    paymentToken: string;
+  };
+  protocol: {
+    jobCounter: string;
+    disputeWindowSeconds: number;
+  };
+  integrity: {
+    passed: boolean;
+    checks: WalletCheck[];
+  };
+  execution: {
+    enabled: boolean;
+    blocker: string;
+  };
+  error?: string;
 };
 
 const freshSteps = (): RuntimeStep[] => Array.from({ length: 5 }, () => ({ status: 'idle' }));
@@ -63,7 +94,198 @@ function stateLabel(status: RuntimeStep['status']) {
   return 'READY';
 }
 
-export function HireExecutionConsole({ tokenId, agentName, defaultTask }: HireExecutionConsoleProps) {
+export function HireExecutionConsole(props: HireExecutionConsoleProps) {
+  const [network, setNetwork] = useState<'testnet' | 'mainnet'>('testnet');
+
+  return (
+    <>
+      <section className="network-mode-panel" aria-label="Execution network">
+        <div>
+          <p className="eyebrow">NETWORK SELECT</p>
+          <strong>Choose the money environment before connecting a wallet.</strong>
+        </div>
+        <div className="network-mode-buttons">
+          <button className={`win95-button ${network === 'testnet' ? 'is-selected' : ''}`} type="button" onClick={() => setNetwork('testnet')}>
+            TESTNET · SAFE START
+          </button>
+          <button className={`win95-button ${network === 'mainnet' ? 'is-selected' : ''}`} type="button" onClick={() => setNetwork('mainnet')}>
+            MAINNET · REAL FUNDS
+          </button>
+        </div>
+      </section>
+      {network === 'testnet'
+        ? <TestnetReadinessConsole tokenId={props.tokenId} agentName={props.agentName} />
+        : <MainnetHireExecutionConsole {...props} />}
+    </>
+  );
+}
+
+function TestnetReadinessConsole({ tokenId, agentName }: Pick<HireExecutionConsoleProps, 'tokenId' | 'agentName'>) {
+  const wallet = useBscWallet();
+  const [report, setReport] = useState<TestnetReadinessReport | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [reportError, setReportError] = useState<string | null>(null);
+  const [walletChecks, setWalletChecks] = useState<WalletCheck[]>([]);
+  const [checkingWallet, setCheckingWallet] = useState(false);
+  const [message, setMessage] = useState('No transaction has been sent.');
+
+  const loadReadiness = useCallback(async () => {
+    setLoading(true);
+    setReportError(null);
+    try {
+      const response = await fetch('/api/hire/testnet-readiness', { cache: 'no-store' });
+      const body = await response.json() as TestnetReadinessReport;
+      if (!response.ok || !body.integrity?.passed) throw new Error(body.error || 'Testnet contracts failed verification.');
+      setReport(body);
+      setMessage('Chain 97 contracts verified live. No transaction has been sent.');
+    } catch (error) {
+      setReport(null);
+      setReportError(error instanceof Error ? error.message : 'Testnet readiness unavailable.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => void loadReadiness(), 0);
+    return () => window.clearTimeout(timer);
+  }, [loadReadiness]);
+
+  const checkWallet = useCallback(async () => {
+    if (!report?.integrity.passed) return;
+    setCheckingWallet(true);
+    setWalletChecks([]);
+    try {
+      const provider = getInjectedProvider();
+      let activeAccount = wallet.account;
+      if (!activeAccount) activeAccount = await wallet.connect();
+      if (!activeAccount) throw new Error('No wallet account was selected.');
+      await ensureBscNetwork(provider, BSC_TESTNET);
+      await wallet.refresh();
+
+      const balanceCall = ERC8183_TESTNET.selectors.balanceOf + addressWord(activeAccount);
+      const [chainHex, bnbHex, tokenHex, kernelCode, routerCode, policyCode, tokenCode, paymentTokenHex] = await Promise.all([
+        provider.request({ method: 'eth_chainId' }) as Promise<string>,
+        provider.request({ method: 'eth_getBalance', params: [activeAccount, 'latest'] }) as Promise<string>,
+        provider.request({ method: 'eth_call', params: [{ to: ERC8183_TESTNET.paymentToken, data: balanceCall }, 'latest'] }) as Promise<string>,
+        provider.request({ method: 'eth_getCode', params: [ERC8183_TESTNET.kernel, 'latest'] }) as Promise<string>,
+        provider.request({ method: 'eth_getCode', params: [ERC8183_TESTNET.router, 'latest'] }) as Promise<string>,
+        provider.request({ method: 'eth_getCode', params: [ERC8183_TESTNET.policy, 'latest'] }) as Promise<string>,
+        provider.request({ method: 'eth_getCode', params: [ERC8183_TESTNET.paymentToken, 'latest'] }) as Promise<string>,
+        provider.request({ method: 'eth_call', params: [{ to: ERC8183_TESTNET.kernel, data: ERC8183_TESTNET.selectors.paymentToken }, 'latest'] }) as Promise<string>,
+      ]);
+      const chainId = Number.parseInt(chainHex, 16);
+      const bnb = BigInt(bnbHex);
+      const token = BigInt(tokenHex);
+      const checks: WalletCheck[] = [
+        { label: 'BSC Testnet', pass: chainId === ERC8183_TESTNET.chainId, observed: `chain ${chainId}` },
+        { label: 'Contract code', pass: [kernelCode, routerCode, policyCode, tokenCode].every((code) => code.length > 2), observed: 'kernel / router / policy / token' },
+        { label: 'Kernel token', pass: decodedAddress(paymentTokenHex).toLowerCase() === ERC8183_TESTNET.paymentToken.toLowerCase(), observed: compact(decodedAddress(paymentTokenHex)) },
+        { label: 'tBNB gas reserve', pass: bnb >= BigInt('2000000000000000'), observed: `${formatUnits(bnb)} tBNB` },
+        { label: 'Test $U balance', pass: token >= BigInt(ERC8183_TESTNET.amountAtomic), observed: `${formatUnits(token)} test $U` },
+      ];
+      setWalletChecks(checks);
+      setMessage(checks.every((check) => check.pass)
+        ? 'Testnet wallet is funded and ready. Provider connection is the only remaining execution gate.'
+        : 'Testnet wallet check stopped at a missing balance or contract requirement. Nothing was sent.');
+    } catch (error) {
+      setWalletChecks([{ label: 'Wallet preflight', pass: false, observed: walletError(error) }]);
+      setMessage('Testnet wallet preflight failed. No transaction was sent.');
+    } finally {
+      setCheckingWallet(false);
+    }
+  }, [report, wallet]);
+
+  const walletReady = walletChecks.length > 0 && walletChecks.every((check) => check.pass);
+
+  return (
+    <section className="hire-console testnet-console" aria-labelledby="testnet-console-title">
+      <header className="panel-heading hire-console-heading">
+        <div><p className="eyebrow">GRABIT.EXE / TEST LAB</p><h2 id="testnet-console-title">BSC Testnet readiness</h2></div>
+        <span className="protocol-pill is-testnet">CHAIN 97 · TEST TOKENS</span>
+      </header>
+
+      <div className="hire-console-grid">
+        <div className="hire-plan-pane">
+          <div className="testnet-stage-summary">
+            <span>SELECTED AGENT</span>
+            <strong>#{tokenId} · {agentName}</strong>
+            <p>We verify the real APEX deployment and your wallet first. Hire transactions stay locked until a chain-97 Agent provider is connected.</p>
+          </div>
+
+          <button className="win95-button" type="button" onClick={() => void loadReadiness()} disabled={loading}>
+            {loading ? 'CHECKING CHAIN 97...' : 'REFRESH LIVE CONTRACT CHECK'}
+          </button>
+          {reportError && <div className="hire-alert is-error"><strong>TESTNET CHECK BLOCKED</strong><p>{reportError}</p></div>}
+
+          {report && (
+            <>
+              <div className="quote-ticket testnet-ticket">
+                <span>LIVE TESTNET</span><strong>{report.integrity.checks.filter((check) => check.pass).length} / {report.integrity.checks.length} PASS</strong>
+                <dl>
+                  <div><dt>Chain</dt><dd>{report.network.chainId}</dd></div>
+                  <div><dt>Block</dt><dd>{report.network.blockNumber.toLocaleString()}</dd></div>
+                  <div><dt>Jobs</dt><dd>{report.protocol.jobCounter}</dd></div>
+                  <div><dt>Window</dt><dd>{report.protocol.disputeWindowSeconds / 60} min</dd></div>
+                </dl>
+              </div>
+              <details className="integrity-details" open>
+                <summary>{report.integrity.checks.length} live contract checks</summary>
+                <div>{report.integrity.checks.map((check) => <p key={check.label}><b>{check.pass ? 'PASS' : 'FAIL'}</b> {check.label}<small>{check.observed}</small></p>)}</div>
+              </details>
+            </>
+          )}
+
+          <div className="wallet-preflight">
+            <header><strong>TESTNET WALLET</strong><span>{wallet.account ? compact(wallet.account) : 'NOT CONNECTED'}</span></header>
+            <button className="win95-button" type="button" disabled={!report || checkingWallet || !wallet.hasProvider} onClick={() => void checkWallet()}>
+              {checkingWallet ? 'CHECKING...' : wallet.account ? 'SWITCH TO CHAIN 97 + CHECK' : 'CONNECT + CHECK TESTNET'}
+            </button>
+            {!wallet.hasProvider && <p>No injected wallet was detected in this browser.</p>}
+            {walletChecks.map((check) => (
+              <div className={'wallet-check ' + (check.pass ? 'is-pass' : 'is-fail')} key={check.label}>
+                <b>{check.pass ? '✓' : '!'}</b><span>{check.label}<small>{check.observed}</small></span>
+              </div>
+            ))}
+            <div className="testnet-faucet-links">
+              <a href={ERC8183_TESTNET.faucets.gas} target="_blank" rel="noreferrer">GET tBNB GAS ↗</a>
+              <a href={ERC8183_TESTNET.faucets.token} target="_blank" rel="noreferrer">GET TEST $U ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <div className="hire-steps-pane">
+          <div className="testnet-gate-stack">
+            <article className={`transaction-step ${report?.integrity.passed ? 'is-confirmed' : 'is-idle'}`}>
+              <span className="transaction-number">{report?.integrity.passed ? '✓' : '01'}</span>
+              <div><header><strong>APEX contracts</strong><b>{report?.integrity.passed ? 'DONE' : 'CHECK'}</b></header><p>Kernel, router, allowed policy and test token are read directly from chain 97.</p></div>
+            </article>
+            <article className={`transaction-step ${walletReady ? 'is-confirmed' : 'is-active'}`}>
+              <span className="transaction-number">{walletReady ? '✓' : '02'}</span>
+              <div><header><strong>Client wallet</strong><b>{walletReady ? 'DONE' : 'NEXT'}</b></header><p>Connect the wallet, switch to BSC Testnet and obtain enough tBNB plus test $U.</p></div>
+            </article>
+            <article className="transaction-step is-failed">
+              <span className="transaction-number">03</span>
+              <div><header><strong>Agent provider</strong><b>LOCKED</b></header><p>{report?.execution.blocker || 'Waiting for live chain-97 provider verification.'}</p></div>
+            </article>
+            <article className="transaction-step">
+              <span className="transaction-number">04</span>
+              <div><header><strong>Five-step Hire</strong><b>0 / 5</b></header><p>Create → policy → budget → approval → escrow funding. It opens only after all three gates pass.</p></div>
+            </article>
+          </div>
+          <div className="hire-alert is-warning">
+            <strong>NO FAKE TEST TRANSACTIONS</strong>
+            <p>The external Agent currently quotes only BSC Mainnet. Grabit will not rewrite its chain or addresses and pretend that the quote is valid on Testnet.</p>
+          </div>
+          <div className="hire-status-line" aria-live="polite"><b>STATUS</b><span>{message}</span></div>
+          {report && <a className="testnet-explorer-link" href={`${report.network.explorerUrl}/address/${report.contracts.kernel}`} target="_blank" rel="noreferrer">OPEN TESTNET KERNEL ↗</a>}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MainnetHireExecutionConsole({ tokenId, agentName, defaultTask }: HireExecutionConsoleProps) {
   const wallet = useBscWallet();
   const [task, setTask] = useState(defaultTask);
   const [plan, setPlan] = useState<SafeHirePlan | null>(null);

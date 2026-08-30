@@ -30,6 +30,20 @@ export const BSC_MAINNET = {
   explorerUrl: 'https://bscscan.com',
 } as const;
 
+export const BSC_TESTNET = {
+  chainId: 97,
+  chainHex: '0x61',
+  name: 'BNB Smart Chain Testnet',
+  nativeCurrency: { name: 'Test BNB', symbol: 'tBNB', decimals: 18 },
+  rpcUrls: [
+    'https://bsc-testnet-dataseed.bnbchain.org',
+    'https://data-seed-prebsc-1-s1.bnbchain.org:8545',
+  ],
+  explorerUrl: 'https://testnet.bscscan.com',
+} as const;
+
+export type BscNetwork = typeof BSC_MAINNET | typeof BSC_TESTNET;
+
 function providerCode(error: unknown) {
   if (error && typeof error === 'object' && 'code' in error) return Number(error.code);
   return null;
@@ -46,7 +60,7 @@ export function walletError(error: unknown) {
       return 'Not enough BNB for gas or not enough $U for this step.';
     }
     if (normalized.includes('not valid json') || normalized.includes('unsupported_operation')) {
-      return 'The wallet RPC response was invalid. Switch to BNB Smart Chain Mainnet in the wallet and retry.';
+      return 'The wallet RPC response was invalid. Switch to the selected BNB Smart Chain network in the wallet and retry.';
     }
     return message;
   }
@@ -59,28 +73,34 @@ export function getInjectedProvider() {
   return provider;
 }
 
-async function addBscMainnet(provider: Eip1193Provider) {
+async function addBscNetwork(provider: Eip1193Provider, network: BscNetwork) {
   await provider.request({
     method: 'wallet_addEthereumChain',
     params: [{
-      chainId: BSC_MAINNET.chainHex,
-      chainName: BSC_MAINNET.name,
-      nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
-      rpcUrls: BSC_MAINNET.rpcUrls,
-      blockExplorerUrls: [BSC_MAINNET.explorerUrl],
+      chainId: network.chainHex,
+      chainName: network.name,
+      nativeCurrency: 'nativeCurrency' in network
+        ? network.nativeCurrency
+        : { name: 'BNB', symbol: 'BNB', decimals: 18 },
+      rpcUrls: network.rpcUrls,
+      blockExplorerUrls: [network.explorerUrl],
     }],
   });
 }
 
-export async function ensureBscMainnet(provider: Eip1193Provider) {
+export async function ensureBscNetwork(provider: Eip1193Provider, network: BscNetwork) {
   const current = String(await provider.request({ method: 'eth_chainId' }));
-  if (current.toLowerCase() === BSC_MAINNET.chainHex) return;
+  if (current.toLowerCase() === network.chainHex) return;
   try {
-    await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: BSC_MAINNET.chainHex }] });
+    await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: network.chainHex }] });
   } catch (error) {
     if (providerCode(error) !== 4902) throw error;
-    await addBscMainnet(provider);
+    await addBscNetwork(provider, network);
   }
+}
+
+export async function ensureBscMainnet(provider: Eip1193Provider) {
+  return ensureBscNetwork(provider, BSC_MAINNET);
 }
 
 export function useBscWallet() {
@@ -155,6 +175,21 @@ export function useBscWallet() {
     }
   }, [refresh]);
 
+  const switchNetwork = useCallback(async (network: BscNetwork) => {
+    setConnecting(true);
+    setError(null);
+    try {
+      const provider = getInjectedProvider();
+      await ensureBscNetwork(provider, network);
+      await refresh();
+    } catch (nextError) {
+      setError(walletError(nextError));
+      throw nextError;
+    } finally {
+      setConnecting(false);
+    }
+  }, [refresh]);
+
   const waitForReceipt = useCallback(async (hash: string) => {
     const provider = getInjectedProvider();
     for (let attempt = 0; attempt < 90; attempt += 1) {
@@ -175,8 +210,10 @@ export function useBscWallet() {
     connecting,
     error,
     isMainnet: chainId === BSC_MAINNET.chainId,
+    isTestnet: chainId === BSC_TESTNET.chainId,
     connect,
     switchToMainnet,
+    switchNetwork,
     refresh,
     waitForReceipt,
   };

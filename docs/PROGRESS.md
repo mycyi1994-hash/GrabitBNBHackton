@@ -1,6 +1,6 @@
 # Grabit delivery progress
 
-Last updated: **2026-08-30 02:23 UTC**
+Last updated: **2026-08-30 02:52 UTC**
 
 ## Overall: 4 / 6 complete
 
@@ -24,6 +24,10 @@ Completion means the planned step produced its internal deliverable. It does not
 | Four categories have a delivered canary task | 0 / 4 |
 | Completed ERC-8183 Job | 0 / 1 minimum |
 | Mainnet execution contracts verified | 5 / 5 |
+| Testnet deployment checks | 7 / 7 |
+| Testnet wallet/network preflight | BUILT · USER CHECK PENDING |
+| Testnet Agent provider | 0 / 1 |
+| Testnet Hire transactions | 0 / 5 |
 | Live quote and call allowlist checks | 21 / 21 |
 | Sequential wallet execution console | 1 / 1 |
 | Evidence-backed production performance values | 0 / required set |
@@ -50,6 +54,15 @@ Completion means the planned step produced its internal deliverable. It does not
 
 The known provider self-test Job `#56657` is `SUBMITTED`, but its client is the provider operator. It validates the external service path, not Grabit demand or completion.
 
+## BSC Testnet path: 2 / 4
+
+1. Verify chain 97, both proxy implementations, router policy allowlist, payment token and 15-minute dispute window: COMPLETE — 7 / 7 live checks.
+2. Add explicit Testnet/Mainnet selection, wallet chain switching, tBNB/test-$U balances and faucet links: COMPLETE.
+3. Connect a real Agent provider that returns a chain-97 quote and delivery path: PENDING — the selected live provider currently returns chain 56 only.
+4. Execute and record Create → Policy → Budget → Approval → Fund on Testnet: PENDING — locked until step 3 passes.
+
+The Testnet screen is deliberately non-transactional until a chain-97 provider exists. A Mainnet quote is never rewritten into Testnet calldata.
+
 ## Stage 5 completion: 4 / 4
 
 1. Dashboard readiness and next action visible in the first workspace: COMPLETE.
@@ -59,8 +72,8 @@ The known provider self-test Job `#56657` is `SUBMITTED`, but its client is the 
 
 ## Immediate next work
 
-1. Connect a BSC Mainnet wallet holding enough BNB gas and at least 0.10 $U.
-2. Review the unsigned-quote warning and confirm the five transactions one at a time.
-3. Verify the recovered Job ID before policy, budget, approval or funding.
-4. Inspect and preserve the delivered result and transaction evidence.
-5. Complete, dispute or refund the first Grabit Job lifecycle.
+1. Open Testnet mode and connect the intended client wallet.
+2. Obtain tBNB and at least 0.10 test $U, then pass all five wallet checks.
+3. Build or connect one chain-97 reference Agent provider.
+4. Verify its provider address, quote, selectors and delivery endpoint before enabling signatures.
+5. Run the five Testnet Hire transactions one at a time and preserve the result.

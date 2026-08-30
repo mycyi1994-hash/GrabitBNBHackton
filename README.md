@@ -18,6 +18,9 @@ It is being built for the **BNB Chain Smart Money Era: Build the Era** hackathon
 - Evidence leaderboard that separates registry, endpoint, quote and delivered-task gates
 - Verification dashboard with category readiness and execution queue
 - Guarded ERC-8183 Mainnet Hire console with a fixed-address and selector allowlist
+- Testnet-first execution mode with explicit Mainnet / Testnet selection
+- Live BSC Testnet checks for chain 97, proxy implementations, kernel token, policy allowlist and dispute window
+- Testnet wallet preflight for tBNB and test $U, with direct faucet links and zero automatic transactions
 - Live provider quote plus BSC contract verification before any wallet prompt
 - Five sequential user-signed transactions: create, bind policy, set budget, exact approval and fund
 - Wallet preflight for chain 56, contract code, kernel token, $U balance, BNB gas reserve and simulation
@@ -56,16 +59,19 @@ Supported prototype queries:
 - GET /api/agents?limit=2
 - GET /api/agents?q=PancakeSwap
 - GET /api/hire/quote?registry=304493
+- GET /api/hire/testnet-readiness
 - GET /api/hire/job?jobId=56657
 - POST /api/hire/notify with a funded numeric jobId
 
 ## Planned onchain path
 
-1. Use the guarded console to run one paid 0.10 $U Yield canary.
-2. Inspect and preserve the deliverable and all five transaction receipts.
-3. Wait for settlement or exercise the documented dispute/refund path.
-4. Grant and revoke an Altana session with a contract allowlist, token spend cap and expiry.
-5. Move verified Job status and deliverables into the one-screen Dashboard.
+1. Fund a client wallet with tBNB and test $U and pass the chain-97 wallet preflight.
+2. Connect a real chain-97 Agent provider; do not rewrite a chain-56 quote.
+3. Run and record the five-step Testnet Hire lifecycle.
+4. Use the guarded Mainnet console to run one paid 0.10 $U Yield canary.
+5. Inspect and preserve the deliverable, settlement outcome and transaction receipts.
+6. Grant and revoke an Altana session with a contract allowlist, token spend cap and expiry.
+7. Move verified Job status and deliverables into the one-screen Dashboard.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the system flow.
 

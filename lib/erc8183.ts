@@ -33,6 +33,42 @@ export const ERC8183 = {
   eip1967ImplementationSlot: '0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc',
 } as const;
 
+// BSC Testnet APEX deployment. Execution stays locked until a chain-97
+// provider endpoint is connected; this config powers live readiness checks.
+export const ERC8183_TESTNET = {
+  chainId: 97,
+  chainHex: '0x61',
+  chainName: 'BNB Smart Chain Testnet',
+  nativeCurrencySymbol: 'tBNB',
+  rpcUrls: [
+    'https://bsc-testnet-dataseed.bnbchain.org',
+    'https://data-seed-prebsc-1-s1.bnbchain.org:8545',
+  ],
+  explorerUrl: 'https://testnet.bscscan.com',
+  kernel: '0xa206c0517B6371C6638CD9e4a42Cc9f02A33B0DE',
+  implementation: '0x153783ddbdf5233c591965f04644b1df2d1a7815',
+  router: '0xd7d36d66d2f1b608a0f943f722d27e3744f66f25',
+  routerImplementation: '0x40c0254610D92F1Eb9c2D7D5d2114bC4c99d935e',
+  policy: '0xd6a4217588f6b1f5657a92a3e94e6422ad771cea',
+  paymentToken: '0xc70B8741B8B07A6d61E54fd4B20f22Fa648E5565',
+  paymentTokenSymbol: '$U test token',
+  amountAtomic: '100000000000000000',
+  amountDisplay: '0.10 test $U',
+  disputeWindowSeconds: 900,
+  selectors: {
+    paymentToken: '0x3013ce29',
+    disputeWindow: '0x117f5f92',
+    jobCounter: '0x50355d76',
+    balanceOf: '0x70a08231',
+    policyWhitelist: '0x70be56b9',
+  },
+  eip1967ImplementationSlot: '0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc',
+  faucets: {
+    gas: 'https://testnet.bnbchain.org/faucet-smart',
+    token: 'https://united-coin-u.github.io/u-faucet/',
+  },
+} as const;
+
 export const CANARY_TASKS: Record<string, string> = {
   '304494': 'Price a read-only rebalance plan for a WBNB/USDT position. Include the proposed weights, estimated pool costs and source block. Do not move funds.',
   '302258': 'Build a read-only WBNB grid plan with 10 levels across a 15% band and 1000 USD notional. Include fees, break-even spacing and source block. Do not trade.',

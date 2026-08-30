@@ -4375,3 +4375,139 @@ body {
   .store-card dl div:nth-child(-n + 2) { border-bottom: 1px solid #aaa; }
   .command-ascii pre { font-size: 10px; }
 }
+
+.network-mode-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 0 0 10px;
+  border: 3px solid;
+  border-color: #fff #565656 #565656 #fff;
+  background: var(--win-bg);
+  padding: 12px;
+}
+
+.network-mode-panel p,
+.network-mode-panel strong {
+  margin: 0;
+}
+
+.network-mode-panel strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 16px;
+}
+
+.network-mode-buttons {
+  display: grid;
+  min-width: min(520px, 48vw);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.network-mode-buttons .win95-button {
+  min-height: 52px;
+  font-size: 14px;
+}
+
+.network-mode-buttons .is-selected {
+  border-color: #222 #fff #fff #222;
+  background: var(--win-blue);
+  color: #fff;
+  box-shadow: inset 2px 2px #111;
+}
+
+.protocol-pill.is-testnet {
+  background: #083f2b;
+  color: #b9ffce;
+}
+
+.testnet-stage-summary {
+  border: 2px solid;
+  border-color: #777 #fff #fff #777;
+  background: #eef7e9;
+  padding: 14px;
+}
+
+.testnet-stage-summary span,
+.testnet-stage-summary strong {
+  display: block;
+}
+
+.testnet-stage-summary span {
+  color: #31513b;
+  font: 900 12px/1.2 "Courier New", monospace;
+}
+
+.testnet-stage-summary strong {
+  margin-top: 5px;
+  color: #003d28;
+  font-size: 19px;
+}
+
+.testnet-stage-summary p {
+  margin: 10px 0 0;
+  font-size: 15px;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.testnet-ticket {
+  background: #e4f4e5;
+}
+
+.testnet-faucet-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.testnet-faucet-links a,
+.testnet-explorer-link {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid;
+  border-color: #fff #555 #555 #fff;
+  background: #d4d1c8;
+  color: #000080;
+  padding: 8px;
+  font: 900 13px/1.2 "Courier New", monospace;
+  text-align: center;
+}
+
+.testnet-gate-stack {
+  display: grid;
+  gap: 7px;
+}
+
+.testnet-console .hire-status-line {
+  margin-top: 10px;
+}
+
+.testnet-explorer-link {
+  margin-top: 8px;
+  background: var(--win-blue);
+  color: #fff;
+}
+
+@media (max-width: 760px) {
+  .network-mode-panel {
+    display: block;
+  }
+
+  .network-mode-buttons {
+    min-width: 0;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .network-mode-buttons,
+  .testnet-faucet-links {
+    grid-template-columns: 1fr;
+  }
+}
