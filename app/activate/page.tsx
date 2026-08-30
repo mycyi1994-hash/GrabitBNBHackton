@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { PrototypeNote } from '@/components/prototype-note';
+import Link from 'next/link';
 import { SiteHeader } from '@/components/site-header';
 import {
   getCandidateByTokenId,
@@ -10,8 +10,8 @@ import { CANARY_TASKS } from '@/lib/erc8183';
 import { HireExecutionConsole } from '@/app/activate/execution-client';
 
 export const metadata: Metadata = {
-  title: 'Execution gate — Agent Market',
-  description: 'Review what must be verified before a BSC DeFi agent can be hired.',
+  title: 'Test an Agent — Grabit',
+  description: 'Hire a BSC Testnet Agent and verify its result in one guided flow.',
 };
 
 type ActivatePageProps = {
@@ -25,38 +25,26 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
 
   return (
     <main className="subpage">
-      <SiteHeader />
-      <div className="activate-shell evidence-shell">
-        <PrototypeNote />
-        <a className="breadcrumb back-link" href={'/registry/' + selected.tokenId}>← Back to registry evidence</a>
+      <SiteHeader compact homeAnchors hideWallet testnetMode />
+      <div className="activate-shell simple-activate-shell">
+        <Link className="breadcrumb back-link" href="/#store">← BACK TO AGENT STORE</Link>
 
-        <div className="execution-gate-layout">
-          <section className="execution-lock execution-live-intro">
-            <pre className="lock-ascii" aria-hidden="true">{'  __________________\n / ________________ \\\n| | GRABIT.EXE      | |\n| | > HIRE AGENT_  | |\n| |________________| |\n \\_____[______]____/'}</pre>
-            <p className="eyebrow">ERC-8183 mainnet console</p>
-            <h1>Five signatures. Zero hidden calls.</h1>
-            <p>The plan is verified against BSC mainnet before the wallet opens. No transaction runs automatically; only the final Fund step moves 0.10 $U into escrow.</p>
-          </section>
+        <section className="simple-activate-intro">
+          <div className="simple-agent-title">
+            <span className="simple-agent-icon">AI</span>
+            <div>
+              <p className="eyebrow">BSC TESTNET · SAFE DEMO</p>
+              <h1>{selected.name}</h1>
+              <p>Connect once, confirm the visible Testnet steps, then receive the Agent result.</p>
+            </div>
+          </div>
+          <div className="simple-flow-strip" aria-label="Three step hire flow">
+            <span className="is-current"><b>1</b> PREPARE</span>
+            <span><b>2</b> HIRE</span>
+            <span><b>3</b> RESULT</span>
+          </div>
+        </section>
 
-          <section className="execution-checklist">
-            <header className="panel-heading">
-              <div><p className="eyebrow">Selected agent</p><h2>{selected.name}</h2></div>
-              <span className="protocol-pill">#{selected.tokenId}</span>
-            </header>
-            <div className="gate-checklist">
-              <div className="is-complete"><span>✓</span><p><strong>ERC-8004 identity</strong><small>Recorded on BSC chain 56</small></p></div>
-              <div className="is-complete"><span>✓</span><p><strong>A2A endpoint</strong><small>Reachable during recorded preflight</small></p></div>
-              <div className="is-complete"><span>✓</span><p><strong>Quote negotiation</strong><small>{selected.price} quote accepted</small></p></div>
-              <div><span>4</span><p><strong>Task delivery</strong><small>No paid result inspected</small></p></div>
-              <div><span>5</span><p><strong>Onchain settlement</strong><small>No completed ERC-8183 Job receipt</small></p></div>
-            </div>
-            <div className="execution-note"><strong>Current proof level</strong><p>The contracts and quote path are verified. A paid Grabit Job is still 0 / 1 until you complete the five wallet confirmations and the deliverable arrives.</p></div>
-            <div className="win95-actions">
-              <a href={'/registry/' + selected.tokenId}>Open identity evidence</a>
-              <a href="/dashboard">Return to dashboard</a>
-            </div>
-          </section>
-        </div>
         <HireExecutionConsole
           tokenId={selected.tokenId}
           agentName={selected.name}

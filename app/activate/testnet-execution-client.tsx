@@ -117,7 +117,6 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
   const [quoteError, setQuoteError] = useState<string | null>(null);
   const [walletChecks, setWalletChecks] = useState<WalletCheck[]>([]);
   const [checkingWallet, setCheckingWallet] = useState(false);
-  const [acknowledged, setAcknowledged] = useState(false);
   const [steps, setSteps] = useState<RuntimeStep[]>(freshSteps);
   const [jobId, setJobId] = useState<string | null>(null);
   const [providerSnapshot, setProviderSnapshot] = useState<ProviderSnapshot | null>(null);
@@ -134,7 +133,7 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
   const nextStep = steps.findIndex((step) => step.status !== 'confirmed');
   const walletReady = walletChecks.length > 0 && walletChecks.every((check) => check.pass);
   const providerReady = Boolean(plan?.providerRuntime.ready);
-  const canExecute = Boolean(plan?.integrity.passed && providerReady && wallet.account && wallet.isTestnet && walletReady && acknowledged);
+  const canExecute = Boolean(plan?.integrity.passed && providerReady && wallet.account && wallet.isTestnet && walletReady);
 
   const persist = useCallback((nextSteps: RuntimeStep[], nextJobId: string | null, nextTask = task) => {
     if (!storageKey) return;
@@ -408,30 +407,30 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
     setJobId(null);
     setProviderSnapshot(null);
     setProviderResult(null);
-    setAcknowledged(false);
     setMessage('Local progress cleared. No on-chain state was changed.');
   }, [storageKey]);
 
   const allFunded = steps.every((step) => step.status === 'confirmed');
   const integrityChecks: IntegrityCheck[] = plan?.integrity.checks || [];
   const secondsUntilSettle = providerSnapshot?.secondsUntilSettle;
+  const currentCall = nextStep >= 0 ? plan?.calls[nextStep] : null;
 
   return (
     <div className="hire-execution-console testnet-execution-console">
       <div className="execution-mode-banner">
         <span className="status-lamp is-live" aria-hidden="true" />
         <div>
-          <strong>BSC TESTNET � LIVE TRANSACTIONS</strong>
+          <strong>BSC TESTNET | LIVE TRANSACTIONS</strong>
           <p>Uses valueless tBNB and test $U. Nothing here can spend Mainnet assets.</p>
         </div>
       </div>
 
       <section className="hire-step-panel">
         <div className="hire-step-heading">
-          <span>01</span>
+          <span>1A</span>
           <div>
-            <strong>Signed reference-provider quote</strong>
-            <small>{agentName} � ERC-8183 on chain 97</small>
+            <strong>Prepare the test</strong>
+            <small>{agentName} | ERC-8183 on chain 97</small>
           </div>
           <button
             type="button"
@@ -442,18 +441,23 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
             {quoteLoading ? 'LOADING...' : 'REFRESH QUOTE'}
           </button>
         </div>
-        <label className="hire-field">
-          <span>READ-ONLY TASK</span>
-          <textarea
-            rows={4}
-            value={task}
-            disabled={hasProgress}
-            onChange={(event) => setTask(event.target.value)}
-          />
-        </label>
+        <details className="simple-technical-details">
+          <summary>VIEW OR EDIT AGENT TASK</summary>
+          <label className="hire-field">
+            <span>READ-ONLY TASK</span>
+            <textarea
+              rows={4}
+              value={task}
+              disabled={hasProgress}
+              onChange={(event) => setTask(event.target.value)}
+            />
+          </label>
+        </details>
         {quoteError ? <div className="hire-alert is-error">{quoteError}</div> : null}
         {plan ? (
           <>
+            <details className="simple-technical-details">
+              <summary>TECHNICAL DETAILS · {integrityChecks.length}/{integrityChecks.length} VERIFIED</summary>
             <div className="hire-facts-grid">
               <div><span>PRICE</span><strong>{plan.quote.display}</strong></div>
               <div><span>EXPIRES</span><strong>{new Date(plan.quote.expiresAt * 1000).toLocaleTimeString()}</strong></div>
@@ -469,10 +473,11 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
                 COPY
               </button>
             </div>
+            </details>
             <div className={`hire-alert ${plan.integrity.passed ? 'is-success' : 'is-error'}`}>
               {plan.integrity.passed
-                ? `SIGNED PLAN VERIFIED � ${integrityChecks.length}/${integrityChecks.length} checks`
-                : 'SIGNED PLAN BLOCKED � integrity check failed'}
+                ? `SIGNED PLAN VERIFIED | ${integrityChecks.length}/${integrityChecks.length} checks`
+                : 'SIGNED PLAN BLOCKED | integrity check failed'}
             </div>
             {!providerReady ? (
               <div className="hire-alert is-warning">
@@ -485,9 +490,9 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
 
       <section className="hire-step-panel">
         <div className="hire-step-heading">
-          <span>02</span>
+          <span>1B</span>
           <div>
-            <strong>Connect + preflight</strong>
+            <strong>Connect your Testnet wallet</strong>
             <small>Wallet balances, deployed bytecode and revert prediction</small>
           </div>
         </div>
@@ -505,7 +510,7 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
               {checkingWallet ? 'CHECKING...' : 'RUN PREFLIGHT'}
             </button>
           )}
-          <span>{wallet.account ? `${compact(wallet.account)} � chain ${wallet.chainId ?? '?'}` : 'No wallet connected'}</span>
+          <span>{wallet.account ? `${compact(wallet.account)} | chain ${wallet.chainId ?? '?'}` : 'No wallet connected'}</span>
         </div>
         {wallet.error ? <div className="hire-alert is-error">{wallet.error}</div> : null}
         {walletChecks.length ? (
@@ -526,21 +531,16 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
 
       <section className="hire-step-panel">
         <div className="hire-step-heading">
-          <span>03</span>
+          <span>02</span>
           <div>
-            <strong>Five explicit wallet signatures</strong>
+            <strong>Hire the Agent</strong>
             <small>Create - Bind policy - Set budget - Approve exact amount - Fund</small>
           </div>
         </div>
-        <label className="hire-confirmation">
-          <input
-            type="checkbox"
-            checked={acknowledged}
-            disabled={hasProgress}
-            onChange={(event) => setAcknowledged(event.target.checked)}
-          />
-          <span>I verified chain 97, the 0.10 test $U cap, contract addresses and two-hour expiry.</span>
-        </label>
+        <div className="simple-job-progress">
+          <strong>{allFunded ? '5 / 5 COMPLETE' : `${Math.max(0, nextStep)} / 5 COMPLETE`}</strong>
+          <span>Each click opens exactly one Testnet wallet confirmation.</span>
+        </div>
         <div className="transaction-step-list">
           {(plan?.calls || []).map((call: ProviderCall, index: number) => {
             const runtime = steps[index] || { status: 'idle' as const };
@@ -549,26 +549,29 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
                 <div className="transaction-step-index">{String(call.step).padStart(2, '0')}</div>
                 <div className="transaction-step-copy">
                   <strong>{call.what}</strong>
-                  <small>to {compact(call.to)} � value 0</small>
+                  <small>to {compact(call.to)} | value 0</small>
                   {runtime.txHash ? (
                     <a href={`${CONFIG.explorerUrl}/tx/${runtime.txHash}`} target="_blank" rel="noreferrer">
-                      {compact(runtime.txHash)} �
+                      {compact(runtime.txHash)} OPEN
                     </a>
                   ) : null}
                   {runtime.error ? <em>{runtime.error}</em> : null}
                 </div>
-                <button
-                  type="button"
-                  className="retro-button compact"
-                  disabled={!canExecute || runningStep !== null || index !== nextStep}
-                  onClick={() => void runStep(index)}
-                >
-                  {runningStep === index ? 'CONFIRMING...' : stateLabel(runtime.status)}
-                </button>
+                <span className="transaction-state-label">{stateLabel(runtime.status)}</span>
               </article>
             );
           })}
         </div>
+        {!allFunded && currentCall ? (
+          <button
+            type="button"
+            className="retro-button primary simple-primary-action"
+            disabled={!canExecute || runningStep !== null}
+            onClick={() => void runStep(nextStep)}
+          >
+            {runningStep !== null ? 'WAITING FOR WALLET...' : `NEXT ${nextStep + 1}/5 · ${currentCall.what}`}
+          </button>
+        ) : null}
         {steps[0]?.status === 'confirmed' && !jobId ? (
           <button type="button" className="retro-button" onClick={() => void recoverJobId()}>
             RECOVER CONFIRMED JOB ID
@@ -576,14 +579,15 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
         ) : null}
         {jobId ? (
           <div className="hire-alert is-success">
-            JOB #{jobId} � {providerSnapshot?.job?.status || 'SYNCING'}
+            JOB #{jobId} | {providerSnapshot?.job?.status || 'SYNCING'}
           </div>
         ) : null}
       </section>
 
+      {(allFunded || Boolean(providerSnapshot?.job)) ? (
       <section className="hire-step-panel">
         <div className="hire-step-heading">
-          <span>04</span>
+          <span>03</span>
           <div>
             <strong>Run agent + settle</strong>
             <small>The server signs only the allowlisted Testnet provider actions</small>
@@ -609,7 +613,7 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
         </div>
         {providerSnapshot?.job?.status === 'SUBMITTED' && typeof secondsUntilSettle === 'number' ? (
           <div className="hire-alert is-warning">
-            DISPUTE WINDOW � {Math.floor(secondsUntilSettle / 60)}m {secondsUntilSettle % 60}s remaining
+            DISPUTE WINDOW | {Math.floor(secondsUntilSettle / 60)}m {secondsUntilSettle % 60}s remaining
           </div>
         ) : null}
         {providerSnapshot?.job ? (
@@ -630,6 +634,7 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
           </div>
         ) : null}
       </section>
+      ) : null}
 
       <div className="execution-status-line" role="status">
         <span className={runningStep !== null || providerAction ? 'status-lamp is-busy' : 'status-lamp'} />

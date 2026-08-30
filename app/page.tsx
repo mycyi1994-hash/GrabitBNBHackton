@@ -31,7 +31,7 @@ export default async function Home() {
         <section className="command-dashboard" id="dashboard">
           <header className="command-section-heading">
             <div><p>MAIN SCREEN / LIVE READINESS</p><h1>Can I trust this agent?</h1></div>
-            <span>ROADMAP 04 / 06 · STAGE 4 WAITING FOR SIGNATURE</span>
+            <span>ROADMAP 04 / 06 · TESTNET DEMO READY</span>
           </header>
 
           <div className="command-stat-grid" aria-label="Marketplace readiness summary">
@@ -44,13 +44,13 @@ export default async function Home() {
           <div className="command-briefing-grid">
             <section className="next-action-panel">
               <header><span>!</span><div><p>NEXT REQUIRED ACTION</p><h2>Run one bounded Yield canary</h2></div></header>
-              <p>The execution plan passed 21 safety checks. The remaining gate needs your own BSC Mainnet wallet to confirm five visible transactions. Only the final transaction escrows exactly 0.10 $U.</p>
+              <p>Choose the Yield Agent, connect a BSC Testnet wallet and confirm five visible test transactions. No Mainnet funds are used.</p>
               <dl>
                 <div><dt>Selected</dt><dd>Venus Yield Ranking #304493</dd></div>
                 <div><dt>Current proof</dt><dd>Identity + endpoint + quote</dd></div>
                 <div><dt>Missing proof</dt><dd>Delivery + settlement</dd></div>
               </dl>
-              <a href="/activate?registry=304493">Open guarded hire console →</a>
+              <a href="/activate?registry=304493">Test this Agent →</a>
             </section>
 
             <figure className="command-ascii" aria-label="ASCII Grabit agent workstation">
@@ -94,7 +94,7 @@ export default async function Home() {
                   <div><dt>Quote</dt><dd>{agent.price}</dd></div>
                   <div><dt>Result</dt><dd className="gate-pending">PENDING</dd></div>
                 </dl>
-                <a href={'/registry/' + agent.tokenId}>Open agent record →</a>
+                <a href={'/activate?registry=' + agent.tokenId}>Test on BSC →</a>
               </article>
             ))}
           </div>

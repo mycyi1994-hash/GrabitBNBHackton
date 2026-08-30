@@ -1,16 +1,26 @@
 'use client';
 /* eslint-disable @next/next/no-html-link-for-pages */
 
-import { BSC_MAINNET, useBscWallet } from '@/components/use-bsc-wallet';
+import { BSC_MAINNET, BSC_TESTNET, useBscWallet } from '@/components/use-bsc-wallet';
 
 type SiteHeaderProps = {
   active?: 'explore' | 'compare' | 'dashboard';
   compact?: boolean;
   homeAnchors?: boolean;
+  hideWallet?: boolean;
+  testnetMode?: boolean;
 };
 
-export function SiteHeader({ active = 'explore', compact = false, homeAnchors = false }: SiteHeaderProps) {
+export function SiteHeader({
+  active = 'explore',
+  compact = false,
+  homeAnchors = false,
+  hideWallet = false,
+  testnetMode = false,
+}: SiteHeaderProps) {
   const { account, chainId, hasProvider, connecting, isMainnet, error, connect } = useBscWallet();
+  const expectedNetwork = testnetMode ? BSC_TESTNET : BSC_MAINNET;
+  const isExpectedNetwork = chainId === expectedNetwork.chainId;
   const walletLabel = connecting
     ? 'Connecting...'
     : account
@@ -21,13 +31,13 @@ export function SiteHeader({ active = 'explore', compact = false, homeAnchors = 
 
   return (
     <>
-      {error && (
+      {error && !hideWallet && (
         <aside className="wallet-recovery" role="alert" aria-live="assertive">
           <header><strong>NETWORK CONNECTION FAILED</strong><span>!</span></header>
           <p>{error}</p>
           <dl>
-            <div><dt>RPC</dt><dd>{BSC_MAINNET.rpcUrls[0]}</dd></div>
-            <div><dt>CHAIN</dt><dd>56 / BNB</dd></div>
+            <div><dt>RPC</dt><dd>{expectedNetwork.rpcUrls[0]}</dd></div>
+            <div><dt>CHAIN</dt><dd>{expectedNetwork.chainId} / {testnetMode ? 'tBNB' : 'BNB'}</dd></div>
           </dl>
           <div className="wallet-recovery-actions">
             <button type="button" onClick={() => void connect().catch(() => undefined)} disabled={connecting}>Retry wallet</button>
@@ -53,10 +63,12 @@ export function SiteHeader({ active = 'explore', compact = false, homeAnchors = 
           )}
         </div>
 
-        <button className="wallet-button" type="button" onClick={() => void connect().catch(() => undefined)} disabled={connecting} title={error ?? 'Connect an EIP-1193 wallet. This global button never switches networks.'}>
-          <span className={'wallet-dot ' + (account && isMainnet ? 'is-connected' : '')} /> {walletLabel}
-        </button>
-        <span className="taskbar-clock">BSC 56</span>
+        {!hideWallet ? (
+          <button className="wallet-button" type="button" onClick={() => void connect().catch(() => undefined)} disabled={connecting} title={error ?? 'Connect an EIP-1193 wallet. This global button never switches networks.'}>
+            <span className={'wallet-dot ' + (account && isExpectedNetwork ? 'is-connected' : '')} /> {walletLabel}
+          </button>
+        ) : null}
+        <span className="taskbar-clock">{testnetMode ? 'TESTNET 97' : 'BSC 56'}</span>
       </nav>
     </>
   );

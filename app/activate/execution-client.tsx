@@ -96,29 +96,7 @@ function stateLabel(status: RuntimeStep['status']) {
 }
 
 export function HireExecutionConsole(props: HireExecutionConsoleProps) {
-  const [network, setNetwork] = useState<'testnet' | 'mainnet'>('testnet');
-
-  return (
-    <>
-      <section className="network-mode-panel" aria-label="Execution network">
-        <div>
-          <p className="eyebrow">NETWORK SELECT</p>
-          <strong>Choose the money environment before connecting a wallet.</strong>
-        </div>
-        <div className="network-mode-buttons">
-          <button className={`win95-button ${network === 'testnet' ? 'is-selected' : ''}`} type="button" onClick={() => setNetwork('testnet')}>
-            TESTNET · SAFE START
-          </button>
-          <button className={`win95-button ${network === 'mainnet' ? 'is-selected' : ''}`} type="button" onClick={() => setNetwork('mainnet')}>
-            MAINNET · REAL FUNDS
-          </button>
-        </div>
-      </section>
-      {network === 'testnet'
-        ? <TestnetHireConsole {...props} />
-        : <MainnetHireExecutionConsole {...props} />}
-    </>
-  );
+  return <TestnetHireConsole {...props} />;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- retained temporarily for rollback of the new live Testnet console
@@ -287,6 +265,7 @@ function TestnetReadinessConsole({ tokenId, agentName }: Pick<HireExecutionConso
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Mainnet flow is intentionally hidden during Testnet product validation
 function MainnetHireExecutionConsole({ tokenId, agentName, defaultTask }: HireExecutionConsoleProps) {
   const wallet = useBscWallet();
   const [task, setTask] = useState(defaultTask);
