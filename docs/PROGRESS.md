@@ -1,8 +1,8 @@
 # Grabit delivery progress
 
-Last updated: **2026-08-30 02:01 UTC**
+Last updated: **2026-08-30 02:23 UTC**
 
-## Overall: 3 / 6 complete
+## Overall: 4 / 6 complete
 
 | Step | Scope | Status | Evidence |
 | --- | --- | --- | --- |
@@ -10,7 +10,7 @@ Last updated: **2026-08-30 02:01 UTC**
 | 2 | Four-category live Agent discovery and preflight | COMPLETE | Four chain-56 identities, reachable A2A, four accepted negotiations |
 | 3 | Replace mock UI with evidence-backed data | COMPLETE | Shared source model, evidence board, verification dashboard, locked execution gate |
 | 4 | Real ERC-8183 Hire and result | IN PROGRESS · 2 / 5 | Mainnet contracts and live quote verified; guarded five-signature console built; no funded Grabit Job |
-| 5 | One-screen Store, Leaderboard and Active Agents | PENDING | Current multi-route UI remains |
+| 5 | One-screen Store, Leaderboard and Active Agents | COMPLETE | Main command center embeds all three surfaces with anchor navigation and one action per Agent |
 | 6 | QA, public deployment and submission | PENDING | Anonymous access and release tests not recorded |
 
 Completion means the planned step produced its internal deliverable. It does not mean the submission is ready.
@@ -28,7 +28,7 @@ Completion means the planned step produced its internal deliverable. It does not
 | Sequential wallet execution console | 1 / 1 |
 | Evidence-backed production performance values | 0 / required set |
 | Silent mock fallback removed | 1 / 1 |
-| Single-screen primary flow implemented | 0 / 1 |
+| Single-screen primary flow implemented | 1 / 1 |
 | Anonymous production access recorded | 0 / 1 |
 | Repeated release demo passed | 0 / 10 |
 
@@ -49,6 +49,13 @@ Completion means the planned step produced its internal deliverable. It does not
 5. Record completion, dispute or refund outcome: PENDING.
 
 The known provider self-test Job `#56657` is `SUBMITTED`, but its client is the provider operator. It validates the external service path, not Grabit demand or completion.
+
+## Stage 5 completion: 4 / 4
+
+1. Dashboard readiness and next action visible in the first workspace: COMPLETE.
+2. Four-category Agent Store embedded in the same screen: COMPLETE.
+3. Evidence-only Leaderboard and Active Agents state embedded below it: COMPLETE.
+4. Primary navigation reduced to three anchor tabs with one detail action per Agent: COMPLETE.
 
 ## Immediate next work
 

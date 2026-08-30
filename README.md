@@ -12,6 +12,8 @@ It is being built for the **BNB Chain Smart Money Era: Build the Era** hackathon
   - Yield Optimisation
   - Health Factor Monitoring
 - Four curated BSC ERC-8004 identities, one per required category, loaded from 8004scan
+- One primary command-center screen containing Dashboard, Agent Store, Evidence Leaderboard and Active Agents
+- Three anchor tabs and one detail action per Agent instead of a deep primary navigation chain
 - Internal live-agent detail pages with owner, registry contract, health and verification status
 - Evidence leaderboard that separates registry, endpoint, quote and delivered-task gates
 - Verification dashboard with category readiness and execution queue
@@ -23,7 +25,7 @@ It is being built for the **BNB Chain Smart Money Era: Build the Era** hackathon
 - Windows 95 / ASCII workstation interface with larger type, equalised panels, page transitions and optional UI sound
 - Server-side 8004scan proxy route with explicit unavailable/stale responses and no silent mock fallback
 
-The home, leaderboard, dashboard and registry detail pages use the same source-backed candidate model. The four selected services returned successful non-funded A2A negotiations, but no paid Grabit category task has been completed yet. The execution console is available for a deliberate user-signed canary, while performance ranking remains unavailable until real results exist. The earlier self-transaction proof and representative performance dataset were removed from the user-facing product.
+The home command center and the legacy leaderboard, dashboard and registry detail routes use the same source-backed candidate model. Dashboard, Store, Leaderboard and Active Agents now appear in one scrollable Windows 95 workspace; the separate routes remain only for direct-link compatibility. The four selected services returned successful non-funded A2A negotiations, but no paid Grabit category task has been completed yet. The execution console is available for a deliberate user-signed canary, while performance ranking remains unavailable until real results exist.
 
 ## Run locally
 

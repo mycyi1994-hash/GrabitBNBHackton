@@ -6,9 +6,10 @@ import { BSC_MAINNET, useBscWallet } from '@/components/use-bsc-wallet';
 type SiteHeaderProps = {
   active?: 'explore' | 'compare' | 'dashboard';
   compact?: boolean;
+  homeAnchors?: boolean;
 };
 
-export function SiteHeader({ active = 'explore', compact = false }: SiteHeaderProps) {
+export function SiteHeader({ active = 'explore', compact = false, homeAnchors = false }: SiteHeaderProps) {
   const { account, chainId, hasProvider, connecting, isMainnet, error, connect } = useBscWallet();
   const walletLabel = connecting
     ? 'Connecting...'
@@ -41,9 +42,15 @@ export function SiteHeader({ active = 'explore', compact = false }: SiteHeaderPr
         </a>
 
         <div className="nav-links">
-          <a className={active === 'explore' ? 'active' : ''} href="/">Agent Explorer</a>
-          <a className={active === 'compare' ? 'active' : ''} href="/compare">Leaderboard</a>
-          <a className={active === 'dashboard' ? 'active' : ''} href="/dashboard">Dashboard</a>
+          {homeAnchors ? (
+            <span className="home-task-label">C:\GRABIT\COMMAND_CENTER</span>
+          ) : (
+            <>
+              <a className={active === 'explore' ? 'active' : ''} href="/">Main screen</a>
+              <a className={active === 'compare' ? 'active' : ''} href="/compare">Leaderboard</a>
+              <a className={active === 'dashboard' ? 'active' : ''} href="/dashboard">Dashboard</a>
+            </>
+          )}
         </div>
 
         <button className="wallet-button" type="button" onClick={() => void connect().catch(() => undefined)} disabled={connecting} title={error ?? 'Connect an EIP-1193 wallet. This global button never switches networks.'}>

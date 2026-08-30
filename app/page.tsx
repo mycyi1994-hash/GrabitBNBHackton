@@ -1,110 +1,141 @@
-/* eslint-disable @next/next/no-html-link-for-pages */
 import { SiteHeader } from '@/components/site-header';
 import { loadMarketplaceRecords } from '@/lib/marketplace-data';
 
-const categories = [
-  ['[R]', 'Rebalancing'],
-  ['[G]', 'Grid Trading'],
-  ['[Y]', 'Yield Optimisation'],
-  ['[H]', 'Health Factor'],
-];
+const categoryCode: Record<string, string> = {
+  Rebalancing: 'REB',
+  'Grid Trading': 'GRID',
+  'Yield Optimisation': 'YIELD',
+  'Health Factor Monitoring': 'HEALTH',
+};
 
 export default async function Home() {
-  const rows = await loadMarketplaceRecords();
-  const available = rows.filter((row) => row.sourceState === 'LIVE REGISTRY').length;
+  const agents = await loadMarketplaceRecords();
+  const liveRegistry = agents.filter((agent) => agent.sourceState === 'LIVE REGISTRY').length;
 
   return (
-    <main className="win95-desktop">
-      <SiteHeader />
+    <main className="win95-desktop command-desktop">
+      <SiteHeader homeAnchors />
 
-      <div className="win95-shortcuts" aria-label="Desktop shortcuts">
-        <a href="#agent-window"><span className="shortcut-icon">A:\</span><b>Agent Explorer</b></a>
-        <a href="/dashboard"><span className="shortcut-icon">W:\</span><b>My Wallet</b></a>
-      </div>
-
-      <section className="win95-window" id="agent-window" aria-label="BNB Agent Explorer">
-        <header className="win95-titlebar">
-          <div><span className="titlebar-icon">A</span><strong>BNB Agent Explorer</strong></div>
+      <section className="command-window" aria-label="Grabit agent command center">
+        <header className="win95-titlebar command-titlebar">
+          <div><span className="titlebar-icon">G</span><strong>GRABIT CONTROL CENTER — BNB AGENT MARKET</strong></div>
           <div className="window-controls" aria-hidden="true"><span>_</span><span>□</span><span>×</span></div>
         </header>
 
-        <nav className="win95-menubar" aria-label="Application menu">
-          <span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span><u>A</u>gent</span><span><u>H</u>elp</span>
+        <nav className="command-tabs" aria-label="Main workspace sections">
+          <a href="#dashboard"><b>01</b><span>Dashboard</span></a>
+          <a href="#store"><b>02</b><span>Agent Store</span></a>
+          <a href="#leaderboard"><b>03</b><span>Leaderboard</span></a>
         </nav>
 
-        <div className="win95-toolbar">
-          <a href="/">← Back</a>
-          <a href="/compare">Leaderboard</a>
-          <label><span>Address</span><input readOnly value="C:\BNB\AGENTS" aria-label="Current folder" /></label>
-        </div>
+        <section className="command-dashboard" id="dashboard">
+          <header className="command-section-heading">
+            <div><p>MAIN SCREEN / LIVE READINESS</p><h1>Can I trust this agent?</h1></div>
+            <span>ROADMAP 04 / 06 · STAGE 4 WAITING FOR SIGNATURE</span>
+          </header>
 
-        <div className="win95-window-body">
-          <aside className="win95-tree">
-            <h2>All Agent Types</h2>
-            <ul>
-              {categories.map(([icon, name]) => <li key={name}><span>{icon}</span>{name}</li>)}
-            </ul>
-            <figure className="ascii-workstation" aria-label="ASCII Agent Market workstation">
+          <div className="command-stat-grid" aria-label="Marketplace readiness summary">
+            <article><span>ERC-8004 identities</span><strong>{liveRegistry} / 4</strong><small>BSC chain 56</small></article>
+            <article><span>A2A quotes</span><strong>4 / 4</strong><small>Live 0.10 $U plans</small></article>
+            <article className="is-pending"><span>Delivered canaries</span><strong>0 / 4</strong><small>No result claimed</small></article>
+            <article className="is-pending"><span>Grabit jobs</span><strong>0 / 1</strong><small>No funds spent</small></article>
+          </div>
+
+          <div className="command-briefing-grid">
+            <section className="next-action-panel">
+              <header><span>!</span><div><p>NEXT REQUIRED ACTION</p><h2>Run one bounded Yield canary</h2></div></header>
+              <p>The execution plan passed 21 safety checks. The remaining gate needs your own BSC Mainnet wallet to confirm five visible transactions. Only the final transaction escrows exactly 0.10 $U.</p>
+              <dl>
+                <div><dt>Selected</dt><dd>Venus Yield Ranking #304493</dd></div>
+                <div><dt>Current proof</dt><dd>Identity + endpoint + quote</dd></div>
+                <div><dt>Missing proof</dt><dd>Delivery + settlement</dd></div>
+              </dl>
+              <a href="/activate?registry=304493">Open guarded hire console →</a>
+            </section>
+
+            <figure className="command-ascii" aria-label="ASCII Grabit agent workstation">
               <pre aria-hidden="true">{String.raw`
- .------------------.
-/  AGENT MARKET 98 /|
-+-----------------+ |
-| C:\> scan_8004  | |
-| [BSC] [ONLINE]   |/
-+-----------------+
-     |  |   |  |
-  .--+--+---+--+--.
-  | [_KEYBOARD__] |
-  '---------------'
+       ______________________
+      / ____________________ \
+     | | GRABIT.EXE         | |
+     | |--------------------| |
+     | | > scan chain 56    | |
+     | | > agents 4/4       | |
+     | | > jobs   0/1       | |
+     | | > waiting wallet_  | |
+     | |____________________| |
+      \______[________]______/
+          /____________\
+       .-'______________'-.
+       |___[_KEYBOARD_]___|
               `}</pre>
-              <figcaption>LOCAL AGENT WORKSTATION</figcaption>
+              <figcaption>SYSTEM ONLINE · NO AUTOMATIC SPENDING</figcaption>
             </figure>
-            <div className={'registry-box ' + (available === 4 ? 'is-live' : 'is-demo')}>
-              <span className="registry-light" />
-              <div><strong>8004scan + A2A</strong><small>{available === 4 ? '4/4 PREFLIGHT / BSC 56' : available + '/4 LIVE · SNAPSHOT FALLBACK'}</small></div>
-            </div>
-          </aside>
+          </div>
+        </section>
 
-          <section className="win95-folder">
-            <header className="folder-heading">
-              <div>
-                <p>BNB SMART CHAIN / ERC-8004</p>
-                <h1>Four required categories</h1>
+        <section className="command-store" id="store">
+          <header className="command-section-heading compact">
+            <div><p>02 / AGENT STORE</p><h2>Four jobs. One clear choice each.</h2></div>
+            <span>{liveRegistry}/4 REGISTRY LIVE</span>
+          </header>
+
+          <div className="store-grid">
+            {agents.map((agent, index) => (
+              <article className="store-card" key={agent.tokenId}>
+                <header>
+                  <span className="store-number">{String(index + 1).padStart(2, '0')}</span>
+                  <div><small>{categoryCode[agent.category] || 'AGENT'} · #{agent.tokenId}</small><h3>{agent.displayName}</h3></div>
+                </header>
+                <p>{agent.displayDescription}</p>
+                <dl>
+                  <div><dt>Registry</dt><dd className="gate-pass">PASS</dd></div>
+                  <div><dt>A2A</dt><dd className="gate-pass">LIVE</dd></div>
+                  <div><dt>Quote</dt><dd>{agent.price}</dd></div>
+                  <div><dt>Result</dt><dd className="gate-pending">PENDING</dd></div>
+                </dl>
+                <a href={'/registry/' + agent.tokenId}>Open agent record →</a>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="command-evidence" id="leaderboard">
+          <header className="command-section-heading compact">
+            <div><p>03 / EVIDENCE LEADERBOARD</p><h2>Proof first. Ranking later.</h2></div>
+            <span>NO FAKE APR · NO MOCK PNL</span>
+          </header>
+
+          <div className="command-bottom-grid">
+            <section className="embedded-leaderboard" aria-label="Agent evidence leaderboard">
+              <div className="leaderboard-row leaderboard-head">
+                <span>Rank</span><span>Agent</span><span>Identity</span><span>Quote</span><span>Result</span>
               </div>
-              <span>{available}/4 source-backed identities</span>
-            </header>
-
-            <div className="win95-agent-list">
-              {rows.map((agent, index) => (
-                <article className="win95-agent-row" key={agent.id + agent.name}>
-                  <span className="file-icon">{String(index + 1).padStart(2, '0')}</span>
-                  <div className="file-main">
-                    <h2>{agent.displayName}</h2>
-                    <p>{agent.displayDescription}</p>
-                    <small>{agent.sourceState} · {agent.serviceId} · PREFLIGHT ONLY</small>
-                  </div>
-                  <dl>
-                    <div><dt>ID</dt><dd>#{agent.tokenId}</dd></div>
-                    <div><dt>Category</dt><dd>{agent.category}</dd></div>
-                    <div><dt>Quote</dt><dd>{agent.price}</dd></div>
-                    <div><dt>Owner</dt><dd>{agent.displayOwner}</dd></div>
-                  </dl>
-                  <a href={'/registry/' + agent.tokenId}>Evidence</a>
-                </article>
+              {agents.map((agent) => (
+                <div className="leaderboard-row" key={agent.tokenId}>
+                  <strong>—</strong>
+                  <span><b>{agent.displayName}</b><small>{agent.category}</small></span>
+                  <span className="gate-pass">PASS</span>
+                  <span>{agent.price}</span>
+                  <span className="gate-pending">NOT TESTED</span>
+                </div>
               ))}
-            </div>
+              <p className="leaderboard-footnote">A performance winner appears only after comparable paid tasks produce sourced results.</p>
+            </section>
 
-            <div className="win95-actions">
-              <a href="https://8004scan.io/agents?chain=56" target="_blank" rel="noreferrer">Open BSC registry</a>
-              <a href="https://agent.brainonbnb.com/.well-known/agent-card.json" target="_blank" rel="noreferrer">Inspect A2A Agent Card</a>
-            </div>
-          </section>
-        </div>
+            <aside className="active-agent-panel">
+              <header><p>ACTIVE AGENTS</p><strong>0</strong></header>
+              <h3>No funded Grabit jobs</h3>
+              <p>An accepted quote is not an active agent. This panel changes only after a real ERC-8183 Job is funded and verified.</p>
+              <div className="active-empty-state"><span>[ EMPTY ]</span><small>C:\GRABIT\ACTIVE_JOBS</small></div>
+            </aside>
+          </div>
+        </section>
 
-        <footer className="win95-statusbar">
-          <span>{rows.length} category candidate(s)</span>
-          <span>{available}/4 REGISTRY · NEGOTIATED 4/4 · DELIVERED 0/4</span>
-          <span>BNB CHAIN ID: 56 · NO MOCK FALLBACK</span>
+        <footer className="win95-statusbar command-statusbar">
+          <span>STORE {agents.length} AGENTS</span>
+          <span>IDENTITY 4/4 · QUOTE 4/4 · RESULT 0/4 · JOB 0/1</span>
+          <span>BSC 56 · EVIDENCE MODE</span>
         </footer>
       </section>
     </main>
