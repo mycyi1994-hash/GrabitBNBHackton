@@ -94,6 +94,7 @@ The scope and evidence rules were frozen on 2026-08-29:
 - [Live Agent verification registry](docs/LIVE_AGENT_REGISTRY.json)
 - [Live Agent discovery report](docs/AGENT_DISCOVERY_REPORT.md)
 - [Current delivery progress](docs/PROGRESS.md)
+- [User test checklist](docs/USER_TEST_CHECKLIST.md)
 - [ERC-8183 paid canary plan](docs/ERC8183_CANARY_PLAN.md)
 
 Registration alone is insufficient. Metadata, endpoint and category-task checks are required; Direct Hire also requires execution evidence.

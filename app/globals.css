@@ -4417,6 +4417,55 @@ body {
 .simple-flow-strip span.is-current { background: #000080; color: #fff; }
 .simple-flow-strip b { font-size: 20px; }
 
+.user-test-checklist {
+  margin: 0 0 8px;
+  border: 3px solid;
+  border-color: #fff #555 #555 #fff;
+  background: #d6d2c8;
+  color: #111;
+}
+
+.user-test-checklist summary {
+  display: flex;
+  min-height: 48px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #000080;
+  color: #fff;
+  font: 900 15px/1.2 "Courier New", monospace;
+  list-style: none;
+}
+
+.user-test-checklist summary::-webkit-details-marker { display: none; }
+.user-test-checklist summary::after { content: "OPEN +"; flex: 0 0 auto; color: var(--dos-amber); }
+.user-test-checklist[open] summary::after { content: "CLOSE -"; }
+
+.user-test-checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+  padding: 2px;
+  background: #777;
+}
+
+.user-test-checklist-grid section {
+  padding: 13px 14px;
+  background: #f4f1e8;
+}
+
+.user-test-checklist-grid strong {
+  display: block;
+  color: #000080;
+  font: 900 14px/1.2 "Courier New", monospace;
+}
+
+.user-test-checklist-grid ol { margin: 9px 0 0; padding-left: 22px; }
+.user-test-checklist-grid li { margin-top: 7px; font-size: 14px; line-height: 1.4; }
+.user-test-checklist > p { margin: 0; padding: 10px 13px; font-size: 14px; font-weight: 800; }
+
 .simple-activate-shell .hire-execution-console {
   gap: 8px;
 }
@@ -4494,6 +4543,7 @@ body {
 
 @media (max-width: 760px) {
   .simple-activate-intro { grid-template-columns: 1fr; }
+  .user-test-checklist-grid { grid-template-columns: 1fr; }
   .simple-agent-title { align-items: flex-start; }
   .simple-flow-strip span { min-height: 58px; }
   .simple-job-progress { display: grid; }

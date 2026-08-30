@@ -45,6 +45,31 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
           </div>
         </section>
 
+        <details className="user-test-checklist">
+          <summary>WHAT SHOULD I TEST? · 5 MIN CHECKLIST</summary>
+          <div className="user-test-checklist-grid">
+            <section>
+              <strong>TEST NOW · NO WALLET</strong>
+              <ol>
+                <li>Click <b>PREVIEW AGENT RESULT</b>.</li>
+                <li>Confirm a verdict and four large metrics appear.</li>
+                <li>Confirm it says <b>PREVIEW</b>, <b>NO JOB</b> and <b>NO CAPITAL MOVED</b>.</li>
+                <li>Return to the Store and repeat for all four Agent categories.</li>
+              </ol>
+            </section>
+            <section>
+              <strong>TEST LATER · TESTNET WALLET</strong>
+              <ol>
+                <li>Connect a wallet on BSC Testnet, chain 97.</li>
+                <li>Run preflight after receiving tBNB and test $U.</li>
+                <li>Confirm the five Hire transactions one at a time.</li>
+                <li>Run Agent, verify the result, wait 15 minutes and settle.</li>
+              </ol>
+            </section>
+          </div>
+          <p>If something fails, send the Agent name, failed step and one screenshot or error message.</p>
+        </details>
+
         <HireExecutionConsole
           tokenId={selected.tokenId}
           agentName={selected.name}
