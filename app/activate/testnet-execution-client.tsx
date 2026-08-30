@@ -99,6 +99,14 @@ type StrategyResultView = {
   };
 };
 
+type PreviewResponse = {
+  preview?: boolean;
+  onchainDeliverable?: boolean;
+  disclaimer?: string;
+  result?: StrategyResultView;
+  error?: string;
+};
+
 const CONFIG = ERC8183_TESTNET;
 const freshSteps = (): RuntimeStep[] => Array.from({ length: 5 }, () => ({ status: 'idle' }));
 
@@ -125,6 +133,50 @@ function stateLabel(status: RuntimeStep['status']) {
   return 'READY';
 }
 
+function StrategyResultCard({ result, preview = false }: { result: StrategyResultView; preview?: boolean }) {
+  return (
+    <div className={`testnet-result-panel${preview ? ' is-preview' : ''}`}>
+      <div className="strategy-result-heading">
+        <div>
+          <span>{result.category || 'AGENT RESULT'}</span>
+          <strong>{result.verdict || 'RESULT SUBMITTED'}</strong>
+        </div>
+        <b>{preview ? 'PREVIEW · ' : ''}{result.dataQuality || 'VERIFIED RESULT'}</b>
+      </div>
+      <p className="strategy-result-summary">{result.summary}</p>
+      <div className="strategy-result-metrics">
+        {(result.metrics || []).map((metric, index) => (
+          <div key={`${metric.label || 'metric'}-${index}`}>
+            <span>{metric.label}</span>
+            <strong>{metric.value}</strong>
+            <small>{metric.note}</small>
+          </div>
+        ))}
+      </div>
+      <div className="strategy-result-guidance">
+        <section>
+          <strong>NEXT ACTIONS</strong>
+          <ol>{(result.actions || []).map((action) => <li key={action}>{action}</li>)}</ol>
+        </section>
+        <section>
+          <strong>RISKS</strong>
+          <ul>{(result.risks || []).map((risk) => <li key={risk}>{risk}</li>)}</ul>
+        </section>
+      </div>
+      <footer className="strategy-result-evidence">
+        <span>BLOCK {result.evidence?.sourceBlock || '?'}</span>
+        <span>{result.evidence?.gasPriceGwei || '?'} GWEI</span>
+        <span>{preview ? 'NO JOB · NO SIGNATURE' : 'ONCHAIN DELIVERABLE'}</span>
+        <span>NO CAPITAL MOVED</span>
+      </footer>
+      <details className="strategy-result-raw">
+        <summary>{preview ? 'VIEW RAW PREVIEW DATA' : 'VIEW RAW ONCHAIN RESULT'}</summary>
+        <pre>{JSON.stringify(result, null, 2)}</pre>
+      </details>
+    </div>
+  );
+}
+
 export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
   const wallet = useBscWallet();
   const [task, setTask] = useState(defaultTask);
@@ -137,6 +189,9 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
   const [jobId, setJobId] = useState<string | null>(null);
   const [providerSnapshot, setProviderSnapshot] = useState<ProviderSnapshot | null>(null);
   const [providerResult, setProviderResult] = useState<Record<string, unknown> | null>(null);
+  const [previewResult, setPreviewResult] = useState<StrategyResultView | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
   const [message, setMessage] = useState('No transaction has been sent.');
   const [runningStep, setRunningStep] = useState<number | null>(null);
   const [providerAction, setProviderAction] = useState<'submit' | 'settle' | null>(null);
@@ -206,6 +261,28 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
     const timer = window.setTimeout(() => void loadQuote(defaultTask), 0);
     return () => window.clearTimeout(timer);
   }, [defaultTask, loadQuote]);
+
+  const loadPreview = useCallback(async () => {
+    setPreviewLoading(true);
+    setPreviewError(null);
+    try {
+      const response = await fetch(
+        `/api/hire/strategy-preview?registry=${encodeURIComponent(tokenId)}&task=${encodeURIComponent(task)}`,
+        { cache: 'no-store' },
+      );
+      const payload = await response.json() as PreviewResponse;
+      if (!response.ok || !payload.preview || !payload.result) {
+        throw new Error(payload.error || 'Agent strategy preview unavailable.');
+      }
+      setPreviewResult(payload.result);
+      setMessage('Read-only Agent preview generated. No wallet, Job or transaction was used.');
+    } catch (error) {
+      setPreviewResult(null);
+      setPreviewError(error instanceof Error ? error.message : 'Agent strategy preview unavailable.');
+    } finally {
+      setPreviewLoading(false);
+    }
+  }, [task, tokenId]);
 
   const checkWallet = useCallback(async () => {
     setCheckingWallet(true);
@@ -458,6 +535,22 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
             {quoteLoading ? 'LOADING...' : 'REFRESH QUOTE'}
           </button>
         </div>
+        <div className="strategy-preview-launch">
+          <div>
+            <strong>See what this Agent actually returns</strong>
+            <span>Read-only preview · no wallet · no signature · no payment</span>
+          </div>
+          <button
+            type="button"
+            className="retro-button primary"
+            disabled={previewLoading}
+            onClick={() => void loadPreview()}
+          >
+            {previewLoading ? 'RUNNING AGENT...' : previewResult ? 'REFRESH PREVIEW' : 'PREVIEW AGENT RESULT'}
+          </button>
+        </div>
+        {previewError ? <div className="hire-alert is-error">{previewError}</div> : null}
+        {previewResult ? <StrategyResultCard result={previewResult} preview /> : null}
         <details className="simple-technical-details">
           <summary>VIEW OR EDIT AGENT TASK</summary>
           <label className="hire-field">
@@ -641,46 +734,7 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
             <div><span>POLICY</span><strong>15 MIN OPTIMISTIC</strong></div>
           </div>
         ) : null}
-        {providerResult && resultView ? (
-          <div className="testnet-result-panel">
-            <div className="strategy-result-heading">
-              <div>
-                <span>{resultView.category || 'AGENT RESULT'}</span>
-                <strong>{resultView.verdict || 'RESULT SUBMITTED'}</strong>
-              </div>
-              <b>{resultView.dataQuality || 'VERIFIED RESULT'}</b>
-            </div>
-            <p className="strategy-result-summary">{resultView.summary}</p>
-            <div className="strategy-result-metrics">
-              {(resultView.metrics || []).map((metric) => (
-                <div key={metric.label}>
-                  <span>{metric.label}</span>
-                  <strong>{metric.value}</strong>
-                  <small>{metric.note}</small>
-                </div>
-              ))}
-            </div>
-            <div className="strategy-result-guidance">
-              <section>
-                <strong>NEXT ACTIONS</strong>
-                <ol>{(resultView.actions || []).map((action) => <li key={action}>{action}</li>)}</ol>
-              </section>
-              <section>
-                <strong>RISKS</strong>
-                <ul>{(resultView.risks || []).map((risk) => <li key={risk}>{risk}</li>)}</ul>
-              </section>
-            </div>
-            <footer className="strategy-result-evidence">
-              <span>BLOCK {resultView.evidence?.sourceBlock || '?'}</span>
-              <span>{resultView.evidence?.gasPriceGwei || '?'} GWEI</span>
-              <span>NO CAPITAL MOVED</span>
-            </footer>
-            <details className="strategy-result-raw">
-              <summary>VIEW RAW ONCHAIN RESULT</summary>
-              <pre>{JSON.stringify(providerResult, null, 2)}</pre>
-            </details>
-          </div>
-        ) : null}
+        {providerResult && resultView ? <StrategyResultCard result={resultView} /> : null}
       </section>
       ) : null}
 

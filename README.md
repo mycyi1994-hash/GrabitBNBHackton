@@ -24,6 +24,7 @@ It is being built for the **BNB Chain Smart Money Era: Build the Era** hackathon
 - Testnet-only reference provider with a signed two-hour quote, onchain Job validation and server-held signing key
 - Four category-specific reference engines: rebalance sizing, grid construction, live indexed Venus yield ranking and health-factor stress testing
 - A one-card Agent result view ordered as verdict, key metrics, next actions, risks and onchain evidence
+- One-click read-only strategy preview with no wallet, signature, Job or payment, clearly separated from delivered onchain results
 - Five explicit chain-97 client transactions followed by user-triggered provider submission and optimistic settlement
 - Live provider quote plus BSC contract verification before any wallet prompt
 - Five sequential user-signed transactions: create, bind policy, set budget, exact approval and fund
@@ -64,6 +65,7 @@ Supported prototype queries:
 - GET /api/agents?q=PancakeSwap
 - GET /api/hire/quote?registry=304493
 - GET /api/hire/testnet-readiness
+- GET /api/hire/strategy-preview?registry=304493
 - GET /api/hire/testnet-quote?registry=304493
 - GET /api/hire/testnet-provider?jobId=1
 - POST /api/hire/testnet-provider with an allowlisted jobId and submit or settle action

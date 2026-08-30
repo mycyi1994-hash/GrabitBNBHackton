@@ -22,6 +22,7 @@ Completion means the planned step produced its internal deliverable. It does not
 | Four required categories have a chain-56 identity | 4 / 4 |
 | Four categories have a reachable service and accepted quote | 4 / 4 |
 | Four category-specific reference strategy engines | 4 / 4 |
+| Wallet-free strategy preview route and UI | 1 / 1 |
 | Four categories have a delivered canary task | 0 / 4 |
 | Completed ERC-8183 Job | 0 / 1 minimum |
 | Mainnet execution contracts verified | 5 / 5 |
