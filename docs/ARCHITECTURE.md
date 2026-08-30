@@ -8,22 +8,24 @@ flowchart LR
   Detail --> Compare
   Compare --> Hire
   Detail --> Hire
-  Hire --> Permissions
-  Permissions --> ERC8183[ERC-8183 job]
+  Hire --> Quote[Live quote + allowlist]
+  Quote --> Preflight[Wallet preflight]
+  Preflight --> ERC8183[Five user-signed ERC-8183 calls]
   ERC8183 --> Dashboard
-  Dashboard --> Revoke
+  Dashboard --> Outcome[Complete / dispute / refund]
 ~~~
 
 ## Data and execution flow
 
 ~~~mermaid
 flowchart TD
-  Browser[Marketplace UI] --> API[Server API routes]
+  Browser[Marketplace UI] --> API[Server quote and Job proxy]
   API --> Scan[8004scan API]
   Scan --> Registry[ERC-8004 identities and feedback]
+  API --> Seller[Provider A2A and quote endpoint]
+  API --> RPC[BNB Mainnet read checks]
   Browser --> Wallet[User wallet]
-  Wallet --> Altana[Altana scoped session]
-  Altana --> Job[ERC-8183 job escrow]
+  Wallet --> Job[ERC-8183 escrow]
   Job --> Agent[BNB Agent Studio agent]
   Agent --> Protocol[PancakeSwap / Venus / Lista]
   Agent --> Receipt[Deliverable and onchain receipt]
@@ -34,15 +36,19 @@ flowchart TD
 
 - 8004scan credentials stay in the server runtime.
 - The marketplace never stores an unrestricted user private key.
+- The server returns no execution plan unless provider, service, chain, addresses, amount, selectors and live contract checks all pass.
+- The current provider quote is unsigned; the UI exposes this instead of implying cryptographic quote authentication.
+- Each transaction is simulated immediately before `eth_sendTransaction` and requires a separate user action.
+- Approval is exactly 0.10 $U, never unlimited. Only the Fund call moves $U; all five calls can spend BNB gas.
+- Local resume data contains Job IDs and transaction hashes only, never wallet secrets.
 - Session permissions must include a call allowlist, spend cap and expiry.
 - Agent performance is stored with its source, observation window and update time.
 - Testnet and mock records are visibly labelled.
 
 ## Next integration milestones
 
-1. Map the live 8004scan response schema into the local Agent view model.
-2. Add live-status verification for seller endpoints.
-3. Connect a wallet provider on BSC testnet.
-4. Create and track one real ERC-8183 testnet job.
-5. Grant and revoke one Altana session onchain.
-6. Add a PancakeSwap-backed reference agent and explorer receipts.
+1. Fund and deliver one read-only Yield canary through the guarded Mainnet console.
+2. Preserve the five transaction receipts, recovered Job ID, deliverable digest and full result.
+3. Add completion, dispute and refund controls only after the first lifecycle is observed.
+4. Grant and revoke one Altana session onchain with a contract allowlist, spend cap and expiry.
+5. Add a PancakeSwap-backed reference agent and explorer receipts.

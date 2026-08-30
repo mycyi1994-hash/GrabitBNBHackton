@@ -1,7 +1,7 @@
 'use client';
 /* eslint-disable @next/next/no-html-link-for-pages */
 
-import { BSC_TESTNET, useBscWallet } from '@/components/use-bsc-wallet';
+import { BSC_MAINNET, useBscWallet } from '@/components/use-bsc-wallet';
 
 type SiteHeaderProps = {
   active?: 'explore' | 'compare' | 'dashboard';
@@ -9,11 +9,11 @@ type SiteHeaderProps = {
 };
 
 export function SiteHeader({ active = 'explore', compact = false }: SiteHeaderProps) {
-  const { account, hasProvider, connecting, isTestnet, error, connect, repairNetwork } = useBscWallet();
+  const { account, chainId, hasProvider, connecting, isMainnet, error, connect } = useBscWallet();
   const walletLabel = connecting
     ? 'Connecting...'
     : account
-      ? account.slice(0, 6) + '...' + account.slice(-4) + (isTestnet ? ' · Testnet' : ' · Switch')
+      ? account.slice(0, 6) + '...' + account.slice(-4) + (isMainnet ? ' · Mainnet' : ` · Chain ${chainId ?? '?'}`)
       : hasProvider
         ? 'Connect wallet'
         : 'Wallet unavailable';
@@ -25,11 +25,11 @@ export function SiteHeader({ active = 'explore', compact = false }: SiteHeaderPr
           <header><strong>NETWORK CONNECTION FAILED</strong><span>!</span></header>
           <p>{error}</p>
           <dl>
-            <div><dt>RPC</dt><dd>{BSC_TESTNET.rpcUrl}</dd></div>
-            <div><dt>CHAIN</dt><dd>97 / tBNB</dd></div>
+            <div><dt>RPC</dt><dd>{BSC_MAINNET.rpcUrls[0]}</dd></div>
+            <div><dt>CHAIN</dt><dd>56 / BNB</dd></div>
           </dl>
           <div className="wallet-recovery-actions">
-            <button type="button" onClick={() => void repairNetwork().catch(() => undefined)} disabled={connecting}>Repair network</button>
+            <button type="button" onClick={() => void connect().catch(() => undefined)} disabled={connecting}>Retry wallet</button>
             <a href="https://docs.bnbchain.org/bnb-smart-chain/developers/wallet-configuration/" target="_blank" rel="noreferrer">Manual settings</a>
           </div>
         </aside>
@@ -46,10 +46,10 @@ export function SiteHeader({ active = 'explore', compact = false }: SiteHeaderPr
           <a className={active === 'dashboard' ? 'active' : ''} href="/dashboard">Dashboard</a>
         </div>
 
-        <button className="wallet-button" type="button" onClick={() => void connect().catch(() => undefined)} disabled={connecting} title={error ?? 'Connect an EIP-1193 wallet to BSC Testnet'}>
-          <span className={'wallet-dot ' + (account && isTestnet ? 'is-connected' : '')} /> {walletLabel}
+        <button className="wallet-button" type="button" onClick={() => void connect().catch(() => undefined)} disabled={connecting} title={error ?? 'Connect an EIP-1193 wallet. This global button never switches networks.'}>
+          <span className={'wallet-dot ' + (account && isMainnet ? 'is-connected' : '')} /> {walletLabel}
         </button>
-        <span className="taskbar-clock">BSC 97</span>
+        <span className="taskbar-clock">BSC 56</span>
       </nav>
     </>
   );

@@ -6,6 +6,8 @@ import {
   getRegistryIdForLegacySlug,
 } from '@/lib/marketplace-data';
 import { marketplaceCandidates } from '@/lib/marketplace-candidates';
+import { CANARY_TASKS } from '@/lib/erc8183';
+import { HireExecutionConsole } from '@/app/activate/execution-client';
 
 export const metadata: Metadata = {
   title: 'Execution gate — Agent Market',
@@ -29,11 +31,11 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
         <a className="breadcrumb back-link" href={'/registry/' + selected.tokenId}>← Back to registry evidence</a>
 
         <div className="execution-gate-layout">
-          <section className="execution-lock">
-            <pre className="lock-ascii" aria-hidden="true">{'  .--------.\n  |  LOCK  |\n  | [____] |\n  \'---||---\''}</pre>
-            <p className="eyebrow">ERC-8183 execution gate</p>
-            <h1>Hire is intentionally locked.</h1>
-            <p>We have verified the identity, reached the A2A service and accepted a quote. We have not yet paid for or received a real task result.</p>
+          <section className="execution-lock execution-live-intro">
+            <pre className="lock-ascii" aria-hidden="true">{'  __________________\n / ________________ \\\n| | GRABIT.EXE      | |\n| | > HIRE AGENT_  | |\n| |________________| |\n \\_____[______]____/'}</pre>
+            <p className="eyebrow">ERC-8183 mainnet console</p>
+            <h1>Five signatures. Zero hidden calls.</h1>
+            <p>The plan is verified against BSC mainnet before the wallet opens. No transaction runs automatically; only the final Fund step moves 0.10 $U into escrow.</p>
           </section>
 
           <section className="execution-checklist">
@@ -48,16 +50,18 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
               <div><span>4</span><p><strong>Task delivery</strong><small>No paid result inspected</small></p></div>
               <div><span>5</span><p><strong>Onchain settlement</strong><small>No completed ERC-8183 Job receipt</small></p></div>
             </div>
-            <div className="execution-note">
-              <strong>Why the old button is gone</strong>
-              <p>A zero-value transaction to your own wallet can prove wallet connectivity, but it is not a hire. The button returns only after Stage 4 performs a real agent job.</p>
-            </div>
+            <div className="execution-note"><strong>Current proof level</strong><p>The contracts and quote path are verified. A paid Grabit Job is still 0 / 1 until you complete the five wallet confirmations and the deliverable arrives.</p></div>
             <div className="win95-actions">
               <a href={'/registry/' + selected.tokenId}>Open identity evidence</a>
               <a href="/dashboard">Return to dashboard</a>
             </div>
           </section>
         </div>
+        <HireExecutionConsole
+          tokenId={selected.tokenId}
+          agentName={selected.name}
+          defaultTask={CANARY_TASKS[selected.tokenId]}
+        />
       </div>
     </main>
   );
