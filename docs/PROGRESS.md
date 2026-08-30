@@ -21,12 +21,13 @@ Completion means the planned step produced its internal deliverable. It does not
 | --- | --- |
 | Four required categories have a chain-56 identity | 4 / 4 |
 | Four categories have a reachable service and accepted quote | 4 / 4 |
+| Four category-specific reference strategy engines | 4 / 4 |
 | Four categories have a delivered canary task | 0 / 4 |
 | Completed ERC-8183 Job | 0 / 1 minimum |
 | Mainnet execution contracts verified | 5 / 5 |
 | Testnet deployment checks | 7 / 7 |
 | Testnet wallet/network preflight | BUILT · USER CHECK PENDING |
-| Testnet Agent provider | CODE COMPLETE · SECRET + GAS PENDING |
+| Testnet Agent provider | CODE + SECRET COMPLETE · GAS PENDING |
 | Testnet Hire transactions | 0 / 5 |
 | Live quote and call allowlist checks | 21 / 21 |
 | Sequential wallet execution console | 1 / 1 |
@@ -58,7 +59,7 @@ The known provider self-test Job `#56657` is `SUBMITTED`, but its client is the 
 
 1. Verify chain 97, both proxy implementations, router policy allowlist, payment token and 15-minute dispute window: COMPLETE — 7 / 7 live checks.
 2. Add explicit Testnet/Mainnet selection, wallet chain switching, tBNB/test-$U balances and faucet links: COMPLETE.
-3. Connect a chain-97 reference Agent provider with a signed quote and delivery path: CODE COMPLETE — production secret registration and provider tBNB funding remain.
+3. Connect a chain-97 reference Agent provider with a signed quote and delivery path: CODE + PRODUCTION SECRET COMPLETE — provider tBNB funding remains.
 4. Execute and record Create → Policy → Budget → Approval → Fund → Submit → Settle on Testnet: PENDING — requires the user's wallet confirmations after the provider is funded.
 
 The Testnet screen now builds its own signed chain-97 plan. It never rewrites the external Agent's chain-56 quote. Every client call is separately confirmed; provider submission and settlement are separate user-triggered actions.
@@ -74,6 +75,6 @@ The Testnet screen now builds its own signed chain-97 plan. It never rewrites th
 
 1. Open Testnet mode and connect the intended client wallet.
 2. Obtain tBNB and at least 0.10 test $U, then pass all five wallet checks.
-3. Register the fresh Testnet-only provider secret in production and send faucet tBNB to its public address.
+3. Send faucet tBNB to the registered provider public address.
 4. Verify its signed quote, exact selectors and delivery endpoint before enabling signatures.
 5. Run the five Testnet Hire transactions one at a time, submit the result and settle after 15 minutes.

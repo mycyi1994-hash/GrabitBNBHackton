@@ -22,6 +22,8 @@ It is being built for the **BNB Chain Smart Money Era: Build the Era** hackathon
 - Live BSC Testnet checks for chain 97, proxy implementations, kernel token, policy allowlist and dispute window
 - Testnet wallet preflight for tBNB and test $U, with direct faucet links and zero automatic transactions
 - Testnet-only reference provider with a signed two-hour quote, onchain Job validation and server-held signing key
+- Four category-specific reference engines: rebalance sizing, grid construction, live indexed Venus yield ranking and health-factor stress testing
+- A one-card Agent result view ordered as verdict, key metrics, next actions, risks and onchain evidence
 - Five explicit chain-97 client transactions followed by user-triggered provider submission and optimistic settlement
 - Live provider quote plus BSC contract verification before any wallet prompt
 - Five sequential user-signed transactions: create, bind policy, set budget, exact approval and fund
@@ -70,7 +72,7 @@ Supported prototype queries:
 
 ## Planned onchain path
 
-1. Configure the fresh Testnet-only reference-provider key and fund its public address with tBNB gas.
+1. Fund the configured Testnet-only reference-provider address with tBNB gas.
 2. Fund a client wallet with tBNB and test $U and pass the chain-97 wallet preflight.
 3. Run and record the five-step Testnet Hire lifecycle, provider result submission and 15-minute settlement.
 4. Use the guarded Mainnet console to run one paid 0.10 $U Yield canary.

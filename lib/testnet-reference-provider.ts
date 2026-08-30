@@ -14,6 +14,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { bscTestnet } from 'viem/chains';
 import type { CandidateSnapshot } from '@/lib/marketplace-candidates';
 import { ERC8183_TESTNET } from '@/lib/erc8183';
+import { buildCategoryStrategyResult } from '@/lib/reference-agent-strategies';
 
 const CONFIG = ERC8183_TESTNET;
 
@@ -289,19 +290,15 @@ export async function buildReferenceDeliverable(jobId: bigint, job: TestnetJob) 
   const description = parseReferenceDescription(job.description);
   if (!description) throw new Error('Job description is not a Grabit Testnet reference task.');
   const result = {
-    version: 1,
-    kind: 'grabit-testnet-canary-result',
+    ...await buildCategoryStrategyResult({
+      registry: description.registry,
+      service: description.service,
+      task: description.task,
+      sourceBlock: blockNumber.toString(),
+      gasPriceGwei: formatGwei(gasPrice),
+      observedAt: new Date().toISOString(),
+    }),
     jobId: jobId.toString(),
-    registry: description.registry,
-    service: description.service,
-    task: description.task,
-    network: 'BSC Testnet',
-    chainId: CONFIG.chainId,
-    sourceBlock: blockNumber.toString(),
-    gasPriceGwei: formatGwei(gasPrice),
-    capitalMovedByAgent: false,
-    finding: 'The reference Agent verified the live chain, measured gas and returned a read-only execution canary. No DeFi position was moved.',
-    observedAt: new Date().toISOString(),
   };
   const resultJson = JSON.stringify(result);
   return {

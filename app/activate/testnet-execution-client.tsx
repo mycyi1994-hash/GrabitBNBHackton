@@ -83,6 +83,22 @@ type StoredProgress = {
   steps: RuntimeStep[];
 };
 
+type StrategyResultView = {
+  category?: string;
+  verdict?: string;
+  summary?: string;
+  dataQuality?: string;
+  metrics?: Array<{ label?: string; value?: string; note?: string }>;
+  actions?: string[];
+  risks?: string[];
+  evidence?: {
+    sourceBlock?: string;
+    gasPriceGwei?: string;
+    observedAt?: string;
+    externalSource?: string;
+  };
+};
+
 const CONFIG = ERC8183_TESTNET;
 const freshSteps = (): RuntimeStep[] => Array.from({ length: 5 }, () => ({ status: 'idle' }));
 
@@ -414,6 +430,7 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
   const integrityChecks: IntegrityCheck[] = plan?.integrity.checks || [];
   const secondsUntilSettle = providerSnapshot?.secondsUntilSettle;
   const currentCall = nextStep >= 0 ? plan?.calls[nextStep] : null;
+  const resultView = providerResult as StrategyResultView | null;
 
   return (
     <div className="hire-execution-console testnet-execution-console">
@@ -624,13 +641,44 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
             <div><span>POLICY</span><strong>15 MIN OPTIMISTIC</strong></div>
           </div>
         ) : null}
-        {providerResult ? (
+        {providerResult && resultView ? (
           <div className="testnet-result-panel">
-            <div>
-              <strong>AGENT DELIVERABLE</strong>
-              <span>Read-only reference result, anchored by its on-chain hash</span>
+            <div className="strategy-result-heading">
+              <div>
+                <span>{resultView.category || 'AGENT RESULT'}</span>
+                <strong>{resultView.verdict || 'RESULT SUBMITTED'}</strong>
+              </div>
+              <b>{resultView.dataQuality || 'VERIFIED RESULT'}</b>
             </div>
-            <pre>{JSON.stringify(providerResult, null, 2)}</pre>
+            <p className="strategy-result-summary">{resultView.summary}</p>
+            <div className="strategy-result-metrics">
+              {(resultView.metrics || []).map((metric) => (
+                <div key={metric.label}>
+                  <span>{metric.label}</span>
+                  <strong>{metric.value}</strong>
+                  <small>{metric.note}</small>
+                </div>
+              ))}
+            </div>
+            <div className="strategy-result-guidance">
+              <section>
+                <strong>NEXT ACTIONS</strong>
+                <ol>{(resultView.actions || []).map((action) => <li key={action}>{action}</li>)}</ol>
+              </section>
+              <section>
+                <strong>RISKS</strong>
+                <ul>{(resultView.risks || []).map((risk) => <li key={risk}>{risk}</li>)}</ul>
+              </section>
+            </div>
+            <footer className="strategy-result-evidence">
+              <span>BLOCK {resultView.evidence?.sourceBlock || '?'}</span>
+              <span>{resultView.evidence?.gasPriceGwei || '?'} GWEI</span>
+              <span>NO CAPITAL MOVED</span>
+            </footer>
+            <details className="strategy-result-raw">
+              <summary>VIEW RAW ONCHAIN RESULT</summary>
+              <pre>{JSON.stringify(providerResult, null, 2)}</pre>
+            </details>
           </div>
         ) : null}
       </section>
