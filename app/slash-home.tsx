@@ -30,30 +30,26 @@ const agentProfiles = [
   {
     role: 'PORTFOLIO MAINTENANCE',
     risk: 'CONTROLLED',
+    summary: 'Reprices a drifted portfolio against executable BSC pool routes before rebalancing.',
     bestFor: 'Allocations that have drifted away from their target weights',
-    mode: 'RULES-BASED AUTOMATION',
-    capability: 'POOL COSTS · TARGET WEIGHTS',
   },
   {
     role: 'SYSTEMATIC EXECUTION',
     risk: 'ACTIVE',
+    summary: 'Builds fee-aware grid levels and break-even spacing for a selected BSC pool.',
     bestFor: 'Traders who need pool-costed grid levels before execution',
-    mode: 'SYSTEMATIC ACTIVE',
-    capability: 'GRID LEVELS · BREAK-EVEN',
   },
   {
     role: 'YIELD ROUTING',
     risk: 'VARIABLE',
+    summary: 'Ranks Venus stablecoin markets by base supply APY and estimated switching cost.',
     bestFor: 'Stablecoin suppliers comparing Venus markets after gas',
-    mode: 'MARKET RANKING',
-    capability: 'VENUS APY · GAS CHECK',
   },
   {
     role: 'RISK MONITOR',
     risk: 'DEFENSIVE',
+    summary: 'Monitors Venus health factor, liquidation distance and collateral stress on-chain.',
     bestFor: 'Borrowers who need liquidation-distance and stress alerts',
-    mode: 'CONTINUOUS MONITOR',
-    capability: 'HEALTH FACTOR · STRESS',
   },
 ];
 
@@ -85,9 +81,8 @@ function AgentCard({ agent, index }: { agent: SlashAgent; index: number }) {
             <span className="grabit-risk-badge">{profile.risk}</span>
           </div>
           <h2>{shortName(agent.name)}</h2>
-          <p>{agent.description}</p>
+          <p>{profile.summary}</p>
           <div className="grabit-best-for"><span>BEST FOR</span><b>{profile.bestFor}</b></div>
-          <small>{profile.mode} · {agent.live ? 'LIVE REGISTRY' : 'REGISTRY CHECK'} · BSC</small>
         </div>
         <div className="grabit-card-planet" aria-hidden="true">
           <AgentCelestial variant={variant} />
@@ -97,7 +92,7 @@ function AgentCard({ agent, index }: { agent: SlashAgent; index: number }) {
         <div><dt>ENDPOINT</dt><dd>{verification}<small>{agent.live ? 'LIVE' : 'WAIT'}</small></dd></div>
         <div><dt>JOB PRICE</dt><dd>{agent.price}</dd></div>
         <div><dt>FEEDBACK</dt><dd>{agent.feedbacks ?? '—'}</dd></div>
-        <div><dt>VALIDATIONS</dt><dd>{agent.validations ?? '—'}<small>{profile.capability}</small></dd></div>
+        <div><dt>VALIDATIONS</dt><dd>{agent.validations ?? '—'}</dd></div>
       </dl>
       <div className="grabit-card-actions">
         <div className="grabit-capability-chips" aria-label="Agent capabilities">

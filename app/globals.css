@@ -10635,6 +10635,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
 body:has(.grabit-market-shell) {
   margin: 0;
   height: 100dvh;
+  overflow-x: hidden;
   overflow: hidden;
   color: #f2efe8;
   background: #06070a;
@@ -11333,11 +11334,12 @@ body:has(.grabit-market-shell) .sfx-toggle {
   gap: 7px;
   align-items: baseline;
   max-width: 100%;
+  min-height: 1.2em;
   margin: 0;
-  overflow: hidden;
+  overflow: visible;
   color: var(--market-text);
-  font: 500 clamp(16px, 1.22vw, 21px)/1 var(--font-geist-mono), monospace;
-  text-overflow: ellipsis;
+  font: 500 clamp(16px, 1.22vw, 21px)/1.2 var(--font-geist-mono), monospace;
+  text-align: center;
   white-space: nowrap;
 }
 
@@ -11770,7 +11772,8 @@ body:has(.grabit-market-shell) .sfx-toggle {
     grid-template-rows: 116px minmax(0, 1fr) 54px;
     height: auto;
     min-height: 100dvh;
-    overflow: visible;
+    overflow-x: clip;
+    overflow-y: visible;
   }
 
   .grabit-market-topbar {
@@ -11913,6 +11916,10 @@ body:has(.grabit-market-shell) .sfx-toggle {
     right: -8%;
     width: 58%;
     opacity: 0.72;
+  }
+
+  .agent-celestial-id {
+    display: none;
   }
 
   .grabit-market-disclaimer {
