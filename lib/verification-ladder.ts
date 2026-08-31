@@ -115,6 +115,13 @@ export function ladderState(evidence: AgentEvidence): LadderState {
   };
 }
 
+/** Where a discovery candidate's recorded level sits on the ladder. */
+export const DISCOVERED_RUNG: Record<string, number> = {
+  REGISTERED: 1,
+  METADATA_VALID: 2,
+  REACHABLE: 3,
+};
+
 /**
  * The four indexed candidates share one verification gate today. Metadata
  * validity is implied by a reachable endpoint that returned a usable card, and

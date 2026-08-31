@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActiveAgents } from '@/components/active-agents';
 import { EvidenceLeaderboard } from '@/components/evidence-leaderboard';
+import { StoreGrid, type StoreAgent } from '@/components/store-grid';
 import { agentProfiles as agentProfileMap } from '@/lib/agent-profiles';
 import { marketplaceCategoryOrder } from '@/lib/marketplace-candidates';
 
@@ -20,6 +21,7 @@ type SlashAgent = {
   feedbacks: number | null;
   validations: number | null;
   endpointVerified: boolean | null;
+  observedAt: string;
 };
 
 type VerificationGate = {
@@ -36,6 +38,7 @@ type DiscoveredRow = {
   name: string;
   level: string;
   blocker: string;
+  observedAt: string;
 };
 
 type SlashHomeProps = {
@@ -44,8 +47,6 @@ type SlashHomeProps = {
   ownerConcentration: number;
   discovered: DiscoveredRow[];
 };
-
-type StoreFilter = 'all' | 'automate' | 'monitor';
 
 type DemoResult = {
   category?: string;
@@ -76,80 +77,8 @@ function shortName(name: string) {
   return name.replace(/^Brain on BNB\s*[—-]\s*/i, '');
 }
 
-function AgentCard({
-  agent,
-  index,
-  running,
-  onRun,
-}: {
-  agent: SlashAgent;
-  index: number;
-  running: boolean;
-  onRun: (agent: SlashAgent, index: number) => void;
-}) {
-  const profile = agentProfiles[index] ?? agentProfiles[0];
-  const variant = variants[index] ?? 'core';
-  const verification = agent.endpointVerified === true ? 'VERIFIED' : agent.live ? 'LIVE' : 'CHECK';
-
-  return (
-    <article className={'grabit-agent-card grabit-product-' + variant}>
-      <Link
-        className="grabit-card-hit"
-        href={'/activate?registry=' + agent.tokenId}
-        aria-label={'Open the Testnet terminal for ' + agent.name}
-      />
-      <div className="grabit-card-index" aria-hidden="true">
-        <span>{String(index + 1).padStart(2, '0')}</span><i />
-      </div>
-      <div className="grabit-card-hero">
-        <div className="grabit-card-copy">
-          <span className="grabit-product-role">{profile.role}</span>
-          <div className="grabit-card-labels">
-            <span className="grabit-agent-code">{agentCodes[index] ?? 'AGT'}</span>
-            <span className="grabit-registry-badge">ERC-8004 #{agent.tokenId}</span>
-            <span className="grabit-risk-badge">{profile.risk}</span>
-          </div>
-          <h2>{shortName(agent.name)}</h2>
-          <p>{profile.summary}</p>
-          <div className="grabit-best-for"><span>BEST FOR</span><b>{profile.bestFor}</b></div>
-        </div>
-        <div className="grabit-card-planet" aria-hidden="true">
-          <AgentCelestial variant={variant} />
-        </div>
-      </div>
-      <dl className="grabit-card-metrics">
-        <div><dt>ENDPOINT</dt><dd>{verification}<small>{agent.live ? 'LIVE' : 'WAIT'}</small></dd></div>
-        <div><dt>JOB PRICE</dt><dd>{agent.price}</dd></div>
-        <div><dt>FEEDBACK</dt><dd>{agent.feedbacks ?? '—'}</dd></div>
-        <div><dt>VALIDATIONS</dt><dd>{agent.validations ?? '—'}</dd></div>
-      </dl>
-      <div className="grabit-card-actions">
-        <div className="grabit-capability-chips" aria-label="Agent capabilities">
-          <span>BSC</span><span>TESTNET</span><span>A2A</span>
-        </div>
-        <button
-          className="grabit-view-agent"
-          type="button"
-          disabled={running}
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onRun(agent, index);
-          }}
-        >
-          <i aria-hidden="true" />
-          <span>{running ? 'OBSERVING...' : 'RUN AGENT'}</span>
-          <small>{running ? 'LIVE BSC' : 'LIVE DEMO'}</small>
-          <b aria-hidden="true">↗</b>
-        </button>
-      </div>
-    </article>
-  );
-}
-
 export function SlashHome({ agents, gate, ownerConcentration, discovered }: SlashHomeProps) {
   const [view, setView] = useState<'landing' | 'store'>('landing');
-  const [filter, setFilter] = useState<StoreFilter>('all');
   const [demoSelection, setDemoSelection] = useState<DemoSelection | null>(null);
   const [demoResult, setDemoResult] = useState<DemoResult | null>(null);
   const [demoError, setDemoError] = useState<string | null>(null);
@@ -159,13 +88,15 @@ export function SlashHome({ agents, gate, ownerConcentration, discovered }: Slas
   const boardRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef<HTMLDivElement>(null);
   const visibleAgents = agents.slice(0, 4);
+  const storeAgents: StoreAgent[] = visibleAgents.map((agent, index) => ({
+    tokenId: agent.tokenId,
+    crumb: agentProfileMap[marketplaceCategoryOrder[index]].crumb,
+    name: agent.name.replace(/^Brain on BNB\s*[—-]\s*/i, ''),
+    job: agentProfileMap[marketplaceCategoryOrder[index]].headline,
+    price: agent.price.replace('$U', 'test $U'),
+    observedAt: agent.observedAt,
+  }));
   const firstAgent = visibleAgents[0];
-  const indexedAgents = visibleAgents.map((agent, index) => ({ agent, index }));
-  const shownAgents = indexedAgents.filter(({ index }) => {
-    if (filter === 'automate') return index < 3;
-    if (filter === 'monitor') return index === 3;
-    return true;
-  });
 
   const scrollTo = useCallback((target: { current: HTMLElement | null }) => {
     target.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -270,27 +201,16 @@ export function SlashHome({ agents, gate, ownerConcentration, discovered }: Slas
             </div>
           </header>
 
-          <div className="grabit-market-toolbar">
-            <div className="grabit-strategy-filters" role="group" aria-label="Filter agents">
-              <button type="button" className={filter === 'all' ? 'is-active' : ''} aria-pressed={filter === 'all'} onClick={() => setFilter('all')}>ALL · 4</button>
-              <button type="button" className={filter === 'automate' ? 'is-active' : ''} aria-pressed={filter === 'automate'} onClick={() => setFilter('automate')}>AUTOMATE · 3</button>
-              <button type="button" className={filter === 'monitor' ? 'is-active' : ''} aria-pressed={filter === 'monitor'} onClick={() => setFilter('monitor')}>MONITOR · 1</button>
-            </div>
-            <p className="grabit-market-status">
-              <b>{String(shownAgents.length).padStart(2, '0')} AGENTS</b> · LIVE BSC REGISTRY
-            </p>
-          </div>
-
-          <section key={filter} className="grabit-agent-grid" ref={storeRef} aria-label="Agent marketplace">
-            {shownAgents.map(({ agent, index }) => (
-              <AgentCard
-                key={agent.tokenId}
-                agent={agent}
-                index={index}
-                running={demoRunning && demoSelection?.agent.tokenId === agent.tokenId}
-                onRun={runDemo}
-              />
-            ))}
+          <section className="store-surface" ref={storeRef} aria-label="Agent marketplace">
+            <StoreGrid
+              agents={storeAgents}
+              discovered={discovered}
+              runningTokenId={demoRunning ? (demoSelection?.agent.tokenId ?? null) : null}
+              onPreview={(tokenId) => {
+                const index = visibleAgents.findIndex((entry) => entry.tokenId === tokenId);
+                if (index >= 0) void runDemo(visibleAgents[index], index);
+              }}
+            />
           </section>
 
           <div ref={boardRef}>

@@ -22,6 +22,7 @@ export default async function Home() {
     feedbacks: agent.feedbacks,
     validations: agent.validations,
     endpointVerified: agent.endpointVerified,
+    observedAt: agent.observedAt,
   }));
 
   // How many of the surfaced identities share one provider wallet. The
@@ -40,6 +41,7 @@ export default async function Home() {
         name: candidate.name,
         level: candidate.level,
         blocker: candidate.blocker,
+        observedAt: candidate.observedAt,
       }))}
     />
   );
