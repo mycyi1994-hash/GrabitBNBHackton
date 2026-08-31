@@ -20,6 +20,8 @@ import {
 } from '@/lib/altana';
 import { CANARY_TASKS } from '@/lib/erc8183';
 import { marketplaceCandidates } from '@/lib/marketplace-candidates';
+import { candidateEvidence, HIRE_OPENS_AT, ladderState } from '@/lib/verification-ladder';
+import { getTestnetProviderAccount } from '@/lib/testnet-reference-provider';
 
 const NO_STORE = { 'cache-control': 'no-store' };
 
@@ -31,8 +33,27 @@ function relayMessage(error: unknown, fallback: string) {
   return message.length > 400 ? `${message.slice(0, 400)}…` : message || fallback;
 }
 
+/**
+ * Two different things are called "hire", and only one of them is gated.
+ *
+ * `canary` hires Grabit's own testnet reference provider. It is how an agent's
+ * category task gets run at all, which is what earns rung 4 — so gating it on
+ * rung 4 would be circular. It is always available.
+ *
+ * `marketplace` pays the external agent named in the registry, and that is
+ * blocked below rung 4, exactly as the detail screen says. The screen and this
+ * route must agree; before this split the screen said blocked and the route
+ * hired anyway.
+ */
+type HireMode = 'canary' | 'marketplace';
+
 export async function POST(request: Request) {
-  let body: { registry?: string; chainId?: number | string; dryRun?: boolean };
+  let body: {
+    registry?: string;
+    chainId?: number | string;
+    dryRun?: boolean;
+    mode?: HireMode;
+  };
   try {
     body = (await request.json()) as typeof body;
   } catch {
@@ -66,6 +87,23 @@ export async function POST(request: Request) {
     );
   }
 
+  const mode: HireMode = body.mode === 'marketplace' ? 'marketplace' : 'canary';
+  const ladder = ladderState(candidateEvidence());
+
+  if (mode === 'marketplace' && !ladder.hireAvailable) {
+    return Response.json(
+      {
+        state: 'BLOCKED',
+        reason: `This agent has not completed a task in its category under test. Marketplace hiring opens at rung ${HIRE_OPENS_AT}; it is on rung ${ladder.reached}.`,
+        rung: ladder.reached,
+        opensAt: HIRE_OPENS_AT,
+        hint: 'Run the canary first: POST with mode "canary" hires the Grabit reference provider, which is what earns the rung.',
+        observedAt: new Date().toISOString(),
+      },
+      { status: 409, headers: NO_STORE },
+    );
+  }
+
   const configurationError = altanaConfigurationError();
   if (configurationError) {
     return Response.json(
@@ -75,6 +113,28 @@ export async function POST(request: Request) {
   }
 
   const network = altanaNetwork(chainId);
+
+  // The canary pays Grabit's own chain-97 provider; a marketplace hire pays the
+  // registry's provider. Naming the wrong one would send the escrow elsewhere.
+  let provider: `0x${string}`;
+  try {
+    provider =
+      mode === 'canary'
+        ? (getTestnetProviderAccount().address as `0x${string}`)
+        : (candidate.provider as `0x${string}`);
+  } catch (error) {
+    return Response.json(
+      {
+        state: 'UNAVAILABLE',
+        reason:
+          error instanceof Error
+            ? error.message
+            : 'The Testnet reference provider is not configured, so the canary has no counterparty.',
+        observedAt: new Date().toISOString(),
+      },
+      { status: 503, headers: NO_STORE },
+    );
+  }
 
   try {
     const session = await resolveAgentSession(chainId);
@@ -88,9 +148,10 @@ export async function POST(request: Request) {
           observedAt: new Date().toISOString(),
           network: altanaNetworkSummary(chainId),
           plan: {
+            mode,
             agent: candidate.name,
             registry: candidate.tokenId,
-            provider: candidate.provider,
+            provider,
             task,
             budgetAtomic: SESSION_BUDGET_ATOMIC.toString(),
             budgetDisplay: chainId === 56 ? '0.10 $U' : '0.10 test $U',
@@ -105,7 +166,7 @@ export async function POST(request: Request) {
     const result = await hireErc8183Agent(
       session,
       {
-        provider: candidate.provider as `0x${string}`,
+        provider,
         task,
         budget: SESSION_BUDGET_ATOMIC,
       },
@@ -115,6 +176,7 @@ export async function POST(request: Request) {
     return Response.json(
       {
         state: 'FUNDED',
+        mode,
         observedAt: new Date().toISOString(),
         chainId,
         agent: {

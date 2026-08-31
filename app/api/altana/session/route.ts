@@ -23,6 +23,7 @@ import {
   isSupportedAltanaChain,
   readAccountSessionKey,
   readSessionAuthority,
+  waitForKeyStoreVisibility,
 } from '@/lib/altana';
 
 const NO_STORE = { 'cache-control': 'no-store' };
@@ -167,6 +168,12 @@ export async function POST(request: Request) {
     // The relay only accepts prepared calls for an address it has seen
     // delegated. Counterfactual and idempotent, so it runs before every write.
     const wallet = await ensureAltanaAgentWallet(chainId);
+
+    // An account that has acted before already holds its admin key in KeyStore.
+    // Let the public read catch up before the SDK decides whether to register
+    // it again, or a write issued moments after a grant reverts with
+    // "KeyStore: key already registered". A first action skips this entirely.
+    if (wallet.alreadyDelegated) await waitForKeyStoreVisibility(chainId);
 
     if (action === 'revoke') {
       const sessionPublicKey = getAltanaSessionSigner().publicKey;

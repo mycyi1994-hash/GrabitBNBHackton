@@ -212,7 +212,9 @@ export function getAltanaAgentWallet(): Wallet {
  * did. Deriving the address alone, as the read paths do, skips this and is the
  * reason a grant could fail against a correctly funded wallet.
  */
-export async function ensureAltanaAgentWallet(chainId: number): Promise<Wallet> {
+export async function ensureAltanaAgentWallet(
+  chainId: number,
+): Promise<Wallet & { alreadyDelegated: boolean }> {
   const signer = getAltanaAdminSigner();
   const address = signer.address;
 
@@ -224,10 +226,10 @@ export async function ensureAltanaAgentWallet(chainId: number): Promise<Wallet> 
   const code = await altanaPublicClient(chainId)
     .getCode({ address })
     .catch(() => undefined);
-  if (code && code !== '0x') return { address };
+  if (code && code !== '0x') return { address, alreadyDelegated: true };
 
   const wallet = await altanaClient(chainId).createWallet({ signer });
-  return { address: wallet.address };
+  return { address: wallet.address, alreadyDelegated: false };
 }
 
 /** Returns the reason the Altana surface is unavailable, or null when ready. */
@@ -281,6 +283,45 @@ export function altanaPublicClient(chainId: number) {
     chain: network.chain,
     transport: http(network.publicRpcUrl, { timeout: 12_000, retryCount: 1 }),
   });
+}
+
+/**
+ * Waits until the public RPC reports the wallet's KeyStore entries.
+ *
+ * The SDK decides whether to prepend the admin key's KeyStore registration by
+ * reading `getKeys` and checking it is empty. BSC's public endpoints serve
+ * stale reads for roughly twelve seconds after a transaction confirms — the SDK
+ * documents this itself — so a write issued straight after a grant sees an
+ * empty list, prepends the registration a second time, and the whole bundle
+ * reverts with "KeyStore: key already registered".
+ *
+ * Waiting for the read to catch up before handing the decision to the SDK
+ * removes the race in one direction, and cannot cause a problem in the other:
+ * a wallet that genuinely holds no keys simply times out and proceeds, where
+ * the prepend is the correct thing to do anyway.
+ */
+export async function waitForKeyStoreVisibility(
+  chainId: number,
+  timeoutMs = 20_000,
+): Promise<boolean> {
+  const network = altanaNetwork(chainId);
+  const wallet = getAltanaAgentWallet();
+  const client = altanaPublicClient(chainId);
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    const keys = await client
+      .readContract({
+        address: network.keyStore,
+        abi: KEYSTORE_ABI,
+        functionName: 'getKeys',
+        args: [wallet.address],
+      })
+      .catch(() => [] as readonly Hex[]);
+    if (keys.length > 0) return true;
+    await new Promise((resolve) => setTimeout(resolve, 1_000));
+  }
+  return false;
 }
 
 export type SessionAuthority = {

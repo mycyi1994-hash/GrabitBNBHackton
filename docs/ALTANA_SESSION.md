@@ -135,14 +135,48 @@ and names the one that answered.
 4. Confirm the panel reads `ACTIVE` and that the KeyStore link resolves. Record
    the grant transaction hash — this is the first Altana-explorer evidence.
 5. Fund the agent wallet with at least 0.10 test $U, then
-   `POST /api/altana/hire {"registry":"304493","dryRun":true}` to confirm the
-   plan without spending, and drop `dryRun` to fund the job through the session
-   key. Record the transaction hash and Job ID.
+   `POST /api/altana/hire {"registry":"304493","mode":"canary","dryRun":true}`
+   to confirm the plan without spending, and drop `dryRun` to fund the job
+   through the session key. Record the transaction hash and Job ID.
+
+   Two things are called hire, and only one is available today:
+
+   - `mode: "canary"` pays Grabit's own chain-97 reference provider. It is how
+     a category task gets run at all, which is what earns rung 4, so gating it
+     on rung 4 would be circular. Always available.
+   - `mode: "marketplace"` pays the external agent named in the registry. It is
+     blocked below rung 4 and answers `409` naming the rung — exactly what the
+     detail screen says. Before these were split the screen said blocked while
+     the route hired anyway.
+
+   The canary is the transaction the prize gate asks for: it is signed by the
+   session key, not by the admin key.
 6. Press `REVOKE SESSION` and confirm the panel flips to `NOT_GRANTED` and that
    KeyStore stops reporting the key. Record that transaction hash too.
 
 Steps 4, 5 and 6 produce the three receipts the submission needs: a scoped grant,
 a session-signed job, and a user-triggered revoke.
+
+## A failure worth recording
+
+The first real run reverted on revoke with `KeyStore: key already registered`.
+
+The cause is a stale-read race, not application state. The SDK decides whether
+to prepend the admin key's KeyStore registration by reading `getKeys` and
+checking it is empty, and BSC's public endpoints serve stale reads for roughly
+twelve seconds after a transaction confirms — the SDK documents this itself in
+`grantSession`. A revoke issued straight after a grant therefore sees an empty
+list, prepends the registration a second time, and the whole atomic bundle
+reverts.
+
+`waitForKeyStoreVisibility` now lets the public read catch up before the SDK
+makes that decision, and only when the account is already delegated, so a
+genuine first action is not delayed.
+
+A separate bug was found and fixed alongside it: `ensureAltanaAgentWallet` was
+calling `createWallet` on every write, and `registerAccount` authorizes the
+admin key each time. It now checks for EIP-7702 delegated code first. That was
+real, but it was not the cause of the revert above.
 
 ## Not done
 
