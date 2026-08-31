@@ -213,10 +213,21 @@ export function getAltanaAgentWallet(): Wallet {
  * reason a grant could fail against a correctly funded wallet.
  */
 export async function ensureAltanaAgentWallet(chainId: number): Promise<Wallet> {
-  const { address } = await altanaClient(chainId).createWallet({
-    signer: getAltanaAdminSigner(),
-  });
-  return { address };
+  const signer = getAltanaAdminSigner();
+  const address = signer.address;
+
+  // registerAccount authorizes the admin key, and KeyStore rejects a key it
+  // already holds ("KeyStore: key already registered"), so this cannot simply
+  // be re-run. An account that has been through it carries EIP-7702 delegated
+  // code on the EOA, which is the cheapest way to ask whether the work is
+  // already done.
+  const code = await altanaPublicClient(chainId)
+    .getCode({ address })
+    .catch(() => undefined);
+  if (code && code !== '0x') return { address };
+
+  const wallet = await altanaClient(chainId).createWallet({ signer });
+  return { address: wallet.address };
 }
 
 /** Returns the reason the Altana surface is unavailable, or null when ready. */
