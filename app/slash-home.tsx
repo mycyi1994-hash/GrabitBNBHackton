@@ -3,7 +3,7 @@
 import { AgentCelestial, type AgentCelestialVariant } from '@/app/agent-celestial';
 import { GrabitScene } from '@/app/grabit-scene';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type SlashAgent = {
   tokenId: string;
@@ -115,6 +115,13 @@ export function SlashHome({ agents }: SlashHomeProps) {
     if (filter === 'monitor') return index === 3;
     return true;
   });
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    document.querySelector('.grabit-market-page')?.scrollTo(0, 0);
+  }, [view]);
 
   if (view === 'store') {
     return (
