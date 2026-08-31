@@ -16,6 +16,11 @@ export default async function Home() {
     category: categoryCode[agent.category] || 'AGENT',
     price: agent.price,
     live: agent.sourceState === 'LIVE REGISTRY',
+    description: agent.displayDescription,
+    owner: agent.displayOwner,
+    feedbacks: agent.feedbacks,
+    validations: agent.validations,
+    endpointVerified: agent.endpointVerified,
   }));
 
   return <SlashHome agents={agents} />;

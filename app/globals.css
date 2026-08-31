@@ -10032,7 +10032,11 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   display: flex;
   gap: 15px;
   align-items: center;
+  padding: 0;
+  border: 0;
   color: inherit;
+  background: transparent;
+  cursor: pointer;
   text-decoration: none;
 }
 
@@ -10067,13 +10071,14 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   height: 100%;
 }
 
-.grabit-main-nav a {
+.grabit-main-nav :is(a, button) {
   position: relative;
   display: grid;
   min-width: 116px;
   padding: 0 20px;
   place-items: center;
   color: var(--grabit-obs-text-2);
+  border: 0;
   background: transparent;
   font: 650 12px/1 var(--font-geist-mono), monospace;
   letter-spacing: 0.1em;
@@ -10081,7 +10086,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   transition: color 160ms ease, background 160ms ease;
 }
 
-.grabit-main-nav a::after {
+.grabit-main-nav :is(a, button)::after {
   content: "";
   position: absolute;
   right: 20px;
@@ -10091,12 +10096,12 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   background: transparent;
 }
 
-.grabit-main-nav a:hover {
+.grabit-main-nav :is(a, button):hover {
   color: var(--grabit-obs-text);
   background: rgb(255 255 255 / 2.5%);
 }
 
-.grabit-main-nav a:hover::after {
+.grabit-main-nav :is(a, button):hover::after {
   background: rgb(242 239 232 / 60%);
 }
 
@@ -10225,6 +10230,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   font: 650 12px/1 var(--font-geist-mono), monospace;
   letter-spacing: 0.1em;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .grabit-primary-action {
@@ -10292,7 +10298,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   letter-spacing: 0.13em;
 }
 
-.grabit-agent-index a {
+.grabit-agent-index :is(a, button) {
   position: relative;
   display: grid;
   grid-template-columns: 30px 1fr auto;
@@ -10301,6 +10307,9 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   width: 100%;
   min-height: 62px;
   padding: 0 3px 0 10px;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
   border-top: 1px solid var(--grabit-obs-line-soft);
   color: var(--grabit-obs-text-2);
   background: transparent;
@@ -10309,7 +10318,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   transition: padding 180ms ease, color 180ms ease, background 180ms ease;
 }
 
-.grabit-agent-index a::before {
+.grabit-agent-index :is(a, button)::before {
   content: "";
   position: absolute;
   inset: 9px auto 9px 0;
@@ -10318,13 +10327,13 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   opacity: 0.54;
 }
 
-.grabit-agent-index a:hover {
+.grabit-agent-index :is(a, button):hover {
   padding-left: 17px;
   color: var(--grabit-obs-text);
   background: rgb(232 227 240 / 4.5%);
 }
 
-.grabit-agent-index a:hover::before {
+.grabit-agent-index :is(a, button):hover::before {
   opacity: 1;
   box-shadow: 0 0 12px var(--agent-accent);
 }
@@ -10334,30 +10343,30 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
 .grabit-agent-3 { --agent-accent: var(--grabit-agent-3); }
 .grabit-agent-4 { --agent-accent: var(--grabit-agent-4); }
 
-.grabit-agent-index a > i {
+.grabit-agent-index :is(a, button) > i {
   color: var(--grabit-obs-text-3);
   font: 500 11px/1 var(--font-geist-mono), monospace;
   font-style: normal;
 }
 
-.grabit-agent-index a > span {
+.grabit-agent-index :is(a, button) > span {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.grabit-agent-index a b {
+.grabit-agent-index :is(a, button) b {
   font: 650 13px/1 var(--font-geist-mono), monospace;
   letter-spacing: 0.1em;
 }
 
-.grabit-agent-index a small {
+.grabit-agent-index :is(a, button) small {
   color: color-mix(in srgb, var(--agent-accent) 72%, var(--grabit-obs-text-3));
   font-size: 11px;
   text-transform: uppercase;
 }
 
-.grabit-agent-index a em {
+.grabit-agent-index :is(a, button) em {
   color: var(--grabit-obs-text-2);
   font: 520 10px/1 var(--font-geist-mono), monospace;
   font-style: normal;
@@ -10549,7 +10558,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
     display: none;
   }
 
-  .grabit-agent-index a {
+  .grabit-agent-index :is(a, button) {
     grid-template-columns: 1fr;
     gap: 4px;
     min-height: 58px;
@@ -10557,13 +10566,13 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
     border-right: 1px solid var(--grabit-obs-line-soft);
   }
 
-  .grabit-agent-index a > i,
-  .grabit-agent-index a small,
-  .grabit-agent-index a em {
+  .grabit-agent-index :is(a, button) > i,
+  .grabit-agent-index :is(a, button) small,
+  .grabit-agent-index :is(a, button) em {
     display: none;
   }
 
-  .grabit-agent-index a b {
+  .grabit-agent-index :is(a, button) b {
     font-size: 10px;
     text-align: center;
   }
@@ -10586,7 +10595,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
     margin: 620px 16px 52px;
   }
 
-  .grabit-agent-index a {
+  .grabit-agent-index :is(a, button) {
     min-height: 52px;
   }
 
@@ -10606,5 +10615,1319 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   .grabit-launch-actions,
   .grabit-agent-index {
     animation: none;
+  }
+}
+
+/* project-ganymede internal marketplace, retaining the original operating-system shell. */
+body:has(.grabit-market-shell) {
+  margin: 0;
+  height: 100dvh;
+  overflow: hidden;
+  color: #f2efe8;
+  background: #06070a;
+}
+
+body:has(.grabit-market-shell) .sfx-toggle {
+  display: none;
+}
+
+.grabit-market-shell {
+  --market-bg: #06070a;
+  --market-surface: #0b0c10;
+  --market-line: rgb(229 226 236 / 18%);
+  --market-line-soft: rgb(229 226 236 / 10%);
+  --market-text: #f2efe8;
+  --market-text-2: #bbb7c1;
+  --market-text-3: #918c99;
+  --market-ivory: #e9e3d4;
+  --market-positive: #a8c5b0;
+  --market-warning: #c8b48c;
+  --market-core: #c6d0d8;
+  --market-tech: #cbbfe0;
+  --market-income: #c2cec0;
+  --market-alpha: #d2b9ae;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: 76px minmax(0, 1fr) 48px;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  color: var(--market-text);
+  background:
+    linear-gradient(rgb(229 226 236 / 1.8%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(229 226 236 / 1.8%) 1px, transparent 1px),
+    var(--market-bg);
+  background-size: 48px 48px, 48px 48px, auto;
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.grabit-market-shell *,
+.grabit-market-shell *::before,
+.grabit-market-shell *::after {
+  box-sizing: border-box;
+}
+
+.grabit-market-shell::before {
+  content: "";
+  position: fixed;
+  inset: -22%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 68% 34%, rgb(132 145 165 / 7%), transparent 25%),
+    radial-gradient(ellipse at 18% 76%, rgb(233 227 212 / 3.5%), transparent 28%);
+  filter: blur(14px);
+  opacity: 0.82;
+}
+
+.grabit-market-shell::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.1;
+  background: radial-gradient(rgb(255 255 255 / 20%) 0.45px, transparent 0.65px);
+  background-size: 5px 5px;
+}
+
+.grabit-market-topbar {
+  position: relative;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(270px, 1fr) auto minmax(360px, 1fr);
+  align-items: stretch;
+  min-width: 0;
+  border-bottom: 1px solid var(--market-line-soft);
+  background: linear-gradient(180deg, rgb(8 8 11 / 96%), rgb(7 7 7 / 86%));
+  backdrop-filter: blur(18px);
+}
+
+.grabit-market-identity {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  width: max-content;
+  padding: 0 clamp(22px, 2.7vw, 44px);
+  border: 0;
+  color: var(--market-text);
+  background: transparent;
+  cursor: pointer;
+}
+
+.grabit-market-identity > span {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgb(238 237 232 / 68%);
+  font: 650 16px/1 var(--font-geist-mono), monospace;
+}
+
+.grabit-market-identity strong {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--market-text);
+  font: 650 13px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.13em;
+  text-align: left;
+}
+
+.grabit-market-identity small {
+  color: var(--market-text-3);
+  font-size: 9px;
+  line-height: 1.2;
+  letter-spacing: 0.13em;
+}
+
+.grabit-market-menu {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+}
+
+.grabit-market-menu :is(button, a) {
+  position: relative;
+  display: grid;
+  min-width: 126px;
+  padding: 0 18px;
+  place-items: center;
+  border: 0;
+  color: var(--market-text-3);
+  background: transparent;
+  font: 650 11px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.grabit-market-menu :is(button, a):hover,
+.grabit-market-menu .is-active {
+  color: var(--market-text);
+  background: rgb(238 237 232 / 2.5%);
+}
+
+.grabit-market-menu .is-active::before {
+  content: "";
+  position: absolute;
+  right: 22px;
+  bottom: -1px;
+  left: 22px;
+  height: 1px;
+  background: var(--market-text);
+  box-shadow: 0 0 10px rgb(242 239 232 / 30%);
+}
+
+.grabit-market-menu .is-active::after {
+  content: "";
+  position: absolute;
+  bottom: 13px;
+  left: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--market-text);
+}
+
+.grabit-market-wallet {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  align-self: center;
+  justify-self: end;
+  min-width: 172px;
+  height: 42px;
+  margin-right: clamp(18px, 2.4vw, 38px);
+  padding: 0 15px;
+  border: 1px solid rgb(203 198 220 / 34%);
+  color: #dbdad3;
+  background: rgb(7 7 7 / 72%);
+  box-shadow: inset 0 0 20px rgb(177 164 205 / 2.5%);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.13em;
+  text-decoration: none;
+}
+
+.grabit-market-wallet i,
+.grabit-market-truth i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--market-positive);
+  box-shadow: 0 0 12px rgb(168 197 176 / 62%);
+}
+
+.grabit-market-page {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 18px;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(26px, 3vw, 48px) clamp(24px, 4vw, 68px);
+  overflow: auto;
+  scrollbar-color: rgb(203 198 220 / 35%) transparent;
+  animation: grabit-view-stage-in 360ms cubic-bezier(.2, .75, .2, 1) both;
+}
+
+.grabit-market-intro {
+  display: flex;
+  gap: 36px;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.grabit-section-kicker {
+  margin: 0 0 9px;
+  color: var(--market-text-3);
+  font: 650 11px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.12em;
+}
+
+.grabit-market-intro h1 {
+  margin: 10px 0 0;
+  color: var(--market-text);
+  font-size: clamp(42px, 4vw, 64px);
+  font-weight: 500;
+  line-height: 0.94;
+  letter-spacing: -0.055em;
+  text-shadow: 0 0 28px rgb(196 187 216 / 9%);
+}
+
+.grabit-market-intro > div:first-child > p:not(.grabit-section-kicker) {
+  max-width: 720px;
+  margin: 12px 0 0;
+  color: var(--market-text-2);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.grabit-market-truth {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.grabit-market-truth span {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--market-line-soft);
+  color: var(--market-text-3);
+  background: rgb(11 12 16 / 72%);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.09em;
+}
+
+.grabit-role-map {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(620px, 46vw);
+  border: 1px solid var(--market-line);
+  background: linear-gradient(135deg, rgb(16 17 25 / 92%), rgb(8 9 13 / 94%));
+}
+
+.grabit-role-map > span {
+  position: relative;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 6px 10px;
+  align-content: center;
+  min-height: 76px;
+  padding: 15px 17px;
+  border-right: 1px solid var(--market-line-soft);
+  border-bottom: 1px solid var(--market-line-soft);
+}
+
+.grabit-role-map > span:nth-child(even) {
+  border-right: 0;
+}
+
+.grabit-role-map > span:nth-child(n + 3) {
+  border-bottom: 0;
+}
+
+.grabit-role-map > span::before {
+  content: "";
+  position: absolute;
+  inset: 0 46% auto 0;
+  height: 2px;
+  background: var(--product-accent);
+  opacity: 0.72;
+}
+
+.grabit-role-map i {
+  grid-row: 1 / 3;
+  color: var(--market-text-3);
+  font: 540 10px/1 var(--font-geist-mono), monospace;
+  font-style: normal;
+}
+
+.grabit-role-map b {
+  color: color-mix(in srgb, var(--product-accent) 78%, var(--market-text));
+  font: 620 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.grabit-role-map small {
+  color: var(--market-text-3);
+  font: 540 9px/1.25 var(--font-geist-mono), monospace;
+  letter-spacing: 0.05em;
+}
+
+.grabit-market-toolbar {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 46px;
+}
+
+.grabit-strategy-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(128px, 1fr));
+  height: 44px;
+  border: 1px solid var(--market-line);
+}
+
+.grabit-strategy-filters button {
+  position: relative;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-right: 1px solid var(--market-line);
+  color: var(--market-text-2);
+  background: rgb(7 7 7 / 55%);
+  font: 650 11px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+
+.grabit-strategy-filters button:last-child {
+  border-right: 0;
+}
+
+.grabit-strategy-filters button:hover {
+  color: var(--market-text);
+  background: rgb(238 237 232 / 3.5%);
+}
+
+.grabit-strategy-filters button.is-active {
+  color: var(--market-text);
+  box-shadow: inset 0 0 0 1px rgb(242 239 232 / 72%);
+}
+
+.grabit-strategy-filters button::after {
+  content: "";
+  position: absolute;
+  right: 28%;
+  bottom: 0;
+  left: 28%;
+  height: 2px;
+  background: var(--market-ivory);
+  opacity: 0;
+  transform: scaleX(0.35);
+  transition: opacity 160ms, transform 220ms cubic-bezier(.2, .75, .2, 1);
+}
+
+.grabit-strategy-filters button.is-active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.grabit-market-status {
+  margin: 0;
+  color: var(--market-text-3);
+  font: 560 10px/1.35 var(--font-geist-mono), monospace;
+  letter-spacing: 0.06em;
+  text-align: right;
+}
+
+.grabit-market-status b {
+  color: var(--market-text);
+  font-weight: 650;
+}
+
+.grabit-agent-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(318px, max-content));
+  grid-auto-rows: minmax(318px, max-content);
+  gap: 16px;
+  align-content: start;
+  min-width: 0;
+  min-height: 0;
+  animation: grabit-filter-grid-in 260ms cubic-bezier(.2, .75, .2, 1) both;
+}
+
+.grabit-agent-card {
+  --product-accent: var(--market-core);
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: minmax(205px, 1fr) 76px 58px;
+  min-width: 0;
+  min-height: 350px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--product-accent) 26%, transparent);
+  color: var(--market-text);
+  background:
+    radial-gradient(circle at 82% 22%, color-mix(in srgb, var(--product-accent) 9%, transparent), transparent 32%),
+    linear-gradient(145deg, rgb(14 15 20 / 96%), rgb(8 9 13 / 96%));
+  box-shadow: inset 0 0 54px color-mix(in srgb, var(--product-accent) 2.5%, transparent);
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  animation: grabit-filter-card-in 300ms cubic-bezier(.2, .75, .2, 1) both;
+}
+
+.grabit-agent-card:nth-child(2) { animation-delay: 35ms; }
+.grabit-agent-card:nth-child(3) { animation-delay: 70ms; }
+.grabit-agent-card:nth-child(4) { animation-delay: 105ms; }
+
+.grabit-agent-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 6;
+  width: 2px;
+  background: linear-gradient(180deg, var(--product-accent), transparent 78%);
+  opacity: 0.72;
+}
+
+.grabit-product-core { --product-accent: var(--market-core); }
+.grabit-product-tech { --product-accent: var(--market-tech); }
+.grabit-product-income { --product-accent: var(--market-income); }
+.grabit-product-alpha { --product-accent: var(--market-alpha); }
+
+.grabit-agent-card:hover,
+.grabit-agent-card:focus-within {
+  border-color: color-mix(in srgb, var(--product-accent) 58%, transparent);
+  box-shadow:
+    0 18px 52px rgb(0 0 0 / 38%),
+    0 0 30px color-mix(in srgb, var(--product-accent) 8%, transparent);
+  transform: translateY(-3px);
+}
+
+.grabit-card-hit {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.grabit-card-hit:focus-visible {
+  outline: 2px solid var(--market-text);
+  outline-offset: -5px;
+}
+
+.grabit-card-index {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  z-index: 4;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--market-text-3);
+  font: 600 10px/1 var(--font-geist-mono), monospace;
+}
+
+.grabit-card-index i {
+  width: 34px;
+  height: 1px;
+  background: color-mix(in srgb, var(--product-accent) 56%, transparent);
+}
+
+.grabit-card-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 0;
+  padding: 26px 26px 20px;
+  overflow: hidden;
+}
+
+.grabit-card-copy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  max-width: 58%;
+}
+
+.grabit-product-role {
+  display: block;
+  margin-bottom: 12px;
+  color: color-mix(in srgb, var(--product-accent) 82%, var(--market-text));
+  font: 620 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.15em;
+}
+
+.grabit-card-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+}
+
+.grabit-agent-code,
+.grabit-registry-badge,
+.grabit-risk-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 25px;
+  padding: 0 8px;
+  border: 1px solid var(--market-line);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.grabit-agent-code {
+  color: var(--product-accent);
+  border-color: color-mix(in srgb, var(--product-accent) 45%, transparent);
+}
+
+.grabit-registry-badge {
+  color: var(--market-text-2);
+}
+
+.grabit-risk-badge {
+  position: relative;
+  padding-bottom: 4px;
+  color: var(--market-text-3);
+}
+
+.grabit-risk-badge::after {
+  content: "";
+  position: absolute;
+  right: 7px;
+  bottom: 3px;
+  left: 7px;
+  height: 2px;
+  background: linear-gradient(90deg, currentColor 0 66%, rgb(255 255 255 / 13%) 66% 100%);
+}
+
+.grabit-card-copy h2 {
+  margin: 17px 0 0;
+  color: var(--market-text);
+  font-size: clamp(24px, 1.8vw, 31px);
+  font-weight: 520;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+.grabit-card-copy > p {
+  max-width: 360px;
+  margin: 10px 0 0;
+  color: var(--market-text-2);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.grabit-best-for {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  max-width: 360px;
+  margin-top: 12px;
+  color: var(--market-text-2);
+  font: 570 9px/1.25 var(--font-geist-mono), monospace;
+  letter-spacing: 0.055em;
+}
+
+.grabit-best-for span {
+  padding: 4px 6px;
+  border: 1px solid color-mix(in srgb, var(--product-accent) 34%, transparent);
+  color: var(--product-accent);
+  white-space: nowrap;
+}
+
+.grabit-best-for b {
+  font-weight: 560;
+}
+
+.grabit-card-copy > small {
+  display: block;
+  margin-top: 14px;
+  color: var(--market-text-3);
+  font: 600 10px/1.4 var(--font-geist-mono), monospace;
+  letter-spacing: 0.08em;
+}
+
+.grabit-card-planet {
+  position: absolute;
+  top: 50%;
+  right: 1%;
+  z-index: 1;
+  display: grid;
+  width: 48%;
+  height: 100%;
+  place-items: center;
+  overflow: hidden;
+  transform: translateY(-50%);
+  opacity: 0.9;
+  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--product-accent) 16%, transparent));
+  pointer-events: none;
+  transition: right 260ms cubic-bezier(.2, .75, .2, 1), opacity 260ms, filter 260ms;
+}
+
+.grabit-card-planet::before {
+  content: "";
+  position: absolute;
+  inset: 12% 11%;
+  width: 78%;
+  height: 76%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(238 237 232 / 6%), transparent 66%);
+}
+
+.grabit-card-planet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background: repeating-linear-gradient(180deg, transparent 0 3px, rgb(238 237 232 / 16%) 4px);
+}
+
+.agent-mini-ascii-celestial {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 8px rgb(238 237 232 / 12%));
+}
+
+.agent-celestial-id {
+  position: absolute;
+  right: 8%;
+  bottom: 8%;
+  z-index: 3;
+  color: color-mix(in srgb, var(--product-accent) 64%, transparent);
+  font: 650 9px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.2em;
+  text-shadow: 0 0 8px rgb(238 237 232 / 18%);
+}
+
+.grabit-agent-card:hover .grabit-card-planet,
+.grabit-agent-card:focus-within .grabit-card-planet {
+  right: 0;
+  opacity: 1;
+  filter: drop-shadow(0 0 22px color-mix(in srgb, var(--product-accent) 22%, transparent));
+}
+
+.grabit-card-metrics {
+  display: grid;
+  grid-template-columns: 1.3fr 1.1fr 0.8fr 0.8fr;
+  margin: 0;
+  border-top: 1px solid var(--market-line);
+  border-bottom: 1px solid var(--market-line);
+}
+
+.grabit-card-metrics > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 15px 18px;
+  border-right: 1px solid var(--market-line);
+}
+
+.grabit-card-metrics > div:last-child {
+  border-right: 0;
+}
+
+.grabit-card-metrics dt {
+  color: var(--market-text-3);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.12em;
+}
+
+.grabit-card-metrics dd {
+  display: flex;
+  gap: 7px;
+  align-items: baseline;
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  color: var(--market-text);
+  font: 500 clamp(16px, 1.22vw, 21px)/1 var(--font-geist-mono), monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.grabit-card-metrics > div:first-child dd,
+.grabit-card-metrics > div:nth-child(2) dd {
+  color: color-mix(in srgb, var(--product-accent) 74%, var(--market-text));
+}
+
+.grabit-card-metrics dd small {
+  color: var(--market-text-3);
+  font-size: 9px;
+}
+
+.grabit-card-actions {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 58px;
+  padding: 10px 14px 10px 20px;
+}
+
+.grabit-capability-chips {
+  display: flex;
+  gap: 7px;
+  min-width: 0;
+}
+
+.grabit-capability-chips span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 9px;
+  border: 1px solid var(--market-line);
+  color: var(--market-text-2);
+  font: 500 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.grabit-view-agent {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  min-width: 154px;
+  min-height: 40px;
+  border: 1px solid color-mix(in srgb, var(--product-accent) 48%, transparent);
+  color: var(--market-text);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.12em;
+  transition: color 160ms, background 160ms;
+}
+
+.grabit-agent-card:hover .grabit-view-agent,
+.grabit-agent-card:focus-within .grabit-view-agent {
+  border-color: var(--product-accent);
+  color: #111216;
+  background: var(--product-accent);
+}
+
+.grabit-market-disclaimer {
+  position: relative;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 clamp(22px, 2.8vw, 46px);
+  border-top: 1px solid var(--market-line-soft);
+  color: var(--market-text-3);
+  background: rgb(7 7 7 / 97%);
+  font-size: 10px;
+}
+
+.grabit-market-disclaimer > span {
+  color: var(--market-warning);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.09em;
+}
+
+.grabit-market-disclaimer p {
+  margin: 0;
+}
+
+.grabit-market-disclaimer a {
+  color: var(--market-text-2);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  text-decoration: none;
+}
+
+@keyframes grabit-view-stage-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes grabit-filter-grid-in {
+  from { opacity: 0.62; }
+}
+
+@keyframes grabit-filter-card-in {
+  from { opacity: 0; transform: translateY(4px); }
+}
+
+@media (min-width: 1100px) and (max-height: 920px) {
+  .grabit-market-page {
+    gap: 10px;
+    padding-block: 18px;
+  }
+
+  .grabit-market-intro h1 {
+    margin-top: 6px;
+    font-size: 48px;
+  }
+
+  .grabit-market-intro > div:first-child > p:not(.grabit-section-kicker) {
+    margin-block: 8px;
+    font-size: 13px;
+  }
+
+  .grabit-market-truth {
+    margin-top: 8px;
+  }
+
+  .grabit-market-truth span {
+    min-height: 24px;
+  }
+
+  .grabit-role-map {
+    grid-template-columns: repeat(4, 1fr);
+    width: min(600px, 48vw);
+  }
+
+  .grabit-role-map > span {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    min-height: 68px;
+    padding: 12px;
+    border-bottom: 0;
+  }
+
+  .grabit-role-map i {
+    display: none;
+  }
+
+  .grabit-role-map b {
+    font-size: 10px;
+  }
+
+  .grabit-role-map small {
+    font-size: 8px;
+  }
+
+  .grabit-market-toolbar {
+    min-height: 40px;
+  }
+
+  .grabit-strategy-filters,
+  .grabit-strategy-filters button {
+    height: 40px;
+    min-height: 40px;
+  }
+
+  .grabit-agent-grid {
+    grid-template-rows: repeat(2, 266px);
+    grid-auto-rows: 266px;
+    gap: 12px;
+  }
+
+  .grabit-agent-card {
+    grid-template-rows: 158px 62px 46px;
+    min-height: 266px;
+  }
+
+  .grabit-card-hero {
+    padding: 17px 20px 12px;
+  }
+
+  .grabit-product-role {
+    margin-bottom: 8px;
+    font-size: 8px;
+  }
+
+  .grabit-agent-code,
+  .grabit-registry-badge,
+  .grabit-risk-badge {
+    min-height: 21px;
+    font-size: 8px;
+  }
+
+  .grabit-card-copy h2 {
+    margin-top: 10px;
+    font-size: 23px;
+  }
+
+  .grabit-card-copy > p {
+    margin-top: 6px;
+    font-size: 11px;
+  }
+
+  .grabit-best-for {
+    margin-top: 7px;
+    font-size: 7px;
+  }
+
+  .grabit-best-for span {
+    padding: 3px 5px;
+  }
+
+  .grabit-card-copy > small {
+    display: none;
+  }
+
+  .grabit-card-metrics > div {
+    padding: 10px 14px;
+  }
+
+  .grabit-card-metrics dt {
+    font-size: 8px;
+  }
+
+  .grabit-card-metrics dd {
+    font-size: 15px;
+  }
+
+  .grabit-card-actions {
+    min-height: 46px;
+    padding-block: 6px;
+  }
+
+  .grabit-capability-chips span {
+    min-height: 25px;
+    font-size: 8px;
+  }
+
+  .grabit-view-agent {
+    min-height: 34px;
+  }
+}
+
+@media (min-width: 1100px) and (max-height: 780px) {
+  .grabit-market-page {
+    gap: 6px;
+    padding: 10px 38px;
+  }
+
+  .grabit-market-intro {
+    gap: 20px;
+  }
+
+  .grabit-market-intro h1 {
+    margin-top: 3px;
+    font-size: 38px;
+  }
+
+  .grabit-market-intro > div:first-child > p:not(.grabit-section-kicker) {
+    max-width: 620px;
+    margin: 5px 0;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .grabit-section-kicker {
+    font-size: 8px;
+  }
+
+  .grabit-market-truth {
+    display: none;
+  }
+
+  .grabit-role-map > span {
+    min-height: 50px;
+    padding: 8px 10px;
+  }
+
+  .grabit-role-map small {
+    display: none;
+  }
+
+  .grabit-market-toolbar,
+  .grabit-strategy-filters,
+  .grabit-strategy-filters button {
+    height: 34px;
+    min-height: 34px;
+  }
+
+  .grabit-strategy-filters button {
+    font-size: 9px;
+  }
+
+  .grabit-agent-grid {
+    grid-template-rows: repeat(2, 222px);
+    grid-auto-rows: 222px;
+    gap: 8px 12px;
+  }
+
+  .grabit-agent-card {
+    grid-template-rows: 125px 56px 41px;
+    min-height: 222px;
+  }
+
+  .grabit-card-hero {
+    padding: 12px 18px 8px;
+  }
+
+  .grabit-product-role {
+    margin-bottom: 6px;
+    font-size: 7px;
+  }
+
+  .grabit-agent-code,
+  .grabit-registry-badge,
+  .grabit-risk-badge {
+    min-height: 18px;
+    padding-inline: 6px;
+    font-size: 7px;
+  }
+
+  .grabit-card-copy h2 {
+    margin-top: 7px;
+    font-size: 20px;
+  }
+
+  .grabit-card-copy > p {
+    display: none;
+  }
+
+  .grabit-best-for {
+    margin-top: 6px;
+    font-size: 7px;
+  }
+
+  .grabit-best-for span {
+    padding: 2px 4px;
+  }
+
+  .grabit-card-metrics > div {
+    padding: 8px 12px;
+  }
+
+  .grabit-card-metrics dt {
+    font-size: 7px;
+  }
+
+  .grabit-card-metrics dd {
+    font-size: 14px;
+  }
+
+  .grabit-card-metrics dd small {
+    font-size: 7px;
+  }
+
+  .grabit-card-actions {
+    min-height: 41px;
+    padding: 4px 10px 4px 14px;
+  }
+
+  .grabit-capability-chips span {
+    min-height: 23px;
+    font-size: 7px;
+  }
+
+  .grabit-capability-chips span:nth-child(n + 3) {
+    display: none;
+  }
+
+  .grabit-view-agent {
+    min-width: 140px;
+    min-height: 31px;
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 1040px) {
+  .grabit-market-topbar {
+    grid-template-columns: minmax(230px, 0.8fr) auto minmax(250px, 0.8fr);
+  }
+
+  .grabit-market-menu :is(button, a) {
+    min-width: 106px;
+  }
+
+  .grabit-market-intro {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .grabit-role-map {
+    width: 100%;
+  }
+
+  .grabit-agent-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+    grid-auto-rows: minmax(390px, auto);
+  }
+
+  .grabit-agent-card {
+    grid-template-rows: minmax(230px, 1fr) auto auto;
+    min-height: 390px;
+  }
+
+  .grabit-card-copy {
+    max-width: 62%;
+  }
+
+  .grabit-card-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grabit-card-actions {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .grabit-view-agent {
+    width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  body:has(.grabit-market-shell) {
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .grabit-market-shell {
+    grid-template-rows: 116px minmax(0, 1fr) 54px;
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .grabit-market-topbar {
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 62px 54px;
+    height: 116px;
+  }
+
+  .grabit-market-identity {
+    grid-row: 1;
+    width: auto;
+    padding-left: 16px;
+  }
+
+  .grabit-market-identity > span {
+    width: 34px;
+    height: 34px;
+  }
+
+  .grabit-market-identity strong {
+    font-size: 10px;
+  }
+
+  .grabit-market-identity small {
+    display: none;
+  }
+
+  .grabit-market-wallet {
+    grid-column: 2;
+    grid-row: 1;
+    width: 44px;
+    min-width: 44px;
+    margin-right: 12px;
+    padding: 0;
+    overflow: hidden;
+    font-size: 0;
+  }
+
+  .grabit-market-wallet i {
+    margin: auto;
+  }
+
+  .grabit-market-menu {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    border-top: 1px solid var(--market-line-soft);
+  }
+
+  .grabit-market-menu :is(button, a) {
+    flex: 1;
+    min-width: 0;
+    padding: 0 6px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+
+  .grabit-market-page {
+    gap: 14px;
+    padding: 22px 16px 30px;
+    overflow: visible;
+  }
+
+  .grabit-market-intro h1 {
+    font-size: 42px;
+  }
+
+  .grabit-market-intro > div:first-child > p:not(.grabit-section-kicker) {
+    font-size: 13px;
+  }
+
+  .grabit-role-map {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grabit-role-map > span {
+    min-height: 72px;
+    padding: 12px;
+  }
+
+  .grabit-market-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .grabit-strategy-filters {
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+  }
+
+  .grabit-strategy-filters button {
+    padding-inline: 6px;
+    font-size: 9px;
+  }
+
+  .grabit-market-status {
+    text-align: left;
+  }
+
+  .grabit-agent-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-rows: minmax(470px, auto);
+  }
+
+  .grabit-agent-card {
+    grid-template-rows: minmax(250px, 1fr) auto auto;
+    min-height: 470px;
+  }
+
+  .grabit-card-copy {
+    max-width: 68%;
+  }
+
+  .grabit-card-hero {
+    padding: 22px 20px;
+  }
+
+  .grabit-product-role {
+    margin-bottom: 10px;
+    font-size: 9px;
+  }
+
+  .grabit-card-copy h2 {
+    font-size: 25px;
+  }
+
+  .grabit-card-copy > p {
+    font-size: 13px;
+  }
+
+  .grabit-best-for {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .grabit-card-planet {
+    right: -8%;
+    width: 58%;
+    opacity: 0.72;
+  }
+
+  .grabit-market-disclaimer {
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    min-height: 54px;
+    padding: 8px 16px;
+  }
+
+  .grabit-market-disclaimer > span,
+  .grabit-market-disclaimer p {
+    font-size: 8px;
+    line-height: 1.35;
+  }
+
+  .grabit-market-disclaimer a {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grabit-market-page,
+  .grabit-agent-grid,
+  .grabit-agent-card {
+    animation: none;
+  }
+
+  .grabit-card-planet {
+    transition: none;
   }
 }
