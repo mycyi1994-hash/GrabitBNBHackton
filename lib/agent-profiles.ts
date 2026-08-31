@@ -9,8 +9,15 @@ import type { MarketplaceCategory } from '@/lib/marketplace-candidates';
 
 export type AgentProfile = {
   code: string;
+  /** The category word as it reads in a breadcrumb. */
+  crumb: string;
   role: string;
   risk: string;
+  /**
+   * What the agent does, in one line, written by us. This is the detail page's
+   * headline — the product name is secondary to the job it performs.
+   */
+  headline: string;
   /** One line under the name. */
   summary: string;
   bestFor: string;
@@ -23,6 +30,8 @@ export type AgentProfile = {
 export const agentProfiles: Record<MarketplaceCategory, AgentProfile> = {
   Rebalancing: {
     code: 'RBL',
+    crumb: 'REBALANCING',
+    headline: 'Prices the trades that would return a portfolio to its target weights.',
     role: 'PORTFOLIO MAINTENANCE',
     risk: 'CONTROLLED',
     summary: 'Reprices a drifted portfolio against executable BSC pool routes before rebalancing.',
@@ -32,6 +41,8 @@ export const agentProfiles: Record<MarketplaceCategory, AgentProfile> = {
   },
   'Grid Trading': {
     code: 'GRID',
+    crumb: 'GRID TRADING',
+    headline: 'Plans a fixed grid of limit orders for one pair inside a price band.',
     role: 'SYSTEMATIC EXECUTION',
     risk: 'ACTIVE',
     summary: 'Builds fee-aware grid levels and break-even spacing for a selected BSC pool.',
@@ -41,6 +52,8 @@ export const agentProfiles: Record<MarketplaceCategory, AgentProfile> = {
   },
   'Yield Optimisation': {
     code: 'YLD',
+    crumb: 'YIELD',
+    headline: 'Ranks Venus stablecoin markets by yield after gas.',
     role: 'YIELD ROUTING',
     risk: 'VARIABLE',
     summary: 'Ranks Venus stablecoin markets by base supply APY and estimated switching cost.',
@@ -50,6 +63,8 @@ export const agentProfiles: Record<MarketplaceCategory, AgentProfile> = {
   },
   'Health Factor Monitoring': {
     code: 'HLTH',
+    crumb: 'HEALTH FACTOR',
+    headline: 'Watches one Venus position and reports its health factor each block.',
     role: 'RISK MONITOR',
     risk: 'DEFENSIVE',
     summary: 'Monitors Venus health factor, liquidation distance and collateral stress on-chain.',

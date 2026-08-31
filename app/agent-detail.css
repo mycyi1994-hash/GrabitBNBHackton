@@ -1,0 +1,347 @@
+/*
+ * Agent detail and the verification ladder — transcribed from the design
+ * handoff (`design_handoff_grabit_agent_market`), study 2a with ladder 1b at
+ * detail scale and ladder 1a at card scale.
+ *
+ * Colour is fixed in role by the handoff: accent marks the single primary
+ * action and the callable-verified line, and nothing else. `unproven` carries
+ * rungs 1–3, the test network and stale data. Ink alphas and hairline values
+ * are used verbatim.
+ */
+
+.agent-detail {
+  --ground: #06070a;
+  --surface: #0b0c10;
+  --ink: #f2efe8;
+  --accent: #e9e3d4;
+  --proven: #a8c5b0;
+  --unproven: #c8b48c;
+  --forbidden: #d2a9a3;
+  --hair: rgba(242, 239, 232, 0.14);
+  --hair-row: rgba(242, 239, 232, 0.08);
+  --hatch-tan: repeating-linear-gradient(135deg, rgba(200, 180, 140, 0.14) 0 6px, transparent 6px 12px);
+  --hatch-neutral: repeating-linear-gradient(135deg, rgba(242, 239, 232, 0.035) 0 7px, transparent 7px 14px);
+
+  min-height: 100dvh;
+  color: var(--ink);
+  background: var(--ground);
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
+
+.agent-detail-frame {
+  max-width: 1680px;
+  margin: 0 auto;
+  border-inline: 1px solid var(--hair);
+}
+
+/* ---- top bar ---- */
+
+.agent-detail-bar {
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid rgba(242, 239, 232, 0.1);
+}
+
+.agent-detail-crumb {
+  color: rgba(242, 239, 232, 0.4);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.agent-detail-crumb a { color: inherit; text-decoration: none; }
+.agent-detail-crumb a:hover { color: var(--ink); }
+
+.network-badge {
+  padding: 7px 12px;
+  border: 1px solid var(--unproven);
+  color: var(--unproven);
+  background: var(--hatch-tan);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+/* The live network never shares the test network's style, colour or wording. */
+.network-badge.is-live {
+  border: 1px dashed rgba(242, 239, 232, 0.18);
+  color: rgba(242, 239, 232, 0.3);
+  background: none;
+}
+
+/* ---- body ---- */
+
+.agent-detail-body { padding: 44px 40px 40px; }
+
+.agent-detail h1 {
+  max-width: 24ch;
+  margin: 0;
+  font-size: 44px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-wrap: pretty;
+}
+
+.agent-detail-sub {
+  margin: 14px 0 0;
+  color: rgba(242, 239, 232, 0.6);
+  font-size: 17px;
+}
+
+.agent-detail-grid {
+  margin-top: 34px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 44px;
+  align-items: start;
+}
+
+/* ---- ladder 1b, detail scale ---- */
+
+.ladder-frame {
+  padding: 22px 24px;
+  border: 1px solid rgba(200, 180, 140, 0.35);
+}
+
+.ladder-rows ol { margin: 0; padding: 0; list-style: none; }
+
+.ladder-rows li {
+  padding: 11px 0;
+  display: grid;
+  grid-template-columns: 14px 156px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  border-top: 1px solid rgba(242, 239, 232, 0.07);
+}
+
+.ladder-rows li:first-child { border-top: 0; }
+
+/* The verified line, drawn as a real rule across the ladder. */
+.ladder-rows li.is-verified-line { border-top: 1px solid var(--accent); }
+
+.ladder-rows li > i {
+  width: 9px;
+  height: 9px;
+  margin-top: 5px;
+  border-radius: 1px;
+  border: 1px solid rgba(242, 239, 232, 0.25);
+}
+
+.ladder-rows li.is-reached > i { border-color: var(--unproven); background: var(--unproven); }
+
+.ladder-rows li b {
+  color: rgba(242, 239, 232, 0.3);
+  font: 400 12px/1.35 var(--font-geist-mono), monospace;
+  letter-spacing: 0.05em;
+}
+
+.ladder-rows li.is-reached b { color: var(--unproven); }
+
+.ladder-rows li p {
+  margin: 0;
+  color: rgba(242, 239, 232, 0.35);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.ladder-rows li.is-reached p { color: rgba(242, 239, 232, 0.8); }
+
+.ladder-stop {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid rgba(200, 180, 140, 0.4);
+  background: var(--hatch-tan);
+}
+
+.ladder-stop span {
+  color: var(--unproven);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.08em;
+}
+
+.ladder-stop p { margin: 8px 0 0; color: rgba(242, 239, 232, 0.8); font-size: 14px; line-height: 1.5; }
+
+.ladder-frame-foot {
+  margin-top: 18px;
+  padding-top: 14px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  border-top: 1px solid rgba(200, 180, 140, 0.3);
+}
+
+.ladder-frame-foot b { color: var(--unproven); font: 500 13px/1.4 var(--font-geist-mono), monospace; }
+.ladder-frame-foot span { color: rgba(242, 239, 232, 0.45); font: 400 12px/1.4 var(--font-geist-mono), monospace; }
+
+/* ---- ladder 1a, both scales ---- */
+
+.ladder-bar-track { display: flex; align-items: center; gap: 3px; }
+.ladder-bar-track > span { display: contents; }
+
+.ladder-seg {
+  height: 7px;
+  width: 30px;
+  display: block;
+  background: rgba(242, 239, 232, 0.13);
+}
+
+.ladder-seg.is-filled { background: var(--unproven); }
+.ladder-seg.is-filled.is-proven { background: var(--proven); }
+
+.ladder-bar-line {
+  width: 11px;
+  height: 16px;
+  display: block;
+  border-left: 1px solid var(--accent);
+}
+
+.ladder-bar.is-detail .ladder-seg { height: 9px; width: 44px; }
+.ladder-bar.is-detail .ladder-bar-line { width: 16px; height: 22px; }
+
+.ladder-bar-read {
+  margin: 10px 0 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ladder-bar-read b { color: var(--unproven); font: 500 13px/1 var(--font-geist-mono), monospace; letter-spacing: 0.08em; }
+.ladder-bar-read span { color: rgba(242, 239, 232, 0.4); font: 400 12px/1 var(--font-geist-mono), monospace; }
+
+.ladder-bar-note {
+  margin: 14px 0 0;
+  padding-left: 12px;
+  border-left: 2px solid var(--unproven);
+  color: rgba(242, 239, 232, 0.72);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ---- lifecycle sequence ---- */
+
+.lifecycle { margin-top: 4px; }
+
+.lifecycle-step {
+  padding: 24px 0;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  border-bottom: 1px solid var(--hair-row);
+}
+
+.lifecycle-step > span {
+  color: rgba(242, 239, 232, 0.25);
+  font: 400 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.08em;
+}
+
+.lifecycle-step h3 { margin: 0; color: rgba(242, 239, 232, 0.45); font-size: 19px; font-weight: 600; }
+.lifecycle-step p { max-width: 46ch; margin: 7px 0 0; color: rgba(242, 239, 232, 0.35); font-size: 14px; line-height: 1.55; }
+
+.lifecycle-step.is-now > span { color: var(--accent); }
+.lifecycle-step.is-now h3 { color: var(--ink); }
+.lifecycle-step.is-now p { color: rgba(242, 239, 232, 0.72); }
+
+.lifecycle-step.is-blocked h3 { color: rgba(242, 239, 232, 0.62); }
+.lifecycle-step.is-blocked p { color: rgba(242, 239, 232, 0.6); }
+
+.lifecycle-action {
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 2px;
+  color: rgba(242, 239, 232, 0.3);
+  background: none;
+  font: 500 12.5px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Exactly one primary action on the screen. */
+.lifecycle-action.is-primary {
+  color: var(--ground);
+  background: var(--accent);
+  cursor: pointer;
+}
+
+.lifecycle-action.is-waiting { border: 1px dashed rgba(242, 239, 232, 0.16); }
+.lifecycle-action.is-blocked { border: 1px solid rgba(200, 180, 140, 0.5); color: var(--unproven); }
+
+/* ---- waiting panels ---- */
+
+.waiting-panel {
+  margin-top: 24px;
+  padding: 22px 24px;
+  border: 1px dashed rgba(242, 239, 232, 0.18);
+}
+
+.waiting-panel > span {
+  color: rgba(242, 239, 232, 0.45);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.waiting-panel p { max-width: 64ch; margin: 10px 0 0; color: rgba(242, 239, 232, 0.72); font-size: 15px; line-height: 1.55; }
+
+/* ---- right rail ---- */
+
+.detail-rail { display: grid; gap: 2px; }
+
+.rail-panel { padding: 20px 22px; border: 1px solid rgba(242, 239, 232, 0.12); }
+
+.rail-panel > span {
+  color: rgba(242, 239, 232, 0.45);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.evidence-rows { margin: 14px 0 0; }
+
+.evidence-rows > div {
+  padding: 10px 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid rgba(242, 239, 232, 0.06);
+}
+
+.evidence-rows dt { color: rgba(242, 239, 232, 0.45); font: 400 12px/1.4 var(--font-geist-mono), monospace; letter-spacing: 0.06em; }
+.evidence-rows dd { margin: 0; color: rgba(242, 239, 232, 0.8); font: 400 12px/1.4 var(--font-geist-mono), monospace; text-align: right; }
+.evidence-rows dd.is-unproven { color: var(--unproven); }
+
+.registry-link {
+  margin-top: 14px;
+  display: inline-block;
+  border-bottom: 1px solid rgba(233, 227, 212, 0.3);
+  color: var(--accent);
+  font: 400 12px/1.4 var(--font-geist-mono), monospace;
+  text-decoration: none;
+}
+
+.registry-link:hover { color: #fff; }
+
+.rail-panel h3 { margin: 12px 0 0; color: var(--unproven); font-size: 24px; font-weight: 500; line-height: 1.3; }
+.rail-panel p { margin: 12px 0 0; color: rgba(242, 239, 232, 0.7); font-size: 14px; line-height: 1.55; }
+
+.owner-siblings { margin: 14px 0 0; padding: 0; list-style: none; }
+.owner-siblings li { color: rgba(242, 239, 232, 0.45); font: 400 12px/1.9 var(--font-geist-mono), monospace; }
+
+@media (max-width: 1180px) {
+  .agent-detail-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .agent-detail h1 { font-size: 34px; }
+  .agent-detail-body { padding: 32px 24px; }
+  .agent-detail-bar { padding: 12px 24px; }
+  .lifecycle-step { grid-template-columns: 34px minmax(0, 1fr); gap: 14px; }
+  .lifecycle-action { grid-column: 2; justify-self: start; }
+  .ladder-rows li { grid-template-columns: 14px 132px minmax(0, 1fr); gap: 12px; }
+}

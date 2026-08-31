@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { RetroInterface } from '@/components/retro-interface';
 import './globals.css';
 import './ganymede-detail.css';
+import './agent-detail.css';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
