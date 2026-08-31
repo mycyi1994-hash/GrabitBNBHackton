@@ -7,7 +7,8 @@ type AudioWindow = Window & typeof globalThis & {
 };
 
 export function RetroInterface({ children }: { children: ReactNode }) {
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  // Off by default, per the scope freeze: sound is opt-in before release.
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const audioRef = useRef<AudioContext | null>(null);
 
   const playTone = useCallback((frequency: number, duration = 0.07) => {
@@ -32,7 +33,8 @@ export function RetroInterface({ children }: { children: ReactNode }) {
   useEffect(() => {
     const preference = window.localStorage.getItem('agent-market-sfx');
     const timer = window.setTimeout(() => {
-      if (preference === 'off') setSoundEnabled(false);
+      // Sound is off unless this viewer turned it on before.
+      if (preference === 'on') setSoundEnabled(true);
     }, 0);
     return () => window.clearTimeout(timer);
   }, []);

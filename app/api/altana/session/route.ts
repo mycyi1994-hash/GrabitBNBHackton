@@ -37,12 +37,18 @@ function resolveChainId(value: unknown) {
 }
 
 function unavailable(reason: string, chainId: number) {
+  const supported = isSupportedAltanaChain(chainId);
   return Response.json(
     {
       state: 'UNAVAILABLE',
       reason,
       observedAt: new Date().toISOString(),
-      network: isSupportedAltanaChain(chainId) ? altanaNetworkSummary(chainId) : null,
+      network: supported ? altanaNetworkSummary(chainId) : null,
+      // The scope a grant would carry is derived from the chain's ERC-8183
+      // deployment, not from any key, so it is reported even when no session
+      // can be read. It lets the product state what the Agent would be allowed
+      // to do before anyone grants it anything.
+      permissions: supported ? describeSessionPermissions(chainId) : null,
     },
     { status: 503, headers: NO_STORE },
   );

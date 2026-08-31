@@ -137,7 +137,7 @@ export function AltanaSessionPanel({ chainId = 97 }: { chainId?: number }) {
   const live = state === 'ACTIVE' || state === 'ACTIVE_UNREGISTERED';
 
   return (
-    <section className="grabit-altana" aria-labelledby="grabit-altana-title">
+    <section className="grabit-altana" id="grabit-authority" aria-labelledby="grabit-altana-title">
       <header className="grabit-altana-head">
         <div>
           <p className="grabit-altana-kicker">AGENT AUTHORITY / ALTANA SESSION KEY</p>
@@ -187,10 +187,11 @@ export function AltanaSessionPanel({ chainId = 97 }: { chainId?: number }) {
       {status?.permissions ? (
         <>
           <p className="grabit-altana-cap">
-            <b>SPEND CAP</b> {status.permissions.spend.limitDisplay} per{' '}
-            {status.permissions.spend.period} · everything outside this list reverts on-chain
+            <b>{live ? 'SPEND CAP' : 'WOULD GRANT'}</b> {status.permissions.spend.limitDisplay} per{' '}
+            {status.permissions.spend.period} · {status.permissions.ttlSeconds / 60}-minute expiry ·
+            everything outside this list reverts on-chain
           </p>
-          <ul className="grabit-altana-calls">
+          <ul className={`grabit-altana-calls${live ? '' : ' is-prospective'}`}>
             {status.permissions.calls.map((call) => (
               <li key={`${call.contract}:${call.signature}`}>
                 <code>{call.signature}</code>

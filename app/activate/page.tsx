@@ -65,8 +65,13 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
 
           <ol className="grabit-terminal-flow" aria-label="Agent test flow">
             <li className="is-current"><span>01</span><b>PREVIEW</b><small>NO WALLET</small></li>
-            <li><span>02</span><b>HIRE</b><small>5 TESTNET TX</small></li>
-            <li><span>03</span><b>RESULT</b><small>VERIFY PROOF</small></li>
+            <li className="is-link">
+              <a href="#grabit-authority">
+                <span>02</span><b>AUTHORITY</b><small>SCOPED SESSION</small>
+              </a>
+            </li>
+            <li><span>03</span><b>HIRE</b><small>5 TESTNET TX</small></li>
+            <li><span>04</span><b>RESULT</b><small>VERIFY PROOF</small></li>
           </ol>
         </section>
 
@@ -74,8 +79,9 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
           <summary><span>?</span><b>WHAT SHOULD I TEST?</b><small>OPEN 3-MIN GUIDE</small></summary>
           <div>
             <p><b>01 / PREVIEW</b> Run the Agent without a wallet. Check its verdict, four metrics and source block.</p>
-            <p><b>02 / HIRE</b> Connect chain 97, run preflight and approve exactly five visible Testnet transactions.</p>
-            <p><b>03 / RESULT</b> Submit the read-only result, inspect its evidence and settle the Testnet job.</p>
+            <p><b>02 / AUTHORITY</b> Grant the Agent a session key with an allowlist, a spend cap and an expiry, and revoke it whenever you like.</p>
+            <p><b>03 / HIRE</b> Connect chain 97, run preflight and approve exactly five visible Testnet transactions.</p>
+            <p><b>04 / RESULT</b> Submit the read-only result, inspect its evidence and settle the Testnet job.</p>
           </div>
         </details>
 
