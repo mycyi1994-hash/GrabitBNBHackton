@@ -17,45 +17,68 @@ type ActivatePageProps = {
   searchParams: Promise<{ agent?: string; registry?: string }>;
 };
 
+function SlashLine({ character = '/' }: { character?: '/' | '=' }) {
+  return <div className="slash-line" aria-hidden="true">{character.repeat(320)}</div>;
+}
+
 export default async function ActivatePage({ searchParams }: ActivatePageProps) {
   const query = await searchParams;
   const tokenId = query.registry || (query.agent ? getRegistryIdForLegacySlug(query.agent) : undefined);
   const selected = getCandidateByTokenId(tokenId) || marketplaceCandidates[0];
 
   return (
-    <main className="ascii-activate-page">
-      <section className="ascii-activate-shell" aria-label="Grabit Agent test terminal">
-        <header className="ascii-activate-top">
+    <main className="slash-activate-page">
+      <section className="slash-activate-shell" aria-label="Grabit Agent test terminal">
+        <SlashLine />
+        <header className="slash-activate-top">
+          <span>/</span>
           <Link href="/">[/] AGENT STORE</Link>
           <strong>GRABIT://TEST_AGENT/{selected.tokenId}</strong>
-          <span>BSC TESTNET 97 [ONLINE]</span>
+          <b>BSC TESTNET 97 [ONLINE]</b>
+          <span>/</span>
         </header>
+        <SlashLine />
 
-        <section className="ascii-agent-head">
+        <section className="slash-agent-head">
+          <span>/</span>
           <div>
-            <small>SELECTED AGENT · ERC-8004 #{selected.tokenId}</small>
+            <small>SELECTED AGENT / ERC-8004 #{selected.tokenId}</small>
             <h1>{selected.name}</h1>
           </div>
+          <i>/</i>
           <nav aria-label="Agent test flow">
-            <span className="is-active">[1] PREVIEW</span>
-            <span>[2] HIRE</span>
+            <span>[1] PREVIEW</span><b>/</b>
+            <span>[2] HIRE</span><b>/</b>
             <span>[3] RESULT</span>
           </nav>
+          <span>/</span>
         </section>
+        <SlashLine />
 
-        <details className="ascii-help">
-          <summary>[?] WHAT SHOULD I TEST?</summary>
+        <details className="slash-help">
+          <summary>/ [?] WHAT SHOULD I TEST? /</summary>
           <div>
-            <p><b>NO WALLET:</b> Preview the result and check the verdict, metrics and source.</p>
-            <p><b>TESTNET:</b> Connect chain 97, run preflight and confirm five visible transactions.</p>
+            <p>/ <b>NO WALLET:</b> Preview the result and check the verdict, metrics and source. /</p>
+            <p>/ <b>TESTNET:</b> Connect chain 97, run preflight and confirm five visible transactions. /</p>
           </div>
         </details>
+        <SlashLine />
 
-        <HireExecutionConsole
-          tokenId={selected.tokenId}
-          agentName={selected.name}
-          defaultTask={CANARY_TASKS[selected.tokenId]}
-        />
+        <div className="slash-console-frame">
+          <HireExecutionConsole
+            tokenId={selected.tokenId}
+            agentName={selected.name}
+            defaultTask={CANARY_TASKS[selected.tokenId]}
+          />
+        </div>
+
+        <SlashLine />
+        <footer className="slash-activate-footer">
+          <span>/</span>
+          <b>PREVIEW FIRST / SIGN TESTNET ONLY / VERIFY RESULT</b>
+          <span>/</span>
+        </footer>
+        <SlashLine />
       </section>
     </main>
   );
