@@ -13954,3 +13954,318 @@ body:has(.grabit-terminal-page) .sfx-switch {
     animation: none;
   }
 }
+
+/* Readable-density pass: keep the terminal compact without shrinking its content. */
+.grabit-terminal-page {
+  font-size: 12px;
+}
+
+.grabit-terminal-shell {
+  width: min(100%, 1920px);
+}
+
+.grabit-terminal-brand strong { font-size: 16px; }
+.grabit-terminal-brand small { font-size: 9px; }
+.grabit-terminal-topbar nav,
+.grabit-terminal-network { font-size: 10px; }
+
+.grabit-terminal-agent p,
+.grabit-terminal-agent > span {
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.grabit-terminal-agent h1 {
+  font-size: clamp(32px, 2.55vw, 48px);
+}
+
+.grabit-terminal-flow li { padding: 14px 16px; }
+.grabit-terminal-flow li span { font-size: 10px; }
+.grabit-terminal-flow li b { font-size: 11px; }
+.grabit-terminal-flow li small { font-size: 9px; }
+
+.grabit-terminal-guide summary {
+  font-size: 10px;
+}
+
+.grabit-terminal-guide summary small,
+.grabit-terminal-guide p {
+  font-size: 10px;
+}
+
+.grabit-terminal-page .execution-mode-banner strong { font-size: 12px; }
+
+.grabit-terminal-page .execution-mode-banner span,
+.grabit-terminal-page .execution-mode-banner p {
+  font-size: 10px;
+}
+
+.grabit-terminal-page .hire-step-heading {
+  min-height: 56px;
+  padding: 10px 13px;
+}
+
+.grabit-terminal-page .hire-step-heading > span:first-child,
+.grabit-terminal-page .hire-step-number {
+  width: 31px;
+  height: 31px;
+  font-size: 10px;
+}
+
+.grabit-terminal-page .hire-step-heading > div > strong,
+.grabit-terminal-page .hire-step-heading h2,
+.grabit-terminal-page .hire-step-heading h3 {
+  color: var(--market-text);
+  font: 650 16px/1.15 var(--font-geist-sans), Arial, sans-serif;
+  letter-spacing: -.02em;
+}
+
+.grabit-terminal-page .hire-step-heading p,
+.grabit-terminal-page .hire-step-heading small {
+  font-size: 10px;
+}
+
+.grabit-terminal-page button,
+.grabit-terminal-page .button,
+.grabit-terminal-page .retro-button,
+.grabit-terminal-page .provider-action-button {
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid var(--market-line);
+  border-radius: 0;
+  color: var(--market-text-2);
+  background: #0a0b0f;
+  box-shadow: none;
+  font-family: var(--font-geist-mono), "Courier New", monospace;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .055em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.grabit-terminal-page .strategy-preview-launch {
+  min-height: 76px;
+  padding: 14px 16px;
+}
+
+.grabit-terminal-page .strategy-preview-launch h3,
+.grabit-terminal-page .strategy-preview-launch strong {
+  font-size: 17px;
+}
+
+.grabit-terminal-page .strategy-preview-launch p,
+.grabit-terminal-page .strategy-preview-launch span,
+.grabit-terminal-page .strategy-preview-launch small {
+  display: block;
+  margin-top: 5px;
+  color: var(--market-text-3);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.grabit-terminal-page .strategy-preview-launch button {
+  min-width: 190px;
+  min-height: 44px;
+  font-size: 11px;
+}
+
+.grabit-terminal-page .strategy-preview-standby {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, .6fr);
+  align-items: end;
+  gap: 32px;
+  min-height: 220px;
+  padding: 28px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--market-line-soft);
+  background:
+    linear-gradient(90deg, rgb(255 255 255 / 2.5%) 1px, transparent 1px),
+    linear-gradient(rgb(255 255 255 / 2.5%) 1px, transparent 1px),
+    radial-gradient(circle at 78% 42%, color-mix(in srgb, var(--product-accent) 13%, transparent), transparent 28%);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+.grabit-terminal-page .strategy-preview-standby::after {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  width: 92px;
+  height: 92px;
+  border: 1px solid color-mix(in srgb, var(--product-accent) 36%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 18px rgb(255 255 255 / 2%),
+    0 0 0 42px rgb(255 255 255 / 1.5%);
+  content: "";
+}
+
+.grabit-terminal-page .strategy-preview-standby > div,
+.grabit-terminal-page .strategy-preview-standby dl {
+  position: relative;
+  z-index: 1;
+}
+
+.grabit-terminal-page .strategy-preview-standby span {
+  color: var(--product-accent);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .13em;
+}
+
+.grabit-terminal-page .strategy-preview-standby strong {
+  display: block;
+  max-width: 620px;
+  margin-top: 10px;
+  color: var(--market-text);
+  font: 650 clamp(23px, 2vw, 36px)/1.05 var(--font-geist-sans), Arial, sans-serif;
+  letter-spacing: -.035em;
+}
+
+.grabit-terminal-page .strategy-preview-standby p {
+  max-width: 600px;
+  margin: 12px 0 0;
+  color: var(--market-text-2);
+  font: 500 12px/1.55 var(--font-geist-sans), Arial, sans-serif;
+}
+
+.grabit-terminal-page .strategy-preview-standby dl {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0;
+  border: 1px solid var(--market-line-soft);
+  background: rgb(6 7 10 / 76%);
+}
+
+.grabit-terminal-page .strategy-preview-standby dl > div {
+  min-width: 0;
+  padding: 12px;
+  border-left: 1px solid var(--market-line-soft);
+}
+
+.grabit-terminal-page .strategy-preview-standby dl > div:first-child { border-left: 0; }
+.grabit-terminal-page .strategy-preview-standby dt { color: var(--market-text-3); font-size: 9px; }
+.grabit-terminal-page .strategy-preview-standby dd { margin: 5px 0 0; color: var(--market-text); font-size: 11px; font-weight: 750; }
+
+.grabit-terminal-page .simple-technical-details summary,
+.grabit-terminal-page .hire-advanced-details summary,
+.grabit-terminal-page .hire-field,
+.grabit-terminal-page .provider-address-box,
+.grabit-terminal-page .hire-alert,
+.grabit-terminal-page .wallet-summary,
+.grabit-terminal-page .wallet-status-line {
+  font-size: 10px;
+}
+
+.grabit-terminal-page .hire-facts-grid dt,
+.grabit-terminal-page .hire-facts-grid > div > span { font-size: 9px; }
+.grabit-terminal-page .hire-facts-grid dd,
+.grabit-terminal-page .hire-facts-grid > div > strong { font-size: 11px; }
+
+.grabit-terminal-page .hire-action-row,
+.grabit-terminal-page .testnet-faucet-row {
+  gap: 8px;
+  padding: 10px 12px;
+}
+
+.grabit-terminal-page .hire-action-row > span {
+  align-self: center;
+  overflow: hidden;
+  color: var(--market-text-3);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.grabit-terminal-page .simple-job-progress {
+  min-height: 42px;
+  padding-inline: 13px;
+  font-size: 11px;
+}
+
+.grabit-terminal-page .simple-job-progress small,
+.grabit-terminal-page .simple-job-progress span { font-size: 9px; }
+
+.grabit-terminal-page .transaction-step-list {
+  grid-template-rows: repeat(5, minmax(50px, auto));
+  min-height: 255px;
+}
+
+.grabit-terminal-page .transaction-step {
+  grid-template-columns: 31px minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 9px 12px;
+}
+
+.grabit-terminal-page .transaction-step-index {
+  width: 29px;
+  height: 29px;
+  font-size: 9px;
+}
+
+.grabit-terminal-page .transaction-step-copy strong { font-size: 11px; }
+.grabit-terminal-page .transaction-step-copy small,
+.grabit-terminal-page .transaction-step-copy a,
+.grabit-terminal-page .transaction-state-label { font-size: 9px; }
+
+.grabit-terminal-page .transaction-state-label {
+  min-width: 62px;
+  padding: 6px 8px;
+}
+
+.grabit-terminal-page .simple-primary-action {
+  min-height: 44px;
+  font-size: 11px;
+}
+
+.grabit-terminal-page .execution-status-line,
+.grabit-terminal-page .hire-footer-actions {
+  min-height: 40px;
+  font-size: 9px;
+}
+
+.grabit-terminal-page .strategy-result-heading p,
+.grabit-terminal-page .strategy-result-heading small,
+.grabit-terminal-page .strategy-result-metrics dt,
+.grabit-terminal-page .strategy-result-guidance > section,
+.grabit-terminal-page .strategy-result-guidance > div,
+.grabit-terminal-page .strategy-result-evidence,
+.grabit-terminal-page .strategy-result-raw { font-size: 10px; }
+
+.grabit-terminal-page .strategy-result-heading h3,
+.grabit-terminal-page .strategy-result-heading strong { font-size: 19px; }
+.grabit-terminal-page .strategy-result-summary { font-size: 13px; }
+.grabit-terminal-page .strategy-result-metrics dd { font-size: 18px; }
+
+@media (min-width: 1081px) {
+  .grabit-terminal-page .testnet-execution-console {
+    grid-template-rows: 48px auto auto 40px;
+    align-content: start;
+  }
+
+  .grabit-terminal-page .cockpit-agent-panel,
+  .grabit-terminal-page .cockpit-wallet-panel,
+  .grabit-terminal-page .cockpit-hire-panel,
+  .grabit-terminal-page .cockpit-result-panel {
+    align-self: start;
+  }
+}
+
+@media (max-width: 720px) {
+  .grabit-terminal-page .strategy-preview-standby {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding: 22px 16px;
+  }
+
+  .grabit-terminal-page .strategy-preview-standby::after { opacity: .35; }
+  .grabit-terminal-page .strategy-preview-standby dl { grid-template-columns: repeat(3, 1fr); }
+  .grabit-terminal-page .strategy-preview-launch button { min-width: 0; }
+}
+
+@media (max-width: 460px) {
+  .grabit-terminal-page .strategy-preview-standby dl { grid-template-columns: 1fr; }
+  .grabit-terminal-page .strategy-preview-standby dl > div { border-top: 1px solid var(--market-line-soft); border-left: 0; }
+  .grabit-terminal-page .strategy-preview-standby dl > div:first-child { border-top: 0; }
+}

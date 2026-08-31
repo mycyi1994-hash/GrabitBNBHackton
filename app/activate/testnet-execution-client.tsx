@@ -550,6 +550,20 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
           </button>
         </div>
         {previewError ? <div className="hire-alert is-error">{previewError}</div> : null}
+        {!previewResult ? (
+          <div className="strategy-preview-standby">
+            <div>
+              <span>01 / READ-ONLY AGENT PROBE</span>
+              <strong>{previewLoading ? 'AGENT IS ANALYSING LIVE DATA' : 'READY TO RUN A LIVE PREVIEW'}</strong>
+              <p>See the exact verdict, metrics and evidence this Agent will return before you connect a wallet.</p>
+            </div>
+            <dl>
+              <div><dt>DATA</dt><dd>LIVE BSC</dd></div>
+              <div><dt>SIGNATURE</dt><dd>NONE</dd></div>
+              <div><dt>PAYMENT</dt><dd>ZERO</dd></div>
+            </dl>
+          </div>
+        ) : null}
         {previewResult ? <StrategyResultCard result={previewResult} preview /> : null}
         <details className="simple-technical-details">
           <summary>VIEW OR EDIT AGENT TASK</summary>
