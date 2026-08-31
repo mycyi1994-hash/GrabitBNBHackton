@@ -1,74 +1,84 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { AgentCelestial, type AgentCelestialVariant } from '@/app/agent-celestial';
 import {
   getCandidateByTokenId,
   getRegistryIdForLegacySlug,
 } from '@/lib/marketplace-data';
-import { marketplaceCandidates } from '@/lib/marketplace-candidates';
+import { marketplaceCandidates, type MarketplaceCategory } from '@/lib/marketplace-candidates';
 import { CANARY_TASKS } from '@/lib/erc8183';
 import { HireExecutionConsole } from '@/app/activate/execution-client';
 
 export const metadata: Metadata = {
-  title: 'Test an Agent — Grabit',
-  description: 'Hire a BSC Testnet Agent and verify its result in one guided flow.',
+  title: 'Testnet Terminal — Grabit',
+  description: 'Preview, hire and verify a BSC Testnet Agent in one observatory terminal.',
 };
 
 type ActivatePageProps = {
   searchParams: Promise<{ agent?: string; registry?: string }>;
 };
 
-function AsciiRail({ character = '=' }: { character?: '-' | '=' }) {
-  return (
-    <div className="ascii-v2-rail" aria-hidden="true">
-      <span>+</span><b>{character.repeat(220)}</b><span>+</span>
-    </div>
-  );
+const categoryVariant: Record<MarketplaceCategory, AgentCelestialVariant> = {
+  Rebalancing: 'core',
+  'Grid Trading': 'tech',
+  'Yield Optimisation': 'income',
+  'Health Factor Monitoring': 'alpha',
+};
+
+function shortName(name: string) {
+  return name.replace(/^Brain on BNB\s*[—-]\s*/i, '');
 }
 
 export default async function ActivatePage({ searchParams }: ActivatePageProps) {
   const query = await searchParams;
   const tokenId = query.registry || (query.agent ? getRegistryIdForLegacySlug(query.agent) : undefined);
   const selected = getCandidateByTokenId(tokenId) || marketplaceCandidates[0];
+  const variant = categoryVariant[selected.category];
 
   return (
-    <main className="slash-activate-page ascii-v2-execute">
-      <section className="slash-activate-shell" aria-label="Grabit Agent test terminal">
-        <AsciiRail />
-        <header className="slash-activate-top">
-          <span>|</span>
-          <Link href="/">[&lt;] AGENT STORE</Link>
-          <strong>GRABIT://TEST_AGENT/{selected.tokenId}</strong>
-          <b>TESTNET_97 :: ONLINE</b>
-          <span>|</span>
-        </header>
-        <AsciiRail character="-" />
-
-        <section className="slash-agent-head">
-          <span>|</span>
-          <div>
-            <small>==[ SELECTED AGENT ]== &nbsp; ERC-8004 #{selected.tokenId}</small>
-            <h1>{selected.name}</h1>
-          </div>
-          <i>::</i>
-          <nav aria-label="Agent test flow">
-            <span>[1] PREVIEW</span><b>---&gt;</b>
-            <span>[2] HIRE</span><b>---&gt;</b>
-            <span>[3] RESULT</span>
+    <main className={`grabit-terminal-page grabit-product-${variant}`}>
+      <section className="grabit-terminal-shell" aria-label="Grabit Agent Testnet terminal">
+        <header className="grabit-terminal-topbar">
+          <Link className="grabit-terminal-brand" href="/" aria-label="Return to Agent Store">
+            <span>G</span>
+            <strong>GRABIT<small>AGENT OBSERVATORY</small></strong>
+          </Link>
+          <nav aria-label="Current location">
+            <Link href="/">AGENT STORE</Link>
+            <i aria-hidden="true">/</i>
+            <b>TESTNET TERMINAL</b>
           </nav>
-          <span>|</span>
-        </section>
-        <AsciiRail character="-" />
+          <div className="grabit-terminal-network"><i /> BSC TESTNET · CHAIN 97</div>
+        </header>
 
-        <details className="slash-help">
-          <summary>[?] WHAT SHOULD I TEST? &nbsp; &gt;&gt; OPEN GUIDE</summary>
+        <section className="grabit-terminal-hero">
+          <div className="grabit-terminal-agent">
+            <p>SELECTED AGENT / ERC-8004 #{selected.tokenId}</p>
+            <h1>{shortName(selected.name)}</h1>
+            <span>{selected.category} · {selected.price} PER JOB · TEST TOKENS ONLY</span>
+          </div>
+
+          <div className="grabit-terminal-celestial" aria-hidden="true">
+            <AgentCelestial variant={variant} />
+          </div>
+
+          <ol className="grabit-terminal-flow" aria-label="Agent test flow">
+            <li className="is-current"><span>01</span><b>PREVIEW</b><small>NO WALLET</small></li>
+            <li><span>02</span><b>HIRE</b><small>5 TESTNET TX</small></li>
+            <li><span>03</span><b>RESULT</b><small>VERIFY PROOF</small></li>
+          </ol>
+        </section>
+
+        <details className="grabit-terminal-guide">
+          <summary><span>?</span><b>WHAT SHOULD I TEST?</b><small>OPEN 3-MIN GUIDE</small></summary>
           <div>
-            <p>&gt; <b>NO WALLET:</b> Preview the result and check the verdict, metrics and source.</p>
-            <p>&gt; <b>TESTNET:</b> Connect chain 97, run preflight and confirm five visible transactions.</p>
+            <p><b>01 / PREVIEW</b> Run the Agent without a wallet. Check its verdict, four metrics and source block.</p>
+            <p><b>02 / HIRE</b> Connect chain 97, run preflight and approve exactly five visible Testnet transactions.</p>
+            <p><b>03 / RESULT</b> Submit the read-only result, inspect its evidence and settle the Testnet job.</p>
           </div>
         </details>
-        <AsciiRail character="-" />
 
-        <div className="slash-console-frame">
+        <div className="grabit-terminal-console">
           <HireExecutionConsole
             tokenId={selected.tokenId}
             agentName={selected.name}
@@ -76,13 +86,11 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
           />
         </div>
 
-        <AsciiRail character="-" />
-        <footer className="slash-activate-footer">
-          <span>|</span>
-          <b>PREVIEW FIRST &nbsp; // &nbsp; SIGN TESTNET ONLY &nbsp; // &nbsp; VERIFY RESULT</b>
-          <span>|</span>
+        <footer className="grabit-terminal-footer">
+          <span>TESTNET / PRE-LAUNCH</span>
+          <p>PREVIEW FIRST · SIGN TESTNET ONLY · VERIFY EVERY RESULT</p>
+          <Link href="/dashboard">OPEN DASHBOARD ↗</Link>
         </footer>
-        <AsciiRail />
       </section>
     </main>
   );
