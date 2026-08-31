@@ -5113,3 +5113,294 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Full-screen responsive Agent cockpit */
+@media (min-width: 1180px) {
+  .activate-page {
+    height: calc(100dvh - 42px);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .activate-page .simple-activate-shell {
+    position: relative;
+    display: grid;
+    grid-template-rows: 58px 30px minmax(0, 1fr);
+    width: calc(100% - 8px);
+    max-width: none;
+    height: calc(100dvh - 50px);
+    min-height: 0;
+    margin: 4px;
+    padding: 34px 6px 6px;
+    overflow: hidden;
+  }
+
+  .simple-activate-shell > .back-link {
+    position: absolute;
+    z-index: 3;
+    top: 33px;
+    right: 8px;
+    min-height: 25px;
+    margin: 0;
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+
+  .simple-activate-intro {
+    grid-template-columns: minmax(0, 1.35fr) minmax(420px, 0.65fr);
+    gap: 6px;
+    height: 52px;
+    margin: 0 0 4px;
+  }
+
+  .simple-agent-title {
+    gap: 9px;
+    padding: 5px 10px;
+    overflow: hidden;
+  }
+
+  .simple-agent-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 15px;
+  }
+
+  .simple-agent-title h1 {
+    overflow: hidden;
+    font-size: clamp(19px, 1.55vw, 28px);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .simple-agent-title .eyebrow { font-size: 9px; }
+  .simple-agent-title > div > p:last-child {
+    overflow: hidden;
+    margin-top: 2px;
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .simple-flow-strip { padding: 3px; }
+  .simple-flow-strip span { min-height: 40px; font-size: 9px; }
+  .simple-flow-strip b { font-size: 14px; }
+  .user-test-checklist { margin: 0 0 4px; }
+  .user-test-checklist summary {
+    min-height: 27px;
+    padding: 4px 9px;
+    font-size: 10px;
+  }
+
+  .user-test-checklist[open] {
+    position: absolute;
+    z-index: 20;
+    top: 92px;
+    right: 6px;
+    left: 6px;
+    box-shadow: 6px 6px 0 rgb(0 0 0 / 45%);
+  }
+
+  .user-test-checklist-grid section { padding: 9px 11px; }
+  .user-test-checklist-grid li { margin-top: 4px; font-size: 12px; }
+  .user-test-checklist > p { padding: 7px 10px; font-size: 12px; }
+
+  .simple-activate-shell .cockpit-layout {
+    display: grid;
+    grid-template-areas:
+      "network network network"
+      "agent wallet hire"
+      "status footer footer";
+    grid-template-columns: minmax(500px, 1.25fr) minmax(260px, 0.62fr) minmax(390px, 0.92fr);
+    grid-template-rows: 34px minmax(0, 1fr) 34px;
+    gap: 5px;
+    min-height: 0;
+    padding: 5px;
+    overflow: hidden;
+  }
+
+  .cockpit-network-banner { grid-area: network; min-height: 0; padding: 3px 9px; }
+  .cockpit-network-banner > div { display: flex; align-items: baseline; gap: 6px; }
+  .cockpit-network-banner strong { font-size: 12px; }
+  .cockpit-network-banner p { display: inline; margin-left: 8px; font-size: 10px; }
+  .cockpit-agent-panel { grid-area: agent; }
+  .cockpit-wallet-panel { grid-area: wallet; }
+  .cockpit-hire-panel,
+  .cockpit-result-panel { grid-area: hire; }
+  .cockpit-status { grid-area: status; }
+  .cockpit-footer { grid-area: footer; }
+
+  .cockpit-layout > .hire-step-panel {
+    min-height: 0;
+    padding: 7px;
+    overflow: hidden;
+  }
+
+  .cockpit-layout .hire-step-heading {
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    gap: 6px;
+    margin: -7px -7px 6px;
+    padding: 5px 7px;
+  }
+
+  .cockpit-layout .hire-step-heading > span {
+    width: 30px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .cockpit-layout .hire-step-heading strong { font-size: 14px; }
+  .cockpit-layout .hire-step-heading small { margin-top: 1px; font-size: 9px; }
+  .cockpit-layout .hire-step-heading .retro-button {
+    min-height: 27px;
+    padding: 4px 7px;
+    font-size: 8px;
+  }
+
+  .cockpit-agent-panel .strategy-preview-launch {
+    gap: 8px;
+    margin: 0;
+    padding: 6px 8px;
+  }
+
+  .cockpit-agent-panel .strategy-preview-launch strong { font-size: 13px; }
+  .cockpit-agent-panel .strategy-preview-launch span { margin-top: 2px; font-size: 9px; }
+  .cockpit-agent-panel .strategy-preview-launch .retro-button {
+    min-width: 150px;
+    min-height: 30px;
+    padding: 4px 6px;
+    font-size: 9px;
+  }
+
+  .cockpit-agent-panel .testnet-result-panel { margin: 4px 0; }
+  .cockpit-agent-panel .strategy-result-heading { gap: 7px; padding: 5px 7px; }
+  .cockpit-agent-panel .strategy-result-heading span { font-size: 8px; }
+  .cockpit-agent-panel .strategy-result-heading strong { margin-top: 2px; font-size: 15px; }
+  .cockpit-agent-panel .strategy-result-heading b { padding: 3px 4px; font-size: 7px; }
+  .cockpit-agent-panel .strategy-result-summary { padding: 6px 7px; font-size: 11px; line-height: 1.25; }
+  .cockpit-agent-panel .strategy-result-metrics > div { padding: 6px; }
+  .cockpit-agent-panel .strategy-result-metrics span { min-height: 0; font-size: 7px; }
+  .cockpit-agent-panel .strategy-result-metrics strong { margin-top: 3px; font-size: 16px; }
+  .cockpit-agent-panel .strategy-result-metrics small { margin-top: 3px; font-size: 8px; line-height: 1.15; }
+  .cockpit-agent-panel .strategy-result-guidance section { padding: 6px 8px; }
+  .cockpit-agent-panel .strategy-result-guidance strong { font-size: 9px; }
+  .cockpit-agent-panel .strategy-result-guidance ol,
+  .cockpit-agent-panel .strategy-result-guidance ul { margin-top: 3px; padding-left: 15px; }
+  .cockpit-agent-panel .strategy-result-guidance li { margin-top: 2px; font-size: 9px; line-height: 1.2; }
+  .cockpit-agent-panel .strategy-result-evidence { gap: 4px 9px; padding: 4px 6px; }
+  .cockpit-agent-panel .strategy-result-evidence span { font-size: 7px; }
+  .cockpit-agent-panel .strategy-result-raw summary { padding: 4px 6px; font-size: 8px; }
+  .cockpit-agent-panel .simple-technical-details { margin-top: 3px; }
+  .cockpit-agent-panel .simple-technical-details summary { padding: 4px 6px; font-size: 8px; }
+  .cockpit-agent-panel .hire-alert {
+    margin-top: 3px;
+    padding: 5px 7px;
+    font-size: 9px;
+    line-height: 1.15;
+  }
+  .cockpit-agent-panel .hire-alert.is-success { display: none; }
+
+  .cockpit-wallet-panel .hire-action-row { display: grid; gap: 5px; }
+  .cockpit-wallet-panel .hire-action-row .retro-button { width: 100%; min-height: 36px; }
+  .cockpit-wallet-panel .hire-action-row > span { font-size: 9px; }
+  .cockpit-wallet-panel .testnet-faucet-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+  }
+  .cockpit-wallet-panel .testnet-faucet-row .retro-button {
+    min-height: 32px;
+    padding: 4px;
+    font-size: 8px;
+  }
+  .cockpit-wallet-panel .integrity-list li { padding: 4px; font-size: 9px; }
+
+  .cockpit-hire-panel .simple-job-progress { padding: 6px; }
+  .cockpit-hire-panel .simple-job-progress strong { font-size: 12px; }
+  .cockpit-hire-panel .simple-job-progress span { display: none; }
+  .cockpit-hire-panel .transaction-step-list { display: grid; gap: 4px; margin-top: 4px; }
+  .cockpit-hire-panel .transaction-step-list .transaction-step {
+    grid-template-columns: 28px minmax(0, 1fr) 54px;
+    gap: 5px;
+    min-height: 43px;
+    margin: 0;
+    padding: 4px;
+  }
+  .cockpit-hire-panel .transaction-step-index {
+    width: 26px;
+    height: 26px;
+    font-size: 10px;
+  }
+  .cockpit-hire-panel .transaction-step-copy strong { font-size: 11px; line-height: 1.05; }
+  .cockpit-hire-panel .transaction-step-copy small { display: none; }
+  .cockpit-hire-panel .transaction-step-copy a,
+  .cockpit-hire-panel .transaction-step-copy em { margin-top: 2px; font-size: 8px; }
+  .cockpit-hire-panel .transaction-state-label {
+    width: 54px;
+    min-width: 0;
+    padding: 4px 2px;
+    font-size: 7px;
+  }
+  .cockpit-hire-panel .simple-primary-action {
+    min-height: 38px;
+    margin-top: 4px;
+    font-size: 10px;
+  }
+
+  .cockpit-layout.has-agent-run .cockpit-hire-panel { display: none; }
+  .cockpit-result-panel { overflow: auto; }
+  .cockpit-status {
+    min-width: 0;
+    padding: 5px 7px;
+    overflow: hidden;
+    font-size: 9px;
+  }
+  .cockpit-status strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cockpit-footer {
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+  .cockpit-footer .retro-button {
+    min-height: 32px;
+    padding: 4px 7px;
+    font-size: 8px;
+  }
+  .sfx-toggle { bottom: 44px; }
+}
+
+@media (min-width: 760px) and (max-width: 1179px) {
+  .activate-page .simple-activate-shell {
+    width: calc(100% - 12px);
+    max-width: none;
+    margin: 6px;
+  }
+
+  .simple-activate-shell .cockpit-layout {
+    display: grid;
+    grid-template-areas:
+      "network network"
+      "agent agent"
+      "wallet hire"
+      "status status"
+      "footer footer";
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    gap: 8px;
+  }
+
+  .cockpit-network-banner { grid-area: network; }
+  .cockpit-agent-panel { grid-area: agent; }
+  .cockpit-wallet-panel { grid-area: wallet; }
+  .cockpit-hire-panel,
+  .cockpit-result-panel { grid-area: hire; }
+  .cockpit-status { grid-area: status; }
+  .cockpit-footer { grid-area: footer; }
+}
+
+@media (min-width: 1180px) and (max-height: 700px) {
+  .activate-page { height: auto; overflow: auto; }
+  .activate-page .simple-activate-shell { height: auto; overflow: visible; }
+  .simple-activate-shell .cockpit-layout {
+    grid-template-rows: 34px minmax(490px, auto) 34px;
+    overflow: visible;
+  }
+}

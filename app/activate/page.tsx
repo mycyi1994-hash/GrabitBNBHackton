@@ -24,7 +24,7 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
   const selected = getCandidateByTokenId(tokenId) || marketplaceCandidates[0];
 
   return (
-    <main className="subpage">
+    <main className="subpage activate-page">
       <SiteHeader compact homeAnchors hideWallet testnetMode />
       <div className="activate-shell simple-activate-shell">
         <Link className="breadcrumb back-link" href="/#store">← BACK TO AGENT STORE</Link>

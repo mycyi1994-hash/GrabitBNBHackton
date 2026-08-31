@@ -510,8 +510,8 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
   const resultView = providerResult as StrategyResultView | null;
 
   return (
-    <div className="hire-execution-console testnet-execution-console">
-      <div className="execution-mode-banner">
+    <div className={`hire-execution-console testnet-execution-console cockpit-layout${previewResult ? ' has-preview' : ''}${allFunded || providerSnapshot?.job ? ' has-agent-run' : ''}`}>
+      <div className="execution-mode-banner cockpit-network-banner">
         <span className="status-lamp is-live" aria-hidden="true" />
         <div>
           <strong>BSC TESTNET | LIVE TRANSACTIONS</strong>
@@ -519,7 +519,7 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
         </div>
       </div>
 
-      <section className="hire-step-panel">
+      <section className="hire-step-panel cockpit-agent-panel">
         <div className="hire-step-heading">
           <span>1A</span>
           <div>
@@ -598,7 +598,7 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
         ) : null}
       </section>
 
-      <section className="hire-step-panel">
+      <section className="hire-step-panel cockpit-wallet-panel">
         <div className="hire-step-heading">
           <span>1B</span>
           <div>
@@ -639,7 +639,7 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
         </div>
       </section>
 
-      <section className="hire-step-panel">
+      <section className="hire-step-panel cockpit-hire-panel">
         <div className="hire-step-heading">
           <span>02</span>
           <div>
@@ -695,7 +695,7 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
       </section>
 
       {(allFunded || Boolean(providerSnapshot?.job)) ? (
-      <section className="hire-step-panel">
+      <section className="hire-step-panel cockpit-result-panel">
         <div className="hire-step-heading">
           <span>03</span>
           <div>
@@ -738,11 +738,11 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
       </section>
       ) : null}
 
-      <div className="execution-status-line" role="status">
+      <div className="execution-status-line cockpit-status" role="status">
         <span className={runningStep !== null || providerAction ? 'status-lamp is-busy' : 'status-lamp'} />
         <strong>{message}</strong>
       </div>
-      <div className="hire-footer-actions">
+      <div className="hire-footer-actions cockpit-footer">
         <a className="retro-button" href={CONFIG.explorerUrl} target="_blank" rel="noreferrer">OPEN TESTNET BSCSCAN</a>
         <button type="button" className="retro-button" disabled={!hasProgress && !jobId} onClick={resetProgress}>
           CLEAR LOCAL PROGRESS
