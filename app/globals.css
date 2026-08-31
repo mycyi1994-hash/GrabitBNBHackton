@@ -9917,3 +9917,694 @@ body:has(.ganymede-exact-home) .sfx-toggle {
     text-shadow: none;
   }
 }
+
+/* project-ganymede landing, adapted only for the Grabit agent content. */
+body:has(.grabit-ganymede-launch) {
+  margin: 0;
+  height: 100dvh;
+  overflow: hidden;
+  color: #f2efe8;
+  background: #06070a;
+}
+
+body:has(.grabit-ganymede-launch) .sfx-toggle {
+  display: none;
+}
+
+.grabit-ganymede-launch {
+  --grabit-obs-bg: #06070a;
+  --grabit-obs-line: rgb(229 226 236 / 18%);
+  --grabit-obs-line-soft: rgb(229 226 236 / 10%);
+  --grabit-obs-text: #f2efe8;
+  --grabit-obs-text-2: #bbb7c1;
+  --grabit-obs-text-3: #918c99;
+  --grabit-obs-ivory: #e9e3d4;
+  --grabit-obs-positive: #a8c5b0;
+  --grabit-obs-warning: #c8b48c;
+  --grabit-agent-1: #c6d0d8;
+  --grabit-agent-2: #cbbfe0;
+  --grabit-agent-3: #c2cec0;
+  --grabit-agent-4: #d2b9ae;
+  position: relative;
+  isolation: isolate;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 720px;
+  overflow: hidden;
+  color: var(--grabit-obs-text);
+  background:
+    linear-gradient(90deg, rgb(6 7 10 / 98%) 0%, rgb(6 7 10 / 72%) 38%, rgb(6 7 10 / 12%) 67%, rgb(6 7 10 / 60%) 100%),
+    radial-gradient(circle at 62% 40%, rgb(255 255 255 / 5%), transparent 24%),
+    var(--grabit-obs-bg);
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.grabit-ganymede-launch *,
+.grabit-ganymede-launch *::before,
+.grabit-ganymede-launch *::after {
+  box-sizing: border-box;
+}
+
+.grabit-ganymede-launch::before {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 68% 34%, rgb(132 145 165 / 7%), transparent 25%),
+    radial-gradient(ellipse at 18% 76%, rgb(233 227 212 / 3.5%), transparent 28%);
+  filter: blur(14px);
+  opacity: 0.88;
+  animation: grabit-mystic-drift 34s ease-in-out infinite alternate;
+}
+
+.grabit-ganymede-launch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.1;
+  background: radial-gradient(rgb(255 255 255 / 20%) 0.45px, transparent 0.65px);
+  background-size: 5px 5px;
+}
+
+.grabit-celestial-scene,
+.grabit-ascii-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.grabit-celestial-scene {
+  z-index: 1;
+  transform: translateX(11vw) scale(1.08);
+  opacity: 0.92;
+  filter:
+    drop-shadow(0 0 15px rgb(238 237 232 / 11%))
+    drop-shadow(0 0 32px rgb(165 149 197 / 12%));
+}
+
+.grabit-ascii-canvas {
+  display: block;
+}
+
+.grabit-launch-nav {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 8;
+  display: grid;
+  grid-template-columns: minmax(270px, 1fr) auto minmax(270px, 1fr);
+  align-items: center;
+  height: 78px;
+  padding: 0 clamp(24px, 4vw, 68px);
+  border-bottom: 1px solid var(--grabit-obs-line-soft);
+  background: linear-gradient(180deg, rgb(6 7 10 / 96%), rgb(6 7 10 / 70%));
+  backdrop-filter: blur(18px);
+}
+
+.grabit-wordmark {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.grabit-wordmark > span {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgb(242 239 232 / 72%);
+  color: var(--grabit-obs-text);
+  font: 650 17px/1 var(--font-geist-mono), monospace;
+}
+
+.grabit-wordmark b {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--grabit-obs-text);
+  font: 650 13px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.15em;
+}
+
+.grabit-wordmark small {
+  color: var(--grabit-obs-text-3);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.grabit-main-nav {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+}
+
+.grabit-main-nav a {
+  position: relative;
+  display: grid;
+  min-width: 116px;
+  padding: 0 20px;
+  place-items: center;
+  color: var(--grabit-obs-text-2);
+  background: transparent;
+  font: 650 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  transition: color 160ms ease, background 160ms ease;
+}
+
+.grabit-main-nav a::after {
+  content: "";
+  position: absolute;
+  right: 20px;
+  bottom: 17px;
+  left: 20px;
+  height: 1px;
+  background: transparent;
+}
+
+.grabit-main-nav a:hover {
+  color: var(--grabit-obs-text);
+  background: rgb(255 255 255 / 2.5%);
+}
+
+.grabit-main-nav a:hover::after {
+  background: rgb(242 239 232 / 60%);
+}
+
+.grabit-testnet-link {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  justify-self: end;
+  min-width: 172px;
+  height: 38px;
+  padding: 0 15px;
+  border: 1px solid rgb(203 198 220 / 34%);
+  color: #dbdad3;
+  background: rgb(7 7 7 / 72%);
+  box-shadow: inset 0 0 20px rgb(177 164 205 / 2.5%);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.13em;
+  text-decoration: none;
+}
+
+.grabit-testnet-link i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--grabit-obs-positive);
+  box-shadow: 0 0 12px rgb(168 197 176 / 62%);
+}
+
+.grabit-launch-copy {
+  position: absolute;
+  top: clamp(146px, 18vh, 210px);
+  left: clamp(28px, 5.4vw, 104px);
+  z-index: 5;
+  width: min(49vw, 760px);
+  text-align: left;
+  animation: grabit-product-reveal 760ms 180ms cubic-bezier(.2, .75, .2, 1) both;
+}
+
+.grabit-status-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(100%, 620px);
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--grabit-obs-line-soft);
+  color: var(--grabit-obs-text-3);
+  font: 650 11px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.grabit-status-line span {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+
+.grabit-status-line i {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--grabit-obs-positive);
+  box-shadow: 0 0 12px rgb(168 197 176 / 62%);
+}
+
+.grabit-status-line b {
+  color: var(--grabit-obs-warning);
+  font-weight: 650;
+}
+
+.grabit-launch-copy > p:first-of-type {
+  margin: 0 0 16px;
+  color: var(--grabit-obs-text-2);
+  font: 650 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.14em;
+}
+
+.grabit-launch-copy h1 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  max-width: none;
+  margin: 0;
+  color: var(--grabit-obs-text);
+  font-size: clamp(56px, 5vw, 86px);
+  font-weight: 410;
+  line-height: 0.84;
+  letter-spacing: -0.065em;
+  text-shadow: 0 0 28px rgb(196 187 216 / 9%);
+  text-wrap: balance;
+}
+
+.grabit-launch-copy h1 span {
+  white-space: nowrap;
+}
+
+.grabit-launch-copy h1 span:last-child {
+  color: #c9c4d0;
+  text-shadow: 0 0 34px rgb(201 196 208 / 13%);
+}
+
+.grabit-launch-description {
+  max-width: 640px;
+  margin: 26px 0 0;
+  color: var(--grabit-obs-text-2);
+  font-size: clamp(15px, 1.2vw, 19px);
+  line-height: 1.58;
+}
+
+.grabit-launch-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+  animation: grabit-product-reveal 720ms 460ms cubic-bezier(.2, .75, .2, 1) both;
+}
+
+.grabit-primary-action,
+.grabit-secondary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  border-radius: 0;
+  font: 650 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+}
+
+.grabit-primary-action {
+  justify-content: space-between;
+  min-width: 222px;
+  padding: 0 20px;
+  border: 1px solid var(--grabit-obs-ivory);
+  color: #111216;
+  background: var(--grabit-obs-ivory);
+}
+
+.grabit-secondary-action {
+  min-width: 178px;
+  padding: 0 18px;
+  border: 1px solid rgb(242 239 232 / 36%);
+  color: var(--grabit-obs-text);
+  background: rgb(8 9 13 / 58%);
+}
+
+.grabit-primary-action:hover,
+.grabit-secondary-action:hover {
+  border-color: var(--grabit-obs-text);
+}
+
+.grabit-assurance {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin-top: 24px;
+  color: var(--grabit-obs-text-3);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.grabit-assurance span {
+  position: relative;
+  padding-left: 13px;
+}
+
+.grabit-assurance span::before {
+  content: "+";
+  position: absolute;
+  left: 0;
+  color: var(--grabit-obs-text-2);
+}
+
+.grabit-agent-index {
+  position: absolute;
+  right: clamp(24px, 4vw, 68px);
+  bottom: 76px;
+  z-index: 7;
+  width: clamp(286px, 20vw, 356px);
+  border-top: 1px solid var(--grabit-obs-line);
+  background: linear-gradient(180deg, rgb(9 10 14 / 16%), rgb(9 10 14 / 74%));
+  backdrop-filter: blur(10px);
+  animation: grabit-product-reveal 760ms 680ms cubic-bezier(.2, .75, .2, 1) both;
+}
+
+.grabit-agent-index-label {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  color: var(--grabit-obs-text-3);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.13em;
+}
+
+.grabit-agent-index a {
+  position: relative;
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  min-height: 62px;
+  padding: 0 3px 0 10px;
+  border-top: 1px solid var(--grabit-obs-line-soft);
+  color: var(--grabit-obs-text-2);
+  background: transparent;
+  text-align: left;
+  text-decoration: none;
+  transition: padding 180ms ease, color 180ms ease, background 180ms ease;
+}
+
+.grabit-agent-index a::before {
+  content: "";
+  position: absolute;
+  inset: 9px auto 9px 0;
+  width: 2px;
+  background: var(--agent-accent);
+  opacity: 0.54;
+}
+
+.grabit-agent-index a:hover {
+  padding-left: 17px;
+  color: var(--grabit-obs-text);
+  background: rgb(232 227 240 / 4.5%);
+}
+
+.grabit-agent-index a:hover::before {
+  opacity: 1;
+  box-shadow: 0 0 12px var(--agent-accent);
+}
+
+.grabit-agent-1 { --agent-accent: var(--grabit-agent-1); }
+.grabit-agent-2 { --agent-accent: var(--grabit-agent-2); }
+.grabit-agent-3 { --agent-accent: var(--grabit-agent-3); }
+.grabit-agent-4 { --agent-accent: var(--grabit-agent-4); }
+
+.grabit-agent-index a > i {
+  color: var(--grabit-obs-text-3);
+  font: 500 11px/1 var(--font-geist-mono), monospace;
+  font-style: normal;
+}
+
+.grabit-agent-index a > span {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.grabit-agent-index a b {
+  font: 650 13px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.grabit-agent-index a small {
+  color: color-mix(in srgb, var(--agent-accent) 72%, var(--grabit-obs-text-3));
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.grabit-agent-index a em {
+  color: var(--grabit-obs-text-2);
+  font: 520 10px/1 var(--font-geist-mono), monospace;
+  font-style: normal;
+  letter-spacing: 0.07em;
+}
+
+.grabit-launch-disclosure {
+  position: absolute;
+  bottom: 22px;
+  left: clamp(28px, 5.4vw, 104px);
+  z-index: 7;
+  max-width: 680px;
+  margin: 0;
+  color: var(--grabit-obs-text-3);
+  font: 500 10px/1.45 var(--font-geist-mono), monospace;
+  letter-spacing: 0.04em;
+}
+
+.grabit-launch-disclosure span {
+  margin-right: 10px;
+  color: var(--grabit-obs-warning);
+}
+
+@keyframes grabit-product-reveal {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes grabit-mystic-drift {
+  from { transform: translate3d(-1%, -1%, 0) scale(1); }
+  to { transform: translate3d(2%, 1%, 0) scale(1.04); }
+}
+
+@media (max-width: 1260px) {
+  .grabit-launch-nav {
+    grid-template-columns: 1fr auto auto;
+  }
+
+  .grabit-main-nav a {
+    min-width: 94px;
+    padding-inline: 14px;
+  }
+
+  .grabit-launch-copy {
+    width: 53vw;
+  }
+
+  .grabit-agent-index {
+    width: 280px;
+  }
+}
+
+@media (max-width: 1040px) {
+  .grabit-celestial-scene {
+    transform: translateX(16vw) scale(1.04);
+    opacity: 0.76;
+  }
+
+  .grabit-launch-nav {
+    grid-template-columns: 1fr auto;
+  }
+
+  .grabit-main-nav {
+    display: none;
+  }
+
+  .grabit-launch-copy {
+    top: 150px;
+    width: 62vw;
+  }
+
+  .grabit-agent-index {
+    right: 28px;
+    width: 260px;
+  }
+}
+
+@media (max-width: 760px) {
+  body:has(.grabit-ganymede-launch) {
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .grabit-ganymede-launch {
+    min-height: 100svh;
+    height: auto;
+    padding-bottom: 126px;
+  }
+
+  .grabit-celestial-scene {
+    transform: translate(25vw, 1vh) scale(0.82);
+    opacity: 0.28;
+    mask-image: linear-gradient(90deg, transparent 0 36%, rgb(0 0 0 / 72%) 62%, #000 100%);
+  }
+
+  .grabit-launch-nav {
+    grid-template-columns: 1fr auto;
+    height: 68px;
+    padding: 0 16px;
+  }
+
+  .grabit-wordmark > span {
+    width: 36px;
+    height: 36px;
+  }
+
+  .grabit-wordmark b {
+    font-size: 11px;
+  }
+
+  .grabit-wordmark small {
+    display: none;
+  }
+
+  .grabit-testnet-link {
+    width: 44px;
+    min-width: 44px;
+    padding: 0;
+    overflow: hidden;
+    font-size: 0;
+  }
+
+  .grabit-testnet-link i {
+    margin: auto;
+  }
+
+  .grabit-launch-copy {
+    top: 112px;
+    left: 20px;
+    width: calc(100vw - 40px);
+  }
+
+  .grabit-status-line {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    font-size: 9px;
+  }
+
+  .grabit-status-line b {
+    display: none;
+  }
+
+  .grabit-launch-copy > p:first-of-type {
+    font-size: 10px;
+  }
+
+  .grabit-launch-copy h1 {
+    max-width: 9ch;
+    font-size: clamp(42px, 12.5vw, 62px);
+    line-height: 0.88;
+  }
+
+  .grabit-launch-copy h1 span {
+    white-space: normal;
+  }
+
+  .grabit-launch-description {
+    max-width: 92%;
+    margin-top: 20px;
+    font-size: 15px;
+  }
+
+  .grabit-launch-actions {
+    flex-direction: column;
+    margin-top: 22px;
+  }
+
+  .grabit-primary-action,
+  .grabit-secondary-action {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  .grabit-assurance {
+    gap: 9px 14px;
+    font-size: 8px;
+  }
+
+  .grabit-agent-index {
+    right: 20px;
+    bottom: 62px;
+    left: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: auto;
+  }
+
+  .grabit-agent-index-label {
+    display: none;
+  }
+
+  .grabit-agent-index a {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    min-height: 58px;
+    padding: 7px 6px;
+    border-right: 1px solid var(--grabit-obs-line-soft);
+  }
+
+  .grabit-agent-index a > i,
+  .grabit-agent-index a small,
+  .grabit-agent-index a em {
+    display: none;
+  }
+
+  .grabit-agent-index a b {
+    font-size: 10px;
+    text-align: center;
+  }
+
+  .grabit-launch-disclosure {
+    bottom: 14px;
+    left: 20px;
+    max-width: calc(100vw - 40px);
+    overflow: visible;
+    font-size: 9px;
+    text-overflow: clip;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 380px) {
+  .grabit-agent-index {
+    position: static;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 620px 16px 52px;
+  }
+
+  .grabit-agent-index a {
+    min-height: 52px;
+  }
+
+  .grabit-launch-disclosure {
+    position: static;
+    margin: -38px 20px 20px;
+  }
+
+  .grabit-ganymede-launch {
+    padding-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grabit-ganymede-launch::before,
+  .grabit-launch-copy,
+  .grabit-launch-actions,
+  .grabit-agent-index {
+    animation: none;
+  }
+}
