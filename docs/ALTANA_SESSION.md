@@ -112,11 +112,24 @@ requirement is not met as written today.
 
 Nothing below has been executed. Each step needs a funded chain-97 key.
 
+`scripts/altana-setup.mjs` covers steps 1 and 2 and answers "am I ready yet?"
+without guessing:
+
+~~~bash
+node scripts/altana-setup.mjs keys    # generate the two keys, print the address to fund
+node scripts/altana-setup.mjs check   # tBNB, test $U and KeyStore state, and what is still missing
+~~~
+
+`keys` prints the keys once and writes nothing to disk; paste them into
+`.env.local` yourself. `check` reads them back, tries each public RPC in turn
+and names the one that answered.
+
 1. Generate two fresh Testnet-only keys and set `GRABIT_ALTANA_ADMIN_PRIVATE_KEY`
    and `GRABIT_ALTANA_SESSION_PRIVATE_KEY`.
-2. Read the agent wallet address from `GET /api/altana/session` and fund it with
-   tBNB from <https://testnet.bnbchain.org/faucet-smart>. The grant pays a
-   KeyStore registration fee, so it needs gas.
+2. Fund the agent wallet address with tBNB from
+   <https://testnet.bnbchain.org/faucet-smart>. The grant pays a KeyStore
+   registration fee, so it needs gas. The address is the admin key's own
+   address; `check` and `GET /api/altana/session` both print it.
 3. Press `GRANT SESSION`. It confirms on-chain and can take up to a minute; the
    SDK waits for the key to become visible before returning.
 4. Confirm the panel reads `ACTIVE` and that the KeyStore link resolves. Record
