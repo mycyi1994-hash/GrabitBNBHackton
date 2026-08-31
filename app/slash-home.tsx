@@ -215,8 +215,13 @@ export function SlashHome({ agents, gate, ownerConcentration, discovered }: Slas
 
           <div ref={boardRef}>
             <EvidenceLeaderboard
-              agents={visibleAgents}
-              gate={gate}
+              agents={storeAgents.map((agent) => ({
+                ...agent,
+                // No job has been delivered or failed, and the table says so
+                // rather than leaving the columns out.
+                jobsDelivered: 0,
+                jobsFailed: 0,
+              }))}
               ownerConcentration={ownerConcentration}
               discovered={discovered}
             />

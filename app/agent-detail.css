@@ -695,3 +695,31 @@
 }
 
 .revoke-panel { margin-top: 32px; }
+
+/* ---------------------------------------------------------------------------
+   Store view container.
+
+   .grabit-market-page was a three-row grid built when the store held three
+   sections. It now holds four, and the third row's minmax(0, 1fr) collapsed the
+   leaderboard to zero height so it drew on top of Active Agents. Rows are no
+   longer fixed, and the document scrolls rather than the panel.
+--------------------------------------------------------------------------- */
+
+.grabit-market-shell {
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+}
+
+.grabit-market-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 0;
+  overflow: visible;
+}
+
+.grabit-market-page > * { flex: 0 0 auto; }
+
+/* These sections bring their own gutters, so they run to the frame edge. */
+.grabit-market-page > .store-surface { margin-inline: calc(-1 * clamp(24px, 4vw, 68px)); }
