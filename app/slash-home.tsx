@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActiveAgents } from '@/components/active-agents';
 import { EvidenceLeaderboard } from '@/components/evidence-leaderboard';
+import { agentProfiles as agentProfileMap } from '@/lib/agent-profiles';
+import { marketplaceCategoryOrder } from '@/lib/marketplace-candidates';
 
 type SlashAgent = {
   tokenId: string;
@@ -65,38 +67,10 @@ type DemoSelection = {
   index: number;
 };
 
-const agentCodes = ['RBL', 'GRID', 'YLD', 'HLTH'];
+const agentCodes = marketplaceCategoryOrder.map((category) => agentProfileMap[category].code);
 const variants: AgentCelestialVariant[] = ['core', 'tech', 'income', 'alpha'];
-const agentProfiles = [
-  {
-    role: 'PORTFOLIO MAINTENANCE',
-    risk: 'CONTROLLED',
-    summary: 'Reprices a drifted portfolio against executable BSC pool routes before rebalancing.',
-    bestFor: 'Allocations that have drifted away from their target weights',
-    demoTask: 'Price a 60/40 WBNB-USDT portfolio back to a 50/50 target with bounded execution cost.',
-  },
-  {
-    role: 'SYSTEMATIC EXECUTION',
-    risk: 'ACTIVE',
-    summary: 'Builds fee-aware grid levels and break-even spacing for a selected BSC pool.',
-    bestFor: 'Traders who need pool-costed grid levels before execution',
-    demoTask: 'Build a 10-level WBNB-USDT grid across a 15% band for a $1,000 test notional.',
-  },
-  {
-    role: 'YIELD ROUTING',
-    risk: 'VARIABLE',
-    summary: 'Ranks Venus stablecoin markets by base supply APY and estimated switching cost.',
-    bestFor: 'Stablecoin suppliers comparing Venus markets after gas',
-    demoTask: 'Rank current Venus stablecoin supply yields and show the best base APY with source block.',
-  },
-  {
-    role: 'RISK MONITOR',
-    risk: 'DEFENSIVE',
-    summary: 'Monitors Venus health factor, liquidation distance and collateral stress on-chain.',
-    bestFor: 'Borrowers who need liquidation-distance and stress alerts',
-    demoTask: 'Stress-test a Venus borrowing position and report health-factor liquidation distance.',
-  },
-];
+// One source with the terminal: the same Agent must not be described twice.
+const agentProfiles = marketplaceCategoryOrder.map((category) => agentProfileMap[category]);
 
 function shortName(name: string) {
   return name.replace(/^Brain on BNB\s*[—-]\s*/i, '');

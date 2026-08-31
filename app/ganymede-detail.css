@@ -1,0 +1,521 @@
+/*
+ * Ganymede detail surface, ported for the Grabit Testnet terminal.
+ *
+ * Taken from project-ganymede's product detail page — app/globals.css for the
+ * base layout and app/ganymede-v4.css for the observatory refinements, merged
+ * here to their final values. Only the tokens are re-pointed: Ganymede's
+ * --obs-* palette and Grabit's --market-* palette already hold identical
+ * values, so this is a re-skin of composition, not of colour.
+ *
+ * The store and this screen are one journey. The class names are kept as they
+ * are in Ganymede so the two can be diffed against each other later.
+ */
+
+.grabit-detail-page {
+  /* The observatory palette. Declared here rather than inherited because these
+     lived on .grabit-terminal-page, and every var() below resolves against it —
+     without them the page falls through to the Windows 95 desktop underneath. */
+  --market-bg: #06070a;
+  --market-surface: #0b0c10;
+  --market-panel: #0f1015;
+  --market-line: rgb(229 226 236 / 18%);
+  --market-line-soft: rgb(229 226 236 / 10%);
+  --market-text: #f2efe8;
+  --market-text-2: #bbb7c1;
+  --market-text-3: #918c99;
+  --market-ivory: #e9e3d4;
+  --market-positive: #a8c5b0;
+  --market-warning: #c8b48c;
+  --market-error: #d2a9a3;
+  --market-core: #c6d0d8;
+  --market-tech: #cbbfe0;
+  --market-income: #c2cec0;
+  --market-alpha: #d2b9ae;
+  --product-accent: var(--market-core);
+
+  position: relative;
+  z-index: 10;
+  min-height: 100dvh;
+  overflow: visible;
+  color: var(--market-text);
+  background:
+    radial-gradient(circle at 73% 22%, color-mix(in srgb, var(--product-accent) 7%, transparent), transparent 27%),
+    linear-gradient(rgb(255 255 255 / 1.5%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 1.2%) 1px, transparent 1px),
+    var(--market-bg);
+  background-size: auto, 32px 32px, 32px 32px, auto;
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
+
+.grabit-detail-page.grabit-product-core { --product-accent: var(--market-core); }
+.grabit-detail-page.grabit-product-tech { --product-accent: var(--market-tech); }
+.grabit-detail-page.grabit-product-income { --product-accent: var(--market-income); }
+.grabit-detail-page.grabit-product-alpha { --product-accent: var(--market-alpha); }
+
+/* Topbar ------------------------------------------------------------------ */
+
+.product-detail-topbar {
+  height: 76px;
+  padding: 0 clamp(28px, 4.3vw, 72px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) auto minmax(200px, 1fr);
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid var(--market-line-soft);
+  background: rgb(6 7 10 / 94%);
+  backdrop-filter: blur(16px);
+}
+
+.detail-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.detail-brand > span {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--market-line);
+  color: var(--market-text);
+  font: 650 15px/1 var(--font-geist-mono), monospace;
+}
+
+.detail-brand strong {
+  display: grid;
+  gap: 4px;
+  font: 650 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .12em;
+}
+
+.detail-brand small {
+  color: var(--market-text-3);
+  font: 600 9px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .12em;
+}
+
+.product-detail-topbar > nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--market-text-3);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .14em;
+}
+
+.product-detail-topbar > nav a { color: var(--market-text-3); text-decoration: none; }
+.product-detail-topbar > nav a:hover { color: var(--market-text); }
+.product-detail-topbar > nav b { color: var(--market-text); font-weight: 650; }
+
+.product-detail-topbar > p {
+  margin: 0;
+  color: var(--market-text-3);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .12em;
+  text-align: right;
+}
+
+.product-detail-topbar > p i {
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  display: inline-block;
+  border-radius: 50%;
+  background: var(--market-positive);
+}
+
+/* Environment notice ------------------------------------------------------ */
+
+.testnet-notice {
+  min-height: 40px;
+  padding: 0 clamp(28px, 4.3vw, 72px);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--market-line-soft);
+  background: rgb(11 12 16 / 96%);
+  color: var(--market-text-3);
+  font: 600 10px/1.4 var(--font-geist-mono), monospace;
+}
+
+.testnet-notice > span {
+  color: var(--market-warning);
+  font-weight: 650;
+  letter-spacing: .12em;
+  white-space: nowrap;
+}
+
+.testnet-notice > span i {
+  width: 5px;
+  height: 5px;
+  margin-right: 7px;
+  display: inline-block;
+  border-radius: 50%;
+  background: var(--market-warning);
+}
+
+.testnet-notice p { margin: 0; }
+.testnet-notice a { margin-left: auto; color: var(--market-text-2); text-decoration: none; white-space: nowrap; }
+.testnet-notice a:hover { color: var(--market-text); }
+
+/* Hero -------------------------------------------------------------------- */
+
+.product-detail-hero {
+  min-height: 540px;
+  padding: clamp(38px, 4vw, 68px) clamp(28px, 4.3vw, 72px);
+  display: grid;
+  grid-template-columns: minmax(420px, 1.08fr) minmax(300px, .72fr) minmax(310px, .72fr);
+  gap: clamp(26px, 3vw, 54px);
+  align-items: center;
+  border-bottom: 1px solid var(--market-line);
+  overflow: hidden;
+}
+
+.product-detail-copy { position: relative; z-index: 3; min-width: 0; }
+
+.product-detail-copy .detail-back {
+  min-height: 40px;
+  margin-bottom: 32px;
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  padding: 0;
+  color: var(--market-text-3);
+  background: transparent;
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .14em;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.product-detail-copy .detail-back:hover { color: var(--market-text); }
+
+.product-detail-labels {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--market-text-2);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .15em;
+}
+
+.product-detail-labels b {
+  padding: 5px 9px;
+  border: 1px solid var(--market-line);
+  color: var(--product-accent);
+  font-weight: 650;
+}
+
+.product-detail-copy h1 {
+  max-width: 720px;
+  margin: 18px 0 0;
+  font-size: clamp(48px, 4.8vw, 80px);
+  font-weight: 480;
+  line-height: .92;
+  letter-spacing: -.055em;
+}
+
+.product-detail-copy h2 {
+  margin: 20px 0 0;
+  color: var(--market-text);
+  font-size: clamp(18px, 1.35vw, 23px);
+  font-weight: 430;
+}
+
+.product-detail-copy > p {
+  max-width: 650px;
+  margin: 14px 0 0;
+  color: var(--market-text-2);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.product-fit-strip {
+  margin: 26px 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--market-line-soft);
+  border: 1px solid var(--market-line-soft);
+}
+
+.product-fit-strip > div { padding: 14px; background: var(--market-bg); }
+
+.product-fit-strip span {
+  color: var(--market-text-3);
+  font: 650 9px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .12em;
+}
+
+.product-fit-strip p {
+  margin: 8px 0 0;
+  color: var(--market-text-2);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.product-hero-actions { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 9px; }
+
+.product-hero-actions a,
+.product-hero-actions button {
+  min-width: 168px;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(238 237 232 / 46%);
+  color: var(--market-text-2);
+  background: transparent;
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .14em;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.product-hero-actions > :first-child {
+  border-color: var(--market-ivory);
+  color: #111;
+  background: var(--market-ivory);
+}
+
+.product-hero-facts {
+  max-width: 600px;
+  margin: 24px 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--market-line-soft);
+  border-bottom: 1px solid var(--market-line-soft);
+}
+
+.product-hero-facts div { padding: 14px 12px 14px 0; border-right: 1px solid var(--market-line-soft); }
+.product-hero-facts div + div { padding-left: 14px; }
+.product-hero-facts div:last-child { border-right: 0; }
+.product-hero-facts dt { color: var(--market-text-3); font: 650 9px/1 var(--font-geist-mono), monospace; letter-spacing: .1em; }
+.product-hero-facts dd { margin: 8px 0 0; color: var(--market-text); font: 560 12px/1 var(--font-geist-mono), monospace; }
+
+.product-hero-visual {
+  min-width: 0;
+  height: 350px;
+  position: relative;
+  mask-image: radial-gradient(ellipse 75% 76%, black 48%, transparent 85%);
+  filter: drop-shadow(0 0 28px color-mix(in srgb, var(--product-accent) 14%, transparent));
+}
+
+.product-market-data {
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--market-line);
+  background: rgb(11 12 17 / 90%);
+}
+
+.product-market-data > span {
+  color: var(--market-text-3);
+  font: 650 9px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .15em;
+}
+
+.product-nav {
+  margin-top: 22px;
+  padding-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  border-bottom: 1px solid var(--market-line);
+}
+
+.product-nav small {
+  grid-column: 1 / -1;
+  margin-bottom: 8px;
+  color: var(--market-text-3);
+  font: 650 9px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .14em;
+}
+
+.product-nav b { font: 520 clamp(30px, 2.5vw, 44px)/1 var(--font-geist-mono), monospace; }
+.product-nav em { color: var(--market-positive); font: 600 11px/1 var(--font-geist-mono), monospace; font-style: normal; }
+
+.product-nav-time {
+  margin: 10px 0 0;
+  color: var(--market-text-3);
+  font: 600 9px/1.4 var(--font-geist-mono), monospace;
+  letter-spacing: .08em;
+}
+
+.product-market-data dl { margin: 0; }
+.product-market-data dl div { padding: 13px 0; display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--market-line-soft); }
+.product-market-data dt { color: var(--market-text-3); font: 650 9px/1 var(--font-geist-mono), monospace; letter-spacing: .13em; }
+.product-market-data dd { margin: 0; color: var(--market-text); font: 520 11px/1 var(--font-geist-mono), monospace; }
+
+/* Tabs -------------------------------------------------------------------- */
+
+.product-tabs {
+  min-height: 60px;
+  padding: 0 clamp(28px, 4.3vw, 72px);
+  position: sticky;
+  top: 76px;
+  z-index: 40;
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--market-line);
+  background: rgb(6 7 10 / 94%);
+  backdrop-filter: blur(16px);
+}
+
+.product-tabs button {
+  min-width: 170px;
+  min-height: 60px;
+  position: relative;
+  border: 0;
+  color: var(--market-text-3);
+  background: transparent;
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .15em;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.product-tabs button::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: -1px;
+  height: 2px;
+  background: transparent;
+}
+
+.product-tabs button.is-active { color: var(--market-text); }
+.product-tabs button.is-active::after { background: var(--market-text); box-shadow: 0 -2px 8px rgb(238 237 232 / 28%); }
+
+.product-tab-panel {
+  min-height: 620px;
+  padding: clamp(26px, 3.2vw, 50px) clamp(28px, 4.3vw, 72px) clamp(42px, 5vw, 72px);
+}
+
+/* Cards ------------------------------------------------------------------- */
+
+.product-overview-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 390px);
+  gap: 24px;
+  align-items: start;
+}
+
+.ganymede-card {
+  padding: clamp(22px, 2.2vw, 34px);
+  border: 1px solid var(--market-line);
+  background:
+    radial-gradient(circle at 86% 16%, rgb(160 144 191 / 4.5%), transparent 30%),
+    linear-gradient(145deg, rgb(14 15 20 / 95%), rgb(9 10 14 / 95%));
+}
+
+.ganymede-card > span {
+  color: var(--market-text-3);
+  font: 650 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .16em;
+}
+
+.ganymede-card h3 {
+  margin: 14px 0 0;
+  font-size: clamp(24px, 2vw, 32px);
+  font-weight: 450;
+  line-height: 1.08;
+  letter-spacing: -.035em;
+}
+
+.ganymede-card > p { margin: 15px 0 0; color: var(--market-text-2); font-size: 14px; line-height: 1.65; }
+
+.product-order-card {
+  padding: 26px;
+  position: sticky;
+  top: 156px;
+  border: 1px solid rgb(238 237 232 / 35%);
+  background: #0b0b0b;
+}
+
+.order-card-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.order-card-heading b { color: var(--market-warning); font: 650 9px/1 var(--font-geist-mono), monospace; letter-spacing: .12em; }
+.product-order-card > p { margin: 18px 0; color: var(--market-text-2); font-size: 12px; line-height: 1.55; }
+
+.subscription-steps {
+  margin: 18px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  list-style: none;
+  border-top: 1px solid var(--market-line-soft);
+  border-bottom: 1px solid var(--market-line-soft);
+}
+
+.subscription-steps li {
+  padding: 12px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--market-text-3);
+  border-right: 1px solid var(--market-line-soft);
+}
+
+.subscription-steps li:last-child { border-right: 0; }
+.subscription-steps li b { font: 500 10px/1 var(--font-geist-mono), monospace; }
+.subscription-steps li span { font: 650 8px/1.2 var(--font-geist-mono), monospace; letter-spacing: .07em; }
+.subscription-steps li.is-active { color: var(--market-text); background: rgb(233 227 212 / 5%); }
+.subscription-steps li.is-done { color: var(--market-positive); }
+
+/* Footer ------------------------------------------------------------------ */
+
+.product-detail-footer {
+  min-height: 54px;
+  padding: 0 clamp(28px, 4.3vw, 72px);
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: center;
+  gap: 20px;
+  border-top: 1px solid var(--market-line);
+  color: var(--market-text-3);
+  font: 600 9px/1 var(--font-geist-mono), monospace;
+  letter-spacing: .1em;
+}
+
+.product-detail-footer p { margin: 0; text-align: center; }
+.product-detail-footer > :last-child { text-align: right; }
+.product-detail-footer a { color: var(--market-text-3); text-decoration: none; }
+.product-detail-footer a:hover { color: var(--market-text); }
+
+/* Responsive — Ganymede's own breakpoints ---------------------------------- */
+
+@media (max-width: 1180px) {
+  .product-detail-hero { grid-template-columns: minmax(360px, 1.1fr) minmax(280px, .8fr); }
+  .product-market-data { grid-column: 1 / -1; display: grid; grid-template-columns: 170px 1fr; gap: 20px; }
+  .product-market-data > span { grid-column: 1 / -1; }
+  .product-market-data dl { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .product-market-data dl div { padding: 10px 15px; flex-direction: column; border-left: 1px solid var(--market-line-soft); border-bottom: 0; }
+  .product-overview-panel { grid-template-columns: 1fr 300px; }
+}
+
+@media (max-width: 900px) {
+  .product-detail-topbar { height: 68px; grid-template-columns: 1fr auto; }
+  .product-detail-topbar > p { display: none; }
+  .product-detail-hero { min-height: auto; padding: 34px 16px; grid-template-columns: 1fr; }
+  .product-hero-visual { display: none; }
+  .product-detail-copy .detail-back { margin-bottom: 24px; }
+  .product-detail-copy h1 { font-size: 48px; }
+  .product-detail-copy > p { font-size: 14px; }
+  .product-fit-strip { grid-template-columns: 1fr; }
+  .product-overview-panel { grid-template-columns: 1fr; }
+  .product-order-card { position: static; }
+  .product-tabs { top: 68px; }
+  .product-detail-footer { padding: 16px; grid-template-columns: 1fr; line-height: 1.5; }
+  .product-detail-footer > :last-child { display: none; }
+}

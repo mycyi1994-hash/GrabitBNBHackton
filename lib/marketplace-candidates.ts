@@ -26,6 +26,14 @@ export const verificationGate = {
   jobSettled: false,
 } as const;
 
+/** Display order, and the order the profile lookup is indexed against. */
+export const marketplaceCategoryOrder: MarketplaceCategory[] = [
+  'Rebalancing',
+  'Grid Trading',
+  'Yield Optimisation',
+  'Health Factor Monitoring',
+];
+
 export const marketplaceCandidates: CandidateSnapshot[] = [
   {
     category: 'Rebalancing',
