@@ -1,6 +1,6 @@
 import { SlashHome } from '@/app/slash-home';
 import { loadMarketplaceRecords } from '@/lib/marketplace-data';
-import { verificationGate } from '@/lib/marketplace-candidates';
+import { discoveredCandidates, verificationGate } from '@/lib/marketplace-candidates';
 
 const categoryCode: Record<string, string> = {
   Rebalancing: 'REBALANCE',
@@ -34,6 +34,13 @@ export default async function Home() {
       agents={agents}
       gate={{ ...verificationGate }}
       ownerConcentration={ownerConcentration}
+      discovered={discoveredCandidates.map((candidate) => ({
+        category: candidate.category,
+        tokenId: candidate.tokenId,
+        name: candidate.name,
+        level: candidate.level,
+        blocker: candidate.blocker,
+      }))}
     />
   );
 }

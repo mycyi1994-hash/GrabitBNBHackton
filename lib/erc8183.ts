@@ -50,6 +50,18 @@ export const ERC8183_TESTNET = {
   router: '0xd7d36d66d2f1b608a0f943f722d27e3744f66f25',
   routerImplementation: '0x40c0254610D92F1Eb9c2D7D5d2114bC4c99d935e',
   policy: '0xd6a4217588f6b1f5657a92a3e94e6422ad771cea',
+  /**
+   * The Altana SDK ships a different OptimisticPolicy for chain 97 than the one
+   * above, while agreeing on the kernel, router and payment token (and on all
+   * five for chain 56). Only the router knows which is real, so both are
+   * checked at runtime and the readiness route reports whichever it
+   * whitelists. Reconcile `policy` to that answer before the hand-rolled and
+   * Altana hire paths are demonstrated together. See docs/ALTANA_SESSION.md.
+   */
+  policyCandidates: [
+    '0xd6a4217588f6b1f5657a92a3e94e6422ad771cea',
+    '0x4F4678D4439feC812Ac7674Bb3Efb4C8f5Fb78A6',
+  ],
   paymentToken: '0xc70B8741B8B07A6d61E54fd4B20f22Fa648E5565',
   paymentTokenSymbol: '$U test token',
   amountAtomic: '100000000000000000',

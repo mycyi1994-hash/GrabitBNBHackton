@@ -28,10 +28,19 @@ type VerificationGate = {
   jobSettled: boolean;
 };
 
+type DiscoveredRow = {
+  category: string;
+  tokenId: string;
+  name: string;
+  level: string;
+  blocker: string;
+};
+
 type SlashHomeProps = {
   agents: SlashAgent[];
   gate: VerificationGate;
   ownerConcentration: number;
+  discovered: DiscoveredRow[];
 };
 
 type StoreFilter = 'all' | 'automate' | 'monitor';
@@ -164,7 +173,7 @@ function AgentCard({
   );
 }
 
-export function SlashHome({ agents, gate, ownerConcentration }: SlashHomeProps) {
+export function SlashHome({ agents, gate, ownerConcentration, discovered }: SlashHomeProps) {
   const [view, setView] = useState<'landing' | 'store'>('landing');
   const [filter, setFilter] = useState<StoreFilter>('all');
   const [demoSelection, setDemoSelection] = useState<DemoSelection | null>(null);
@@ -315,6 +324,7 @@ export function SlashHome({ agents, gate, ownerConcentration }: SlashHomeProps) 
               agents={visibleAgents}
               gate={gate}
               ownerConcentration={ownerConcentration}
+              discovered={discovered}
             />
           </div>
 
@@ -502,6 +512,33 @@ export function SlashHome({ agents, gate, ownerConcentration }: SlashHomeProps) 
             VIEW LEADERBOARD
           </button>
         </div>
+        <dl className="grabit-launch-readiness" aria-label="Verification readiness">
+          <div>
+            <dt>IDENTITY</dt>
+            <dd>{gate.identityRegistered ? `${visibleAgents.length} / ${visibleAgents.length}` : `0 / ${visibleAgents.length}`}</dd>
+            <small>ERC-8004 on chain 56</small>
+          </div>
+          <div>
+            <dt>ENDPOINT</dt>
+            <dd>{gate.endpointReachable ? `${visibleAgents.length} / ${visibleAgents.length}` : `0 / ${visibleAgents.length}`}</dd>
+            <small>A2A reached</small>
+          </div>
+          <div className="is-pending">
+            <dt>DELIVERED</dt>
+            <dd>{gate.taskDelivered ? `${visibleAgents.length} / ${visibleAgents.length}` : `0 / ${visibleAgents.length}`}</dd>
+            <small>No paid task yet</small>
+          </div>
+          <div className="is-pending">
+            <dt>SETTLED JOBS</dt>
+            <dd>{gate.jobSettled ? '1' : '0'}</dd>
+            <small>ERC-8183 escrow</small>
+          </div>
+        </dl>
+        <p className="grabit-launch-next">
+          <b>NEXT</b> Run any Agent read-only, then open the Testnet terminal to grant a scoped
+          session and hire one.
+        </p>
+
         <div className="grabit-assurance">
           <span>IDENTITY VERIFIED</span>
           <span>PERMISSIONS VISIBLE</span>

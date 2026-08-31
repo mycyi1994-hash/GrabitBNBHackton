@@ -47,6 +47,9 @@ export async function GET() {
       CONFIG.paymentToken,
     ];
     const whitelistData = CONFIG.selectors.policyWhitelist + addressWord(CONFIG.policy);
+    const candidateWhitelistData = CONFIG.policyCandidates.map(
+      (candidate) => CONFIG.selectors.policyWhitelist + addressWord(candidate),
+    );
     const [
       chainHex,
       blockHex,
@@ -58,6 +61,7 @@ export async function GET() {
       policyAllowedHex,
       jobCounterHex,
       providerBalanceHex,
+      candidateWhitelistHexes,
     ] = await Promise.all([
       rpc<string>('eth_chainId', []),
       rpc<string>('eth_blockNumber', []),
@@ -69,6 +73,11 @@ export async function GET() {
       rpc<string>('eth_call', [{ to: CONFIG.router, data: whitelistData }, 'latest']),
       rpc<string>('eth_call', [{ to: CONFIG.kernel, data: CONFIG.selectors.jobCounter }, 'latest']),
       providerAddress ? rpc<string>('eth_getBalance', [providerAddress, 'latest']) : Promise.resolve('0x0'),
+      Promise.all(
+        candidateWhitelistData.map((data) =>
+          rpc<string>('eth_call', [{ to: CONFIG.router, data }, 'latest']).catch(() => '0x0'),
+        ),
+      ),
     ]);
 
     const chainId = Number.parseInt(chainHex, 16);
@@ -76,6 +85,15 @@ export async function GET() {
     const disputeWindowSeconds = Number(BigInt(disputeWindowHex));
     const jobCounter = BigInt(jobCounterHex).toString();
     const policyAllowed = BigInt(policyAllowedHex) === BigInt(1);
+    // Which of the two known chain-97 policy deployments the router actually
+    // whitelists. The configured address may not be the one that works.
+    const policyCandidates = CONFIG.policyCandidates.map((address, index) => ({
+      address,
+      whitelisted: BigInt(candidateWhitelistHexes[index] || '0x0') === BigInt(1),
+      configured: sameAddress(address, CONFIG.policy),
+    }));
+    const resolvedPolicy = policyCandidates.find((candidate) => candidate.whitelisted) ?? null;
+    const policyMismatch = Boolean(resolvedPolicy) && !resolvedPolicy!.configured;
     const providerBalance = BigInt(providerBalanceHex);
     const minimumProviderGas = BigInt('2000000000000000');
     const providerFunded = providerBalance >= minimumProviderGas;
@@ -85,12 +103,22 @@ export async function GET() {
       { label: 'Kernel implementation', pass: sameAddress(decodedAddress(kernelImplementationHex), CONFIG.implementation), observed: decodedAddress(kernelImplementationHex) },
       { label: 'Router implementation', pass: sameAddress(decodedAddress(routerImplementationHex), CONFIG.routerImplementation), observed: decodedAddress(routerImplementationHex) },
       { label: 'Kernel payment token', pass: sameAddress(decodedAddress(paymentTokenHex), CONFIG.paymentToken), observed: decodedAddress(paymentTokenHex) },
-      { label: 'Policy allowlist', pass: policyAllowed, observed: policyAllowed ? 'whitelisted' : 'not whitelisted' },
+      {
+        label: 'Policy allowlist',
+        pass: policyAllowed,
+        observed: policyAllowed
+          ? 'whitelisted'
+          : resolvedPolicy
+            ? `not whitelisted — the router whitelists ${resolvedPolicy.address} instead`
+            : 'not whitelisted — neither known policy address is whitelisted',
+      },
       { label: 'Short dispute window', pass: disputeWindowSeconds === CONFIG.disputeWindowSeconds, observed: `${disputeWindowSeconds} seconds` },
     ];
     const passed = checks.every((check) => check.pass);
     const executionEnabled = passed && Boolean(providerAddress) && providerFunded;
-    const blocker = !passed
+    const blocker = policyMismatch
+      ? `The configured policy is not whitelisted; the router whitelists ${resolvedPolicy!.address}.`
+      : !passed
       ? 'One or more BSC Testnet deployment checks failed.'
       : providerConfigurationError
         ? providerConfigurationError
@@ -111,6 +139,17 @@ export async function GET() {
         router: CONFIG.router,
         policy: CONFIG.policy,
         paymentToken: CONFIG.paymentToken,
+      },
+      policyResolution: {
+        configured: CONFIG.policy,
+        routerWhitelists: resolvedPolicy?.address ?? null,
+        mismatch: policyMismatch,
+        candidates: policyCandidates,
+        note: policyMismatch
+          ? 'ERC8183_TESTNET.policy in lib/erc8183.ts does not match what the router whitelists. Update it to routerWhitelists before running the Testnet hire.'
+          : resolvedPolicy
+            ? 'The configured policy is the one the router whitelists.'
+            : 'Neither known policy address is whitelisted by the router. Re-check the deployment.',
       },
       protocol: {
         jobCounter,

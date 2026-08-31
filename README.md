@@ -130,4 +130,9 @@ Registration alone is insufficient. Metadata, endpoint and category-task checks 
 
 ## License
 
-License to be selected before the public hackathon submission.
+[Apache License 2.0](LICENSE).
+
+Apache-2.0 rather than MIT because the main-track prize is adoption of the
+winning submission as the official BNB Agent Studio marketplace: its explicit
+patent grant and contribution terms are what make that adoption safe for both
+sides. It also matches the licence of the Altana SDK this project builds on.

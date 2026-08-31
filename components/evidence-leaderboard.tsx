@@ -13,6 +13,14 @@ type LeaderboardAgent = {
   endpointVerified: boolean | null;
 };
 
+type DiscoveredRow = {
+  category: string;
+  tokenId: string;
+  name: string;
+  level: string;
+  blocker: string;
+};
+
 type VerificationGate = {
   identityRegistered: boolean;
   endpointReachable: boolean;
@@ -29,10 +37,12 @@ export function EvidenceLeaderboard({
   agents,
   gate,
   ownerConcentration,
+  discovered,
 }: {
   agents: LeaderboardAgent[];
   gate: VerificationGate;
   ownerConcentration: number;
+  discovered: DiscoveredRow[];
 }) {
   const gates = [
     ['IDENTITY', gateCount(agents, gate.identityRegistered), 'ERC-8004 records on chain 56'],
@@ -113,6 +123,44 @@ export function EvidenceLeaderboard({
           wallet. Identity, reachability and a quote do not prove return, drawdown, uptime or result
           quality.
         </p>
+      ) : null}
+
+      {discovered.length ? (
+        <details className="grabit-board-discovered">
+          <summary>
+            <b>DISCOVERED · NOT ELIGIBLE</b>
+            <small>
+              {discovered.length} further BSC identities, and the exact check that stopped each
+            </small>
+          </summary>
+          <p>
+            Registration is cheap: 8004scan listed 288,128 BSC registrations when these were
+            observed. What separates the four above is the endpoint and negotiation checks, not the
+            registration. These carry no price and cannot be hired. Several would qualify if their
+            owner fixed the endpoint.
+          </p>
+          <ul>
+            {discovered.map((row) => (
+              <li key={row.tokenId}>
+                <div>
+                  <strong>{row.name}</strong>
+                  <small>
+                    {row.category} · #{row.tokenId}
+                  </small>
+                </div>
+                <span className="grabit-board-level">{row.level}</span>
+                <p>{row.blocker}</p>
+                <a
+                  href={`https://8004scan.io/agents/bsc/${row.tokenId}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  8004SCAN ↗
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
       ) : null}
     </section>
   );

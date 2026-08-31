@@ -1,8 +1,8 @@
 # Grabit delivery progress
 
-Last updated: **2026-08-31 13:05 UTC**
+Last updated: **2026-08-31 15:10 UTC**
 
-## Overall: 3 / 6 complete
+## Overall: 4 / 6 complete
 
 | Step | Scope | Status | Evidence |
 | --- | --- | --- | --- |
@@ -10,7 +10,7 @@ Last updated: **2026-08-31 13:05 UTC**
 | 2 | Four-category live Agent discovery and preflight | COMPLETE | Four chain-56 identities, reachable A2A, four accepted negotiations |
 | 3 | Replace mock UI with evidence-backed data | COMPLETE | Shared source model, evidence board, verification dashboard, locked execution gate |
 | 4 | Real ERC-8183 Hire and result | IN PROGRESS · 2 / 5 | Mainnet contracts and live quote verified; guarded five-signature console built; no funded Grabit Job |
-| 5 | One-screen Store, Leaderboard and Active Agents | 3 / 4 | Leaderboard and Active Agents restored into the store workspace with AGENTS / LEADERBOARD / ACTIVE anchors. Readiness still sits behind the landing hero |
+| 5 | One-screen Store, Leaderboard and Active Agents | COMPLETE | Leaderboard and Active Agents restored into the store workspace with AGENTS / LEADERBOARD / ACTIVE anchors; readiness and the next action now render on first paint |
 | 6 | QA, public deployment and submission | PENDING | Anonymous access and release tests not recorded |
 
 Completion means the planned step produced its internal deliverable. It does not mean the submission is ready.
@@ -33,12 +33,14 @@ Completion means the planned step produced its internal deliverable. It does not
 | Live quote and call allowlist checks | 21 / 21 |
 | Sequential wallet execution console | 1 / 1 |
 | Evidence-backed production performance values | 0 / required set |
+| Discovered-but-ineligible tier published | 7 identities across 4 categories |
+| Licence selected | Apache-2.0 |
 | Silent mock fallback removed | 1 / 1 |
 | Altana session scope built (allowlist, cap, expiry) | 1 / 1 |
 | Altana session registered in public KeyStore | CODE COMPLETE · UNEXECUTED |
 | Altana session-signed onchain transaction | 0 / 1 minimum |
 | In-product permission view and revoke control | 1 / 1 |
-| Single-screen primary flow implemented | 3 / 4 — see Stage 5 |
+| Single-screen primary flow implemented | 1 / 1 |
 | Anonymous production access recorded | 0 / 1 |
 | Repeated release demo passed | 0 / 10 |
 
@@ -69,21 +71,22 @@ The known provider self-test Job `#56657` is `SUBMITTED`, but its client is the 
 
 The Testnet screen now builds its own signed chain-97 plan. It never rewrites the external Agent's chain-56 quote. Every client call is separately confirmed; provider submission and settlement are separate user-triggered actions.
 
-## Stage 5 status: 3 / 4 — reopened and largely restored 2026-08-31
+## Stage 5 status: 4 / 4 — reopened and restored 2026-08-31
 
 The observatory redesign (commits `95ade5b`..`8096b11`) had replaced the single
 workspace this stage delivered. Restored on 2026-08-31 without reverting the
 redesign, and verified in Chromium against a production build:
 
-1. Dashboard readiness and next action visible in the first workspace: PARTIAL — Active Agents carries readiness and a next action, but it sits in the store view behind the landing hero rather than on first paint.
+1. Dashboard readiness and next action visible in the first workspace: COMPLETE — the landing carries an identity / endpoint / delivered / settled readiness strip and the next action on first paint, and Active Agents carries the live version inside the workspace.
 2. Four-category Agent Store embedded in the same screen: COMPLETE.
 3. Evidence-only Leaderboard and Active Agents embedded below it: COMPLETE — both render inline; the gate summary, four-category table and provider-concentration warning moved in from /compare.
 4. Primary navigation reduced to three anchor tabs: COMPLETE — AGENTS / LEADERBOARD / ACTIVE scroll within the workspace and no longer leave the page.
 
 `/dashboard` and `/compare` still resolve for direct links.
 
-The remaining item is a product decision rather than a bug: making the store the
-first paint would satisfy it and would cost the hero the redesign introduced.
+Item 1 was closed by putting the readiness numbers on the landing itself rather
+than by making the store the first paint, which would have cost the hero the
+redesign introduced.
 
 ## Altana session gate: 4 / 5
 

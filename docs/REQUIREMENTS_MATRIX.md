@@ -9,7 +9,7 @@ PASS = evidenced, PARTIAL = truthful prototype, FAIL = required evidence missing
 | --- | --- | --- | --- | --- |
 | MT-01 | Public and functional during judging | Deployment exists; anonymous access is not recorded | FAIL | Private-window and external-network test |
 | MT-02 | Surfaced Agents are live on BSC | Home fetches two chain-56 identities; endpoints and tasks are untested | PARTIAL | Identity, metadata, endpoint, canary task and activity |
-| MT-03 | Land, find, understand, activate with minimal friction | Journey exists across several routes | PARTIAL | One desktop: Store, Leaderboard, Active Agents |
+| MT-03 | Land, find, understand, activate with minimal friction | Landing carries readiness and the next action; Store, Leaderboard and Active Agents share one workspace with anchor navigation | PASS | Re-check after each redesign; this regressed once already |
 | MT-04 | Accurate decision-quality data | Registry identity is live; performance and risk are representative | FAIL | Source, time, window, formula and verification level |
 | MT-05 | Rebalancing is first-class | Representative cards only | FAIL | One eligible Agent with category metrics and activation |
 | MT-06 | Grid Trading is first-class | Representative cards only | FAIL | Same depth as MT-05 |
@@ -17,6 +17,7 @@ PASS = evidenced, PARTIAL = truthful prototype, FAIL = required evidence missing
 | MT-08 | Health Factor Monitoring is first-class | Representative cards only | FAIL | Same depth as MT-05 |
 | MT-09 | Activate hires an Agent | Zero-value self-transaction only | FAIL | Job ID, provider, budget, lifecycle, result and settlement/refund |
 | MT-10 | Four categories have equal depth | Generic Agent model and comparison rows | FAIL | Common trust fields plus category-correct metrics |
+| MT-11 | Agent diversity is legible | Four anchors share one owner; seven further identities across all four categories are published with the exact check that stopped each | PARTIAL | A second owner reaching TASK_TESTED in any category |
 
 ## Truth and safety gates
 

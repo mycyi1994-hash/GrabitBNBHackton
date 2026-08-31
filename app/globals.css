@@ -14695,3 +14695,147 @@ body:has(.grabit-terminal-page) .sfx-switch {
   .grabit-board h2,
   .grabit-active h2 { font-size: 18px; }
 }
+
+/* Discovered-but-ineligible tier, and readiness on the landing. */
+
+.grabit-board-discovered {
+  border: 1px solid var(--market-line-soft);
+}
+
+.grabit-board-discovered summary {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  color: var(--market-text-2);
+  cursor: pointer;
+  list-style: none;
+}
+
+.grabit-board-discovered summary::-webkit-details-marker { display: none; }
+
+.grabit-board-discovered summary::before {
+  content: '+';
+  color: var(--product-accent);
+  font-weight: 700;
+}
+
+.grabit-board-discovered[open] summary::before { content: '−'; }
+
+.grabit-board-discovered summary b {
+  color: var(--market-text);
+  font-size: 10px;
+  letter-spacing: .12em;
+}
+
+.grabit-board-discovered summary small { color: var(--market-text-3); }
+
+.grabit-board-discovered > p {
+  margin: 0;
+  padding: 0 14px 12px;
+  max-width: 78ch;
+  color: var(--market-text-3);
+}
+
+.grabit-board-discovered ul {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--market-line-soft);
+  border-top: 1px solid var(--market-line-soft);
+}
+
+.grabit-board-discovered li {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 128px minmax(220px, 1.6fr) auto;
+  gap: 12px;
+  align-items: baseline;
+  padding: 11px 14px;
+  background: var(--market-bg);
+}
+
+.grabit-board-discovered li strong { color: var(--market-text-2); }
+
+.grabit-board-discovered li small {
+  display: block;
+  margin-top: 2px;
+  color: var(--market-text-3);
+  font-size: 10px;
+}
+
+.grabit-board-discovered li p {
+  margin: 0;
+  color: var(--market-text-3);
+}
+
+.grabit-board-level {
+  align-self: start;
+  padding: 3px 7px;
+  border: 1px solid var(--market-line);
+  color: var(--market-text-3);
+  font-size: 9px;
+  letter-spacing: .1em;
+  white-space: nowrap;
+}
+
+.grabit-board-discovered li a {
+  color: color-mix(in srgb, var(--product-accent) 70%, var(--market-text));
+  font-size: 10px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.grabit-board-discovered li a:hover { text-decoration: underline; }
+
+.grabit-launch-readiness {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 1px;
+  margin: 22px 0 0;
+  background: var(--market-line-soft, rgb(229 226 236 / 10%));
+  border: 1px solid var(--market-line-soft, rgb(229 226 236 / 10%));
+}
+
+.grabit-launch-readiness > div {
+  padding: 10px 12px;
+  background: rgb(8 9 12 / 82%);
+}
+
+.grabit-launch-readiness dt {
+  color: var(--market-text-3, #918c99);
+  font-size: 9px;
+  letter-spacing: .12em;
+}
+
+.grabit-launch-readiness dd {
+  margin: 3px 0 1px;
+  color: var(--product-accent, #f2efe8);
+  font-size: 18px;
+}
+
+.grabit-launch-readiness .is-pending dd { color: var(--market-text-3, #918c99); }
+
+.grabit-launch-readiness small {
+  color: var(--market-text-3, #918c99);
+  font-size: 9px;
+}
+
+.grabit-launch-next {
+  margin: 10px 0 0;
+  color: var(--market-text-3, #918c99);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.grabit-launch-next b {
+  margin-right: 8px;
+  color: var(--market-text-2, #bbb7c1);
+  letter-spacing: .1em;
+}
+
+@media (max-width: 760px) {
+  .grabit-board-discovered li { grid-template-columns: 1fr; gap: 5px; }
+}
