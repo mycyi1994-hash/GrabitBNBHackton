@@ -5404,3 +5404,503 @@ body {
     overflow: visible;
   }
 }
+
+/* CRT workstation concept demo */
+.activate-page {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 42%, rgb(35 75 70 / 82%), transparent 48%),
+    linear-gradient(#173f3c, #082421 72%, #051816);
+}
+
+.activate-page > .topbar {
+  display: none;
+}
+
+.crt-demo-stage {
+  position: relative;
+  width: min(98vw, calc(98dvh * 1.5));
+  aspect-ratio: 3 / 2;
+  isolation: isolate;
+  filter: drop-shadow(0 22px 22px rgb(0 0 0 / 58%));
+}
+
+.crt-workstation-art {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+.crt-screen-surface {
+  container-type: inline-size;
+  position: absolute;
+  z-index: 2;
+  top: 8.2%;
+  left: 21.7%;
+  width: 56.5%;
+  height: 52.4%;
+  overflow: hidden;
+  border-radius: 2.8% / 4.8%;
+  background: #07110b;
+  box-shadow:
+    inset 0 0 28px rgb(34 255 137 / 10%),
+    inset 0 0 90px rgb(0 0 0 / 72%);
+}
+
+.crt-screen-surface::after {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  content: "";
+  border-radius: inherit;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0%) 0 3px,
+      rgb(0 20 10 / 6%) 3px 4px
+    ),
+    radial-gradient(ellipse at center, transparent 66%, rgb(0 0 0 / 16%) 100%);
+  pointer-events: none;
+}
+
+.activate-page .crt-screen-surface .simple-activate-shell {
+  position: relative;
+  display: grid;
+  grid-template-rows: 64px 28px minmax(0, 1fr);
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 5px;
+  overflow: hidden;
+  border: 0;
+  background: #c7c4bb;
+  box-shadow: inset 0 0 34px rgb(14 56 38 / 15%);
+}
+
+.activate-page .crt-screen-surface .back-link {
+  position: absolute;
+  z-index: 8;
+  top: 9px;
+  right: 9px;
+  min-height: 27px;
+  margin: 0;
+  padding: 5px 8px;
+  font-size: clamp(10px, 1.05cqw, 14px);
+}
+
+.activate-page .crt-screen-surface .simple-activate-intro {
+  grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.65fr);
+  gap: 5px;
+  height: 58px;
+  margin: 0;
+}
+
+.activate-page .crt-screen-surface .simple-agent-title {
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 9px;
+}
+
+.activate-page .crt-screen-surface .simple-agent-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 15px;
+}
+
+.activate-page .crt-screen-surface .simple-agent-title h1 {
+  max-width: calc(100% - 75px);
+  font: 900 clamp(19px, 2.05cqw, 31px)/1.05 Arial, sans-serif;
+}
+
+.activate-page .crt-screen-surface .simple-agent-title .eyebrow {
+  font-size: clamp(9px, 0.85cqw, 12px);
+}
+
+.activate-page .crt-screen-surface .simple-agent-title > div > p:last-child {
+  max-width: calc(100% - 50px);
+  font-size: clamp(10px, 1.05cqw, 14px);
+}
+
+.activate-page .crt-screen-surface .simple-flow-strip {
+  padding: 3px;
+}
+
+.activate-page .crt-screen-surface .simple-flow-strip span {
+  min-height: 46px;
+  font-size: clamp(8px, 0.78cqw, 11px);
+}
+
+.activate-page .crt-screen-surface .simple-flow-strip b {
+  font-size: clamp(14px, 1.45cqw, 20px);
+}
+
+.activate-page .crt-screen-surface .user-test-checklist {
+  position: relative;
+  z-index: 9;
+  margin: 0;
+}
+
+.activate-page .crt-screen-surface .user-test-checklist summary {
+  min-height: 25px;
+  padding: 4px 8px;
+  font-size: clamp(9px, 0.9cqw, 12px);
+}
+
+.activate-page .crt-screen-surface .user-test-checklist[open] {
+  position: absolute;
+  top: 69px;
+  right: 5px;
+  left: 5px;
+  max-height: calc(100% - 74px);
+  overflow: auto;
+  box-shadow: 6px 6px 0 rgb(0 0 0 / 42%);
+}
+
+.activate-page .crt-screen-surface .cockpit-layout {
+  display: grid;
+  grid-template-areas:
+    "network network"
+    "agent wallet"
+    "agent hire"
+    "status footer";
+  grid-template-columns: minmax(0, 1.42fr) minmax(275px, 0.82fr);
+  grid-template-rows: 34px auto minmax(0, 1fr) 34px;
+  gap: 5px;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.activate-page .crt-screen-surface .cockpit-network-banner {
+  grid-area: network;
+  min-height: 0;
+  padding: 4px 8px;
+}
+
+.activate-page .crt-screen-surface .cockpit-network-banner > div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.activate-page .crt-screen-surface .cockpit-network-banner strong {
+  font-size: clamp(11px, 1.05cqw, 15px);
+}
+
+.activate-page .crt-screen-surface .cockpit-network-banner p {
+  display: inline;
+  margin: 0;
+  font-size: clamp(9px, 0.88cqw, 12px);
+}
+
+.activate-page .crt-screen-surface .cockpit-agent-panel {
+  position: relative;
+  grid-area: agent;
+  overflow: auto;
+}
+
+.activate-page .crt-screen-surface .cockpit-wallet-panel {
+  grid-area: wallet;
+}
+
+.activate-page .crt-screen-surface .cockpit-hire-panel,
+.activate-page .crt-screen-surface .cockpit-result-panel {
+  grid-area: hire;
+}
+
+.activate-page .crt-screen-surface .cockpit-status {
+  grid-area: status;
+}
+
+.activate-page .crt-screen-surface .cockpit-footer {
+  grid-area: footer;
+}
+
+.activate-page .crt-screen-surface .cockpit-layout > .hire-step-panel {
+  min-height: 0;
+  padding: 7px;
+  overflow: hidden;
+}
+
+.activate-page .crt-screen-surface .hire-step-heading {
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  gap: 7px;
+  margin: -7px -7px 6px;
+  padding: 6px 7px;
+}
+
+.activate-page .crt-screen-surface .hire-step-heading > span {
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+}
+
+.activate-page .crt-screen-surface .hire-step-heading strong {
+  font: 900 clamp(15px, 1.45cqw, 20px)/1.1 Arial, sans-serif;
+}
+
+.activate-page .crt-screen-surface .hire-step-heading small {
+  margin-top: 2px;
+  font-size: clamp(8px, 0.78cqw, 11px);
+}
+
+.activate-page .crt-screen-surface .strategy-preview-launch {
+  gap: 8px;
+  margin: 0;
+  padding: 8px;
+}
+
+.activate-page .crt-screen-surface .strategy-preview-launch strong {
+  font-size: clamp(14px, 1.35cqw, 19px);
+}
+
+.activate-page .crt-screen-surface .strategy-preview-launch span {
+  font-size: clamp(10px, 0.95cqw, 13px);
+}
+
+.activate-page .crt-screen-surface .retro-button,
+.activate-page .crt-screen-surface .simple-primary-action {
+  min-height: 34px;
+  padding: 6px 9px;
+  font-size: clamp(10px, 0.95cqw, 14px);
+}
+
+.activate-page .crt-screen-surface .cockpit-layout:not(.has-preview) .cockpit-agent-panel::after {
+  position: absolute;
+  right: 10px;
+  bottom: 12px;
+  left: 10px;
+  display: grid;
+  min-height: 34%;
+  place-items: center;
+  border: 2px dashed #267c52;
+  color: #235f43;
+  background: repeating-linear-gradient(0deg, #d9ded4 0 3px, #d1d7ce 3px 4px);
+  content: "AGENT STANDBY  ·  PRESS PREVIEW";
+  font: 900 clamp(13px, 1.55cqw, 22px)/1 "Courier New", monospace;
+  text-align: center;
+}
+
+.activate-page .crt-screen-surface .cockpit-agent-panel .hire-alert {
+  margin-top: 4px;
+  padding: 6px 8px;
+  font-size: clamp(10px, 0.9cqw, 13px);
+}
+
+.activate-page .crt-screen-surface .cockpit-agent-panel .hire-alert.is-success {
+  display: none;
+}
+
+.activate-page .crt-screen-surface .simple-technical-details {
+  margin-top: 4px;
+}
+
+.activate-page .crt-screen-surface .simple-technical-details summary {
+  padding: 5px 7px;
+  font-size: clamp(9px, 0.86cqw, 12px);
+}
+
+.activate-page .crt-screen-surface .cockpit-wallet-panel .hire-action-row {
+  display: grid;
+  gap: 5px;
+}
+
+.activate-page .crt-screen-surface .cockpit-wallet-panel .hire-action-row .retro-button {
+  width: 100%;
+}
+
+.activate-page .crt-screen-surface .cockpit-wallet-panel .hire-action-row > span {
+  overflow: hidden;
+  font-size: clamp(9px, 0.85cqw, 12px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activate-page .crt-screen-surface .testnet-faucet-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+
+.activate-page .crt-screen-surface .cockpit-hire-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.activate-page .crt-screen-surface .simple-job-progress {
+  padding: 6px 8px;
+}
+
+.activate-page .crt-screen-surface .simple-job-progress strong {
+  font-size: clamp(12px, 1.2cqw, 17px);
+}
+
+.activate-page .crt-screen-surface .simple-job-progress span {
+  display: none;
+}
+
+.activate-page .crt-screen-surface .transaction-step-list {
+  display: grid;
+  flex: 1;
+  grid-template-rows: repeat(5, minmax(38px, 1fr));
+  gap: 4px;
+  min-height: 0;
+  margin-top: 5px;
+}
+
+.activate-page .crt-screen-surface .transaction-step-list .transaction-step {
+  grid-template-columns: 30px minmax(0, 1fr) 62px;
+  gap: 7px;
+  min-height: 0;
+  margin: 0;
+  padding: 5px;
+}
+
+.activate-page .crt-screen-surface .transaction-step-index {
+  width: 28px;
+  height: 28px;
+  font-size: 11px;
+}
+
+.activate-page .crt-screen-surface .transaction-step-copy strong {
+  font-size: clamp(11px, 1.05cqw, 15px);
+}
+
+.activate-page .crt-screen-surface .transaction-step-copy small {
+  display: none;
+}
+
+.activate-page .crt-screen-surface .transaction-state-label {
+  width: 62px;
+  min-width: 0;
+  padding: 5px 3px;
+  font-size: clamp(8px, 0.72cqw, 10px);
+}
+
+.activate-page .crt-screen-surface .simple-primary-action {
+  min-height: 38px;
+  margin-top: 5px;
+}
+
+.activate-page .crt-screen-surface .cockpit-layout.has-agent-run .cockpit-hire-panel {
+  display: none;
+}
+
+.activate-page .crt-screen-surface .cockpit-result-panel {
+  overflow: auto;
+}
+
+.activate-page .crt-screen-surface .cockpit-status {
+  min-width: 0;
+  padding: 6px 8px;
+  overflow: hidden;
+  font-size: clamp(9px, 0.86cqw, 12px);
+}
+
+.activate-page .crt-screen-surface .cockpit-footer {
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.activate-page .crt-screen-surface .cockpit-footer .retro-button {
+  min-height: 32px;
+  padding: 5px 7px;
+}
+
+.crt-shortcut-legend {
+  position: absolute;
+  z-index: 3;
+  right: 28.5%;
+  bottom: 10.2%;
+  left: 17%;
+  display: flex;
+  justify-content: space-around;
+  color: #38342d;
+  font: 900 clamp(7px, 0.55vw, 11px)/1 "Courier New", monospace;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+}
+
+.crt-power-label {
+  position: absolute;
+  z-index: 3;
+  top: 68.3%;
+  left: 42%;
+  color: #464138;
+  font: 900 clamp(7px, 0.5vw, 10px)/1 "Courier New", monospace;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+@media (max-width: 1050px), (max-height: 620px) {
+  .activate-page {
+    display: block;
+    min-height: 100vh;
+    overflow: auto;
+  }
+
+  .crt-demo-stage {
+    width: 100%;
+    min-height: 100vh;
+    aspect-ratio: auto;
+    filter: none;
+  }
+
+  .crt-workstation-art,
+  .crt-shortcut-legend,
+  .crt-power-label {
+    display: none;
+  }
+
+  .crt-screen-surface {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+    border-radius: 0;
+  }
+
+  .activate-page .crt-screen-surface .simple-activate-shell {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .activate-page .crt-screen-surface .cockpit-layout {
+    display: grid;
+    grid-template-areas:
+      "network"
+      "agent"
+      "wallet"
+      "hire"
+      "status"
+      "footer";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    overflow: visible;
+  }
+
+  .activate-page .crt-screen-surface .cockpit-layout > .hire-step-panel {
+    overflow: visible;
+  }
+
+  .activate-page .crt-screen-surface .cockpit-layout:not(.has-preview) .cockpit-agent-panel::after {
+    position: static;
+    min-height: 110px;
+    margin-top: 8px;
+  }
+}
