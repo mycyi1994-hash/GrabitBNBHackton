@@ -9984,7 +9984,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 40;
+  z-index: 2;
   pointer-events: none;
   opacity: 0.1;
   background: radial-gradient(rgb(255 255 255 / 20%) 0.45px, transparent 0.65px);
@@ -10000,12 +10000,25 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
 }
 
 .grabit-celestial-scene {
-  z-index: 1;
+  z-index: 0;
+  pointer-events: none;
   transform: translateX(11vw) scale(1.08);
   opacity: 0.92;
   filter:
     drop-shadow(0 0 15px rgb(238 237 232 / 11%))
     drop-shadow(0 0 32px rgb(165 149 197 / 12%));
+}
+
+.grabit-launch-interface {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  isolation: isolate;
+  pointer-events: none;
+}
+
+.grabit-launch-interface :is(a, button) {
+  pointer-events: auto;
 }
 
 .grabit-ascii-canvas {
@@ -10137,7 +10150,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   z-index: 5;
   width: min(49vw, 760px);
   text-align: left;
-  animation: grabit-product-reveal 760ms 180ms cubic-bezier(.2, .75, .2, 1) both;
+  opacity: 1;
 }
 
 .grabit-status-line {
@@ -10217,7 +10230,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   display: flex;
   gap: 12px;
   margin-top: 28px;
-  animation: grabit-product-reveal 720ms 460ms cubic-bezier(.2, .75, .2, 1) both;
+  opacity: 1;
 }
 
 .grabit-primary-action,
@@ -10286,7 +10299,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   border-top: 1px solid var(--grabit-obs-line);
   background: linear-gradient(180deg, rgb(9 10 14 / 16%), rgb(9 10 14 / 74%));
   backdrop-filter: blur(10px);
-  animation: grabit-product-reveal 760ms 680ms cubic-bezier(.2, .75, .2, 1) both;
+  opacity: 1;
 }
 
 .grabit-agent-index-label {

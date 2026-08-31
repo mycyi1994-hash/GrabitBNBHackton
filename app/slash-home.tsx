@@ -190,7 +190,7 @@ export function SlashHome({ agents }: SlashHomeProps) {
   return (
     <main className="grabit-ganymede-launch">
       <GrabitScene />
-
+      <div className="grabit-launch-interface">
       <header className="grabit-launch-nav">
         <button className="grabit-wordmark" type="button" onClick={() => setView('landing')} aria-label="Grabit home">
           <span>G</span>
@@ -257,6 +257,7 @@ export function SlashHome({ agents }: SlashHomeProps) {
         <span>TESTNET / PRE-LAUNCH</span>
         Agent performance is shown only after verified execution. No mainnet capital moves from this screen.
       </p>
+      </div>
     </main>
   );
 }
