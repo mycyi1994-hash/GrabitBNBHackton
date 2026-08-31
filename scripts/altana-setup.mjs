@@ -30,7 +30,9 @@ const NETWORK = {
 
 /** Enough for the KeyStore registration fee plus a few intents. */
 const MIN_GAS_WEI = 20_000_000_000_000_000n; // 0.02 tBNB
-const HIRE_BUDGET = 100_000_000_000_000_000n; // 0.10 $U
+const HIRE_BUDGET = 100_000_000_000_000_000n; // 0.10 $U escrowed per job
+// One task per category for the Agent Advantage Report, plus retry headroom.
+const REPORT_BUDGET = HIRE_BUDGET * 20n; // 2.00 $U
 
 const ERC20_ABI = [
   { name: 'balanceOf', type: 'function', stateMutability: 'view', inputs: [{ name: 'a', type: 'address' }], outputs: [{ type: 'uint256' }] },
@@ -128,6 +130,7 @@ async function check() {
   const rows = [
     ['tBNB for gas', gas >= MIN_GAS_WEI, `${formatEther(gas)} tBNB (need ${formatEther(MIN_GAS_WEI)})`, NETWORK.faucetGas],
     ['test $U for one hire', token !== null && token >= HIRE_BUDGET, token === null ? 'could not read balance' : `${formatUnits(token, 18)} $U (need ${formatUnits(HIRE_BUDGET, 18)})`, NETWORK.faucetToken],
+    ['test $U for the 4-task report', token !== null && token >= REPORT_BUDGET, token === null ? 'could not read balance' : `${formatUnits(token, 18)} $U (want ${formatUnits(REPORT_BUDGET, 18)})`, NETWORK.faucetToken],
     ['session registered in KeyStore', Boolean(keyValid), keyValid ? 'valid' : `${registeredKeys.length} key(s) on this wallet, none matching this session`, ''],
   ];
 

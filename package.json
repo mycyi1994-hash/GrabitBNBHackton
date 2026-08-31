@@ -10,7 +10,9 @@
     "dev": "vinext dev",
     "build": "vinext build",
     "start": "vinext start",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "advantage": "node scripts/advantage-report.mjs",
+    "altana": "node scripts/altana-setup.mjs"
   },
   "dependencies": {
     "@altananetwork/sdk": "^0.8.0",

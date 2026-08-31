@@ -56,7 +56,9 @@ Calls — nothing outside this list can be signed by the session:
 | `dispute(uint256)` | policy | Contest a deliverable inside the window |
 | `claimRefund(uint256)` | commerce | Reclaim escrow when nothing is delivered |
 
-Spend: **0.10 $U per day**, on the chain's $U token only.
+Spend: **1.00 $U per day**, on the chain's $U token only. One job escrows
+0.10 $U, so the ceiling is ten jobs a day, sized to leave retry headroom for
+the four-task Agent Advantage Report.
 Expiry: **3600 seconds** per grant.
 
 A leaked session key can therefore replay the capped job lifecycle against
@@ -134,7 +136,8 @@ and names the one that answered.
    SDK waits for the key to become visible before returning.
 4. Confirm the panel reads `ACTIVE` and that the KeyStore link resolves. Record
    the grant transaction hash — this is the first Altana-explorer evidence.
-5. Fund the agent wallet with at least 0.10 test $U, then
+5. Fund the agent wallet with test $U — at least 0.10 for a single canary,
+   and about 2.00 to run the four Advantage Report tasks with retries. Then
    `POST /api/altana/hire {"registry":"304493","mode":"canary","dryRun":true}`
    to confirm the plan without spending, and drop `dryRun` to fund the job
    through the session key. Record the transaction hash and Job ID.

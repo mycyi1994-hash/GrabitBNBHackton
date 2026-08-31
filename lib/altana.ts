@@ -26,7 +26,7 @@ import {
   type Signer,
   type Wallet,
 } from '@altananetwork/sdk';
-import { createPublicClient, http, keccak256, padHex, type Address, type Hex } from 'viem';
+import { createPublicClient, formatUnits, http, keccak256, padHex, type Address, type Hex } from 'viem';
 
 export const ALTANA_NETWORKS: Record<number, NetworkConfig> = {
   [BNB_TESTNET.chainId]: BNB_TESTNET,
@@ -36,8 +36,20 @@ export const ALTANA_NETWORKS: Record<number, NetworkConfig> = {
 /** Testnet-first, matching the rest of the execution surface. */
 export const DEFAULT_ALTANA_CHAIN_ID = BNB_TESTNET.chainId;
 
-/** 0.10 $U in raw units. The same bounded amount the rest of Grabit escrows. */
-export const SESSION_BUDGET_ATOMIC = BigInt('100000000000000000');
+/**
+ * The session key's daily ceiling, in raw units: 1.00 $U.
+ *
+ * One job escrows 0.10 $U (`ERC8183.amountDisplay`), so this is ten jobs a day.
+ * It is deliberately larger than one job: the Agent Advantage Report runs one
+ * task per category, and under a tighter cap a single retry would strand the
+ * run until the spend period rolled over. The magnitude is sized to the demo
+ * and the token is a valueless testnet token; the claim being made is not that
+ * the number is small but that a number exists, is chosen before the key is
+ * handed out, and is enforced by the account rather than by this application.
+ */
+export const SESSION_BUDGET_ATOMIC = BigInt('1000000000000000000');
+/** Decimals of the $U payment token on both BNB networks. */
+export const SESSION_BUDGET_DECIMALS = 18;
 export const SESSION_SPEND_PERIOD = 'day' as const;
 export const SESSION_TTL_SECONDS = 3_600;
 
@@ -156,7 +168,7 @@ export function describeSessionPermissions(chainId: number) {
       token: addresses.paymentToken,
       tokenSymbol: chainId === BNB.chainId ? '$U' : 'test $U',
       limitAtomic: SESSION_BUDGET_ATOMIC.toString(),
-      limitDisplay: `0.10 ${chainId === BNB.chainId ? '$U' : 'test $U'}`,
+      limitDisplay: `${formatUnits(SESSION_BUDGET_ATOMIC, SESSION_BUDGET_DECIMALS)} ${chainId === BNB.chainId ? '$U' : 'test $U'}`,
       period: SESSION_SPEND_PERIOD,
     },
     ttlSeconds: SESSION_TTL_SECONDS,

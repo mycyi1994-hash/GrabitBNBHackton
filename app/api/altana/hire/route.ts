@@ -7,18 +7,21 @@
  * allowlist and per-day spend cap are what bound this call: the account rejects
  * anything outside them at validation time, so the worst case here is one
  * capped job against an allowlisted contract.
+ *
+ * The job escrows `jobBudgetAtomic` — what one Job costs — not the session's
+ * daily ceiling. The two were briefly the same number, which hid the fact that
+ * passing the ceiling here would sink a whole day's allowance into one job.
  */
 import { hireErc8183Agent } from '@altananetwork/sdk';
 import {
   DEFAULT_ALTANA_CHAIN_ID,
-  SESSION_BUDGET_ATOMIC,
   altanaConfigurationError,
   altanaNetwork,
   altanaNetworkSummary,
   isSupportedAltanaChain,
   resolveAgentSession,
 } from '@/lib/altana';
-import { CANARY_TASKS } from '@/lib/erc8183';
+import { CANARY_TASKS, jobBudgetAtomic, jobBudgetDisplay } from '@/lib/erc8183';
 import { marketplaceCandidates } from '@/lib/marketplace-candidates';
 import { candidateEvidence, HIRE_OPENS_AT, ladderState } from '@/lib/verification-ladder';
 import { getTestnetProviderAccount } from '@/lib/testnet-reference-provider';
@@ -153,8 +156,8 @@ export async function POST(request: Request) {
             registry: candidate.tokenId,
             provider,
             task,
-            budgetAtomic: SESSION_BUDGET_ATOMIC.toString(),
-            budgetDisplay: chainId === 56 ? '0.10 $U' : '0.10 test $U',
+            budgetAtomic: jobBudgetAtomic(chainId).toString(),
+            budgetDisplay: jobBudgetDisplay(chainId),
             signedBy: 'session',
             sessionExpiry: session.expiry,
           },
@@ -168,7 +171,7 @@ export async function POST(request: Request) {
       {
         provider,
         task,
-        budget: SESSION_BUDGET_ATOMIC,
+        budget: jobBudgetAtomic(chainId),
       },
       { network },
     );
@@ -188,7 +191,7 @@ export async function POST(request: Request) {
           id: result.jobId.toString(),
           provider: result.provider,
           budgetAtomic: result.budget.toString(),
-          budgetDisplay: chainId === 56 ? '0.10 $U' : '0.10 test $U',
+          budgetDisplay: jobBudgetDisplay(chainId),
           expiredAt: Number(result.expiredAt),
         },
         transaction: {

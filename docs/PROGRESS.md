@@ -94,7 +94,7 @@ The published prize gate requires live on-chain transactions through an Altana
 session key. See `docs/ALTANA_SESSION.md`.
 
 1. Agent holds its own Altana wallet: COMPLETE — smart account at the admin signer's address.
-2. Session carries a call allowlist, spend cap and expiry: COMPLETE — eight ERC-8183 signatures, 0.10 $U per day, one-hour expiry.
+2. Session carries a call allowlist, spend cap and expiry: COMPLETE — eight ERC-8183 signatures, 1.00 $U per day, one-hour expiry.
 3. Session registered in the public KeyStore: CODE COMPLETE — `register: true` on every grant; no grant has run.
 4. User-facing permission view and revoke: COMPLETE — reads the enforced expiry from the account and verifiability from KeyStore.
 5. A real transaction signed by the session key: PENDING — requires a tBNB-funded chain-97 agent wallet.

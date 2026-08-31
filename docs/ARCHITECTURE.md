@@ -44,7 +44,9 @@ flowchart TD
 - Local resume data contains Job IDs and transaction hashes only, never wallet secrets.
 - Session permissions must include a call allowlist, spend cap and expiry. The
   Altana session grants exactly eight ERC-8183 signatures, caps spending at
-  0.10 $U per day and expires after one hour.
+  1.00 $U per day and expires after one hour. The cap is ten times the 0.10 $U
+  a single job escrows, so a retry inside the Advantage Report run cannot
+  strand the session until the spend period rolls over.
 - The Altana admin key only grants and revokes; it never signs a job. The session
   key signs jobs and holds no authority beyond the allowlist and cap.
 - Session state is read from chain, never remembered: the enforced expiry comes
