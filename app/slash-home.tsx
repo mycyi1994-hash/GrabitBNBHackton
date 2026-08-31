@@ -14,47 +14,51 @@ type SlashHomeProps = {
   agents: SlashAgent[];
 };
 
-const GRABIT_ASCII = String.raw`
-  _____  _____          ____   _____ _______
- / ____||  __ \   /\   |  _ \ |_   _|__   __|
-| |  __ | |__) | /  \  | |_) |  | |    | |
-| | |_ ||  _  / / /\ \ |  _ <   | |    | |
-| |__| || | \ \/ ____ \| |_) | _| |_   | |
- \_____||_|  \_\_/    \_\____/ |_____|  |_|`;
-
-const BSC_FRAMES = [
-  String.raw`        /\
-       /==\
-  /\  / /\ \  /\
- /  \/ <  > \/  \
- \  /\  \/  /\  /
-  \/  \ == /  \/
-       \  /
-        \/`,
-  String.raw`        /\
-       /--\
-  /\  / /\ \  /\
- /==\/ <  > \/==\
- \==/\  \/  /\==/
-  \/  \ -- /  \/
-       \  /
-        \/`,
-  String.raw`        /\
-       /++\
-  /\  / /\ \  /\
- /--\/ <==> \/--\
- \--/\  \/  /\--/
-  \/  \ ++ /  \/
-       \  /
-        \/`,
-  String.raw`        /\
-       /==\
-  /\  / /\ \  /\
- /  \/ <++> \/  \
- \  /\  \/  /\  /
-  \/  \ == /  \/
-       \  /
-        \/`,
+const BSC_SCENE_FRAMES = [
+  String.raw`                              .----[ BSC / 56 ]----.
+                         .----'                       '----.
+                    o----+         /\       /\             +----o
+                   /     |        /  \     /  \            |     \
+       [ REBALANCE ]     |   /\  / /\ \   / /\ \  /\      |     [ GRID ]
+                   \     |  /  \/ /  \ \ / /  \ \/  \     |     /
+                    o----+  \  /\ \  / / \ \  / /\  /     +----o
+                         |   \/  \ \/ /   \ \/ /  \/      |
+                         |        \  /     \  /            |
+                         |         \/       \/             |
+                    o----+              *                  +----o
+                   /     |              |                  |     \
+          [ YIELD ]      |              v                  |     [ HEALTH ]
+                   \     |      .-----------------.         |     /
+                    o----+------|  GRABIT AGENT   |---------+----o
+                                | identity: PASS  |
+                                | quote:    LIVE  |
+                                | execute:  READY |
+                                '--------+--------'
+                                         |
+                                         v
+                                [ VERIFY BEFORE HIRE ]`,
+  String.raw`                              .----[ BSC / 56 ]----.
+                         .----'                       '----.
+                    *----+         /\       /\             +----*
+                   /     |        /  \     /  \            |     \
+       [ REBALANCE ]     |   /\  / /\ \   / /\ \  /\      |     [ GRID ]
+                   \     |  /  \/ /  \ \ / /  \ \/  \     |     /
+                    o----+  \  /\ \  / / \ \  / /\  /     +----o
+                         |   \/  \ \/ /   \ \/ /  \/      |
+                         |        \  /     \  /            |
+                         |         \/       \/             |
+                    o----+              +                  +----o
+                   /     |              |                  |     \
+          [ YIELD ]      |              v                  |     [ HEALTH ]
+                   \     |      .-----------------.         |     /
+                    *----+------|  GRABIT AGENT   |---------+----*
+                                | identity: PASS  |
+                                | quote:    LIVE  |
+                                | execute:  READY |
+                                '--------+--------'
+                                         |
+                                         v
+                                [ VERIFY BEFORE HIRE ]`,
 ];
 
 function AsciiRail({ character = '=', end = '+' }: { character?: '=' | '-'; end?: '+' | ':' }) {
@@ -81,8 +85,8 @@ export function SlashHome({ agents }: SlashHomeProps) {
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (motionQuery.matches) return;
     const timer = window.setInterval(() => {
-      setLogoFrame((frame) => (frame + 1) % BSC_FRAMES.length);
-    }, 240);
+      setLogoFrame((frame) => (frame + 1) % BSC_SCENE_FRAMES.length);
+    }, 620);
     return () => window.clearInterval(timer);
   }, []);
 
@@ -106,48 +110,46 @@ export function SlashHome({ agents }: SlashHomeProps) {
 
   if (!entered) {
     return (
-      <main className="ascii-v2-gateway">
-        <section className="ascii-v2-boot" aria-label="Enter Grabit BNB Agent Market">
-          <AsciiRail />
-          <header className="ascii-v2-boot-head">
-            <span>|</span>
-            <b>GRABIT.SYS</b>
-            <small>BNB AGENT EXECUTION TERMINAL</small>
-            <strong>NET_56 :: ONLINE</strong>
-            <span>|</span>
+      <main className="ascii-editorial-gateway">
+        <section className="ascii-editorial-page" aria-label="Enter Grabit BNB Agent Market">
+          <header className="ascii-editorial-head">
+            <b>GRABIT</b>
+            <span>BNB AGENT MARKET / 2026</span>
+            <span>INDEX 01—04</span>
           </header>
-          <AsciiRail character="-" />
 
-          <div className="ascii-v2-boot-stage">
-            <div className="ascii-v2-wordmark" aria-label="Grabit">
-              <pre>{GRABIT_ASCII}</pre>
-              <p>SMART MONEY, OPERATED BY VERIFIED AGENTS.</p>
+          <div className="ascii-editorial-rule" aria-hidden="true">{'-'.repeat(96)}</div>
+
+          <section className="ascii-editorial-intro">
+            <p><span>001</span> / SMART MONEY ERA</p>
+            <h1>Agents you can<br />inspect before you trust.</h1>
+            <div>
+              <span>LIVE IDENTITIES&nbsp;&nbsp;{liveCount}/4</span>
+              <span>NETWORK&nbsp;&nbsp;BNB CHAIN</span>
             </div>
+          </section>
 
-            <div className="ascii-v2-bsc" aria-label="Animated ASCII BNB Smart Chain mark">
-              <pre>{BSC_FRAMES[logoFrame]}</pre>
-              <div><span>&lt;</span> BNB SMART CHAIN <span>&gt;</span></div>
-            </div>
+          <figure className="ascii-editorial-art">
+            <pre aria-label="BNB Chain agents connected to the Grabit verification layer">{BSC_SCENE_FRAMES[logoFrame]}</pre>
+            <figcaption>FIG. 01 — ONE MARKET, FOUR LIVE DEFI AGENT CATEGORIES.</figcaption>
+          </figure>
 
-            <div className="ascii-v2-path" aria-label="Product flow">
-              <b>FIND</b><span>---&gt;</span><b>VERIFY</b><span>---&gt;</span><b>HIRE</b><span>---&gt;</span><b>MONITOR</b>
-            </div>
-
+          <section className="ascii-editorial-entry">
+            <p>Find, compare and hire on-chain agents.<br />Identity first. Evidence always. Testnet before capital.</p>
             <button type="button" autoFocus onClick={() => setEntered(true)}>
-              [ ENTER AGENT MARKET ]
+              ENTER THE MARKET&nbsp;&nbsp;---&gt;
             </button>
-            <small className="ascii-v2-boot-note">ENTER = OPEN&nbsp;&nbsp; // &nbsp;&nbsp;BSC TESTNET READY&nbsp;&nbsp; // &nbsp;&nbsp;NO MAINNET FUNDS</small>
-          </div>
+          </section>
 
-          <AsciiRail character="-" />
-          <footer className="ascii-v2-boot-foot">
-            <span>|</span>
-            <b>IDENTITIES {liveCount}/4</b>
-            <b>QUOTES 4/4</b>
-            <b>EXECUTION TESTNET_97</b>
-            <span>|</span>
+          <div className="ascii-editorial-rule" aria-hidden="true">{'-'.repeat(96)}</div>
+
+          <footer className="ascii-editorial-foot">
+            <span>01 REBALANCE</span>
+            <span>02 GRID</span>
+            <span>03 YIELD</span>
+            <span>04 HEALTH</span>
+            <b>TESTNET_97 / SAFE MODE <i aria-hidden="true">_</i></b>
           </footer>
-          <AsciiRail />
         </section>
       </main>
     );
