@@ -723,3 +723,123 @@
 
 /* These sections bring their own gutters, so they run to the frame edge. */
 .grabit-market-page > .store-surface { margin-inline: calc(-1 * clamp(24px, 4vw, 68px)); }
+
+/* ===========================================================================
+   Study 2b — dense two-pane. Decision on the left, evidence permanently beside
+   it, everything on one screen without scrolling. Ladder 1c, compressed.
+   =========================================================================== */
+
+.detail-2b { display: grid; grid-template-columns: minmax(0, 1fr) 368px; }
+
+.detail-2b-left { padding: 28px; border-right: 1px solid rgba(242, 239, 232, 0.1); min-width: 0; }
+.detail-2b-right { padding: 22px 24px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+.detail-2b h1 {
+  max-width: 30ch;
+  margin: 0;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+
+.detail-2b-price {
+  margin: 10px 0 18px;
+  color: rgba(242, 239, 232, 0.5);
+  font: 400 13px/1.4 var(--font-geist-mono), monospace;
+}
+
+/* Ladder 1c, compressed */
+
+.ladder-gate {
+  display: grid;
+  grid-template-columns: auto 1px minmax(0, 1fr);
+  border: 1px solid rgba(242, 239, 232, 0.12);
+}
+
+.ladder-gate-figure { padding: 14px 18px; display: grid; align-content: center; justify-items: center; }
+.ladder-gate-figure b { color: var(--unproven); font: 400 32px/1 var(--font-geist-mono), monospace; }
+.ladder-gate-figure span { margin-top: 4px; color: rgba(242, 239, 232, 0.4); font: 400 12px/1 var(--font-geist-mono), monospace; }
+
+/* The only use of accent in the component: the one distance that matters. */
+.ladder-gate-line { background: var(--accent); }
+
+.ladder-gate-body {
+  padding: 14px 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  background: var(--hatch-tan);
+}
+
+.ladder-gate-body > div { min-width: 0; }
+.ladder-gate-body b { color: var(--unproven); font: 500 12px/1 var(--font-geist-mono), monospace; letter-spacing: 0.08em; }
+.ladder-gate-body p { margin: 8px 0 0; color: rgba(242, 239, 232, 0.8); font-size: 13.5px; line-height: 1.45; }
+
+.ladder-gate-stamp {
+  margin: 0;
+  color: rgba(242, 239, 232, 0.4);
+  font: 400 12px/1.5 var(--font-geist-mono), monospace;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ladder-gate-stamp span { display: block; }
+
+/* Dense lifecycle */
+
+.detail-2b .lifecycle-step {
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 15px 0;
+}
+
+.detail-2b .lifecycle-step h3 { font-size: 16px; }
+.detail-2b .lifecycle-step p { max-width: 62ch; margin-top: 5px; font-size: 13.5px; line-height: 1.45; }
+.detail-2b .lifecycle-action { padding: 11px 16px; white-space: nowrap; }
+
+/* Two-up waiting panels */
+
+.detail-2b-panels { margin-top: 18px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; }
+
+.detail-2b-panels .waiting-panel { margin: 0; padding: 16px 18px; }
+.detail-2b-panels .waiting-panel p { font-size: 13.5px; line-height: 1.5; }
+.detail-2b-panels .is-return { border-color: rgba(200, 180, 140, 0.35); }
+.detail-2b-panels .is-return > span { color: var(--unproven); }
+
+/* Right pane */
+
+.detail-2b-right .rail-panel { padding: 0; border: 0; }
+
+.peek-intro { margin: 12px 0 0; color: rgba(242, 239, 232, 0.65); font-size: 13.5px; line-height: 1.5; }
+
+.peek-list { margin: 14px 0 0; display: grid; gap: 12px; }
+
+.peek-row { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px; align-items: start; }
+.peek-row span { font: 500 12px/1.45 var(--font-geist-mono), monospace; letter-spacing: 0.06em; }
+.peek-row span.is-may { color: var(--proven); }
+.peek-row span.is-never { color: var(--forbidden); }
+.peek-row p { margin: 0; color: rgba(242, 239, 232, 0.72); font-size: 13px; line-height: 1.45; }
+
+.peek-more { margin: 14px 0 0; color: rgba(242, 239, 232, 0.4); font: 400 12px/1.4 var(--font-geist-mono), monospace; text-decoration: none; display: inline-block; }
+.peek-more:hover { color: var(--ink); }
+
+/* The preview result, once it has run. */
+.preview-result { margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(242, 239, 232, 0.14); }
+.preview-result > span { color: var(--proven); font: 500 12px/1 var(--font-geist-mono), monospace; letter-spacing: 0.1em; }
+.preview-result h3 { margin: 10px 0 0; color: var(--ink); font-size: 19px; font-weight: 600; }
+.preview-result > p { margin: 8px 0 0; color: rgba(242, 239, 232, 0.75); font-size: 13.5px; line-height: 1.5; }
+.preview-metrics { margin: 14px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1px; background: rgba(242, 239, 232, 0.08); border: 1px solid rgba(242, 239, 232, 0.08); }
+.preview-metrics > div { padding: 10px 12px; background: #06070a; }
+.preview-metrics dt { color: rgba(242, 239, 232, 0.4); font: 400 12px/1 var(--font-geist-mono), monospace; letter-spacing: 0.06em; }
+.preview-metrics dd { margin: 6px 0 0; color: var(--ink); font: 400 14px/1.2 var(--font-geist-mono), monospace; }
+.preview-source { margin: 12px 0 0; color: rgba(242, 239, 232, 0.4); font: 400 12px/1.5 var(--font-geist-mono), monospace; }
+
+@media (max-width: 1180px) {
+  .detail-2b { grid-template-columns: minmax(0, 1fr); }
+  .detail-2b-left { border-right: 0; border-bottom: 1px solid rgba(242, 239, 232, 0.1); }
+  .detail-2b-panels { grid-template-columns: minmax(0, 1fr); }
+}

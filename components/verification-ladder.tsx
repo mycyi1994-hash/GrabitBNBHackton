@@ -107,3 +107,43 @@ export function LadderRows({
     </div>
   );
 }
+
+/**
+ * Study 1c, compressed as 2b uses it — the rung 3 to 4 distance is the graphic.
+ * The accent column is the only place accent appears in the component: it marks
+ * the one boundary that matters.
+ */
+export function LadderGate({
+  state,
+  observedAt,
+  summary,
+}: {
+  state: LadderState;
+  observedAt: string;
+  summary: string;
+}) {
+  const rung = state.rung;
+  if (!rung || !observedAt) return null;
+
+  return (
+    <div className="ladder-gate">
+      <div className="ladder-gate-figure">
+        <b>{state.reached}</b>
+        <span>OF {LADDER.length}</span>
+      </div>
+      <i className="ladder-gate-line" aria-hidden="true" />
+      <div className="ladder-gate-body">
+        <div>
+          <b>
+            {rung.level} · {state.callableVerified ? 'CALLABLE VERIFIED' : 'NOT CALLABLE VERIFIED'}
+          </b>
+          <p>{summary}</p>
+        </div>
+        <p className="ladder-gate-stamp">
+          observed
+          <span>{observedAt.slice(0, 10)}</span>
+        </p>
+      </div>
+    </div>
+  );
+}
