@@ -42,7 +42,14 @@ flowchart TD
 - Each transaction is simulated immediately before `eth_sendTransaction` and requires a separate user action.
 - Approval is exactly 0.10 $U, never unlimited. Only the Fund call moves $U; all five calls can spend BNB gas.
 - Local resume data contains Job IDs and transaction hashes only, never wallet secrets.
-- Session permissions must include a call allowlist, spend cap and expiry.
+- Session permissions must include a call allowlist, spend cap and expiry. The
+  Altana session grants exactly eight ERC-8183 signatures, caps spending at
+  0.10 $U per day and expires after one hour.
+- The Altana admin key only grants and revokes; it never signs a job. The session
+  key signs jobs and holds no authority beyond the allowlist and cap.
+- Session state is read from chain, never remembered: the enforced expiry comes
+  from the agent account's own key list and public verifiability from the Altana
+  KeyStore.
 - Agent performance is stored with its source, observation window and update time.
 - Testnet and mock records are visibly labelled.
 
@@ -51,5 +58,5 @@ flowchart TD
 1. Fund and deliver one read-only Yield canary through the guarded Mainnet console.
 2. Preserve the five transaction receipts, recovered Job ID, deliverable digest and full result.
 3. Add completion, dispute and refund controls only after the first lifecycle is observed.
-4. Grant and revoke one Altana session onchain with a contract allowlist, spend cap and expiry.
+4. Grant, exercise and revoke the Altana session onchain and preserve its three receipts.
 5. Add a PancakeSwap-backed reference agent and explorer receipts.

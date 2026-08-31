@@ -35,9 +35,12 @@ PASS = evidenced, PARTIAL = truthful prototype, FAIL = required evidence missing
 | --- | --- | --- |
 | TermiX | GO for evidence collection | Three real Agent-versus-manual tasks; one trading, stock or security |
 | PancakeSwap | Conditional GO | One flagship with measurable LP or trader benefit |
-| Altana | 48-hour conditional GO | Wallet, allowlist, cap, expiry, session transaction and UI revoke |
+| Altana | BUILT · UNEXECUTED | Wallet, allowlist, cap, expiry and UI revoke are implemented (`docs/ALTANA_SESSION.md`). Session transaction pending a funded chain-97 key |
 
-Partner work stops whenever a main-track FAIL blocks the journey.
+Partner work stops whenever a main-track FAIL blocks the journey. Altana is the
+exception: the published prize gate requires live on-chain transactions through
+an Altana session key, so it is a main-track requirement rather than optional
+partner work.
 
 ## Release gate
 

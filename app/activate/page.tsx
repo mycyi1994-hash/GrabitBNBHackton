@@ -8,6 +8,7 @@ import {
 import { marketplaceCandidates, type MarketplaceCategory } from '@/lib/marketplace-candidates';
 import { CANARY_TASKS } from '@/lib/erc8183';
 import { HireExecutionConsole } from '@/app/activate/execution-client';
+import { AltanaSessionPanel } from '@/components/altana-session-panel';
 
 export const metadata: Metadata = {
   title: 'Testnet Terminal — Grabit',
@@ -85,6 +86,8 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
             defaultTask={CANARY_TASKS[selected.tokenId]}
           />
         </div>
+
+        <AltanaSessionPanel chainId={97} />
 
         <footer className="grabit-terminal-footer">
           <span>TESTNET / PRE-LAUNCH</span>

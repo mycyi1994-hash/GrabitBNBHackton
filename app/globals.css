@@ -14269,3 +14269,198 @@ body:has(.grabit-terminal-page) .sfx-switch {
   .grabit-terminal-page .strategy-preview-standby dl > div { border-top: 1px solid var(--market-line-soft); border-left: 0; }
   .grabit-terminal-page .strategy-preview-standby dl > div:first-child { border-top: 0; }
 }
+
+/* Altana session authority — what the Agent may do, and the revoke control. */
+
+.grabit-altana {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  gap: 14px;
+  padding: 20px 24px 22px;
+  border-top: 1px solid var(--market-line-soft);
+  background: rgb(8 9 12 / 96%);
+  color: var(--market-text-2);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.grabit-altana-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.grabit-altana-kicker {
+  margin: 0 0 4px;
+  color: var(--market-text-3);
+  font-size: 9px;
+  letter-spacing: .14em;
+}
+
+.grabit-altana h2 {
+  margin: 0;
+  color: var(--market-text);
+  font-size: 15px;
+  letter-spacing: .02em;
+}
+
+.grabit-altana-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border: 1px solid var(--market-line);
+  color: var(--market-text-2);
+  font-size: 10px;
+  letter-spacing: .1em;
+  white-space: nowrap;
+}
+
+.grabit-altana-state i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--market-text-3);
+}
+
+.grabit-altana-state.is-live {
+  border-color: color-mix(in srgb, var(--product-accent) 58%, transparent);
+  color: var(--market-text);
+}
+
+.grabit-altana-state.is-live i { background: var(--product-accent); }
+
+.grabit-altana-reason {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--market-line);
+  border-left: 2px solid var(--product-accent);
+  color: var(--market-text-2);
+}
+
+.grabit-altana-reason b {
+  margin-right: 8px;
+  color: var(--market-text);
+  letter-spacing: .1em;
+}
+
+.grabit-altana-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--market-line-soft);
+  border: 1px solid var(--market-line-soft);
+}
+
+.grabit-altana-facts > div {
+  padding: 10px 12px;
+  background: rgb(8 9 12 / 96%);
+}
+
+.grabit-altana-facts dt {
+  color: var(--market-text-3);
+  font-size: 9px;
+  letter-spacing: .12em;
+}
+
+.grabit-altana-facts dd {
+  margin: 4px 0 0;
+  color: var(--market-text);
+  font-size: 12px;
+}
+
+.grabit-altana a {
+  color: color-mix(in srgb, var(--product-accent) 78%, var(--market-text));
+  text-decoration: none;
+}
+
+.grabit-altana a:hover { text-decoration: underline; }
+
+.grabit-altana-cap {
+  margin: 0;
+  color: var(--market-text-2);
+}
+
+.grabit-altana-cap b {
+  margin-right: 8px;
+  color: var(--market-text);
+  letter-spacing: .1em;
+}
+
+.grabit-altana-calls {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--market-line-soft);
+  border: 1px solid var(--market-line-soft);
+}
+
+.grabit-altana-calls li {
+  display: grid;
+  grid-template-columns: minmax(200px, 1.1fr) minmax(180px, 1.4fr) auto;
+  gap: 12px;
+  align-items: baseline;
+  padding: 9px 12px;
+  background: rgb(8 9 12 / 96%);
+}
+
+.grabit-altana-calls code {
+  color: var(--market-text);
+  font-size: 11px;
+  word-break: break-all;
+}
+
+.grabit-altana-calls span { color: var(--market-text-3); }
+
+.grabit-altana-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.grabit-altana-actions button {
+  padding: 9px 16px;
+  border: 1px solid var(--market-line);
+  background: transparent;
+  color: var(--market-text);
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: .1em;
+  cursor: pointer;
+}
+
+.grabit-altana-actions button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--product-accent) 58%, transparent);
+}
+
+.grabit-altana-actions button:disabled {
+  color: var(--market-text-3);
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+.grabit-altana-actions .is-revoke:not(:disabled) {
+  border-color: color-mix(in srgb, #ff5d73 46%, transparent);
+  color: #ff8b9a;
+}
+
+.grabit-altana-actions .is-ghost { color: var(--market-text-3); }
+
+.grabit-altana-notice {
+  margin: 0;
+  padding: 9px 12px;
+  border: 1px solid var(--market-line-soft);
+  color: var(--market-text-2);
+  word-break: break-all;
+}
+
+@media (max-width: 760px) {
+  .grabit-altana { padding: 16px; }
+  .grabit-altana-calls li { grid-template-columns: 1fr; gap: 4px; }
+}
