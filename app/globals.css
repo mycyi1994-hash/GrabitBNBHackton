@@ -11397,6 +11397,8 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 }
 
 .grabit-card-actions {
+  position: relative;
+  z-index: 12;
   display: flex;
   gap: 14px;
   align-items: center;
@@ -11424,6 +11426,8 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 }
 
 .grabit-view-agent {
+  position: relative;
+  z-index: 13;
   display: inline-flex;
   gap: 12px;
   align-items: center;
@@ -11432,9 +11436,16 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
   min-height: 40px;
   border: 1px solid color-mix(in srgb, var(--product-accent) 48%, transparent);
   color: var(--market-text);
+  background: transparent;
   font: 650 10px/1 var(--font-geist-mono), monospace;
   letter-spacing: 0.12em;
+  cursor: pointer;
   transition: color 160ms, background 160ms;
+}
+
+.grabit-view-agent:disabled {
+  opacity: 0.58;
+  cursor: wait;
 }
 
 .grabit-agent-card:hover .grabit-view-agent,
@@ -12013,6 +12024,408 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
   .grabit-view-agent {
     width: 100%;
     min-width: 0;
+  }
+}
+
+/* Immediate Agent run: the marketplace is testable before wallet connection. */
+.grabit-demo-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 50% 42%, rgb(242 203 71 / 8%), transparent 42%),
+    rgb(2 3 5 / 91%);
+  backdrop-filter: blur(12px);
+  animation: grabit-demo-backdrop-in 180ms ease-out both;
+}
+
+.grabit-demo-window {
+  width: min(1120px, calc(100vw - 48px));
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  border: 1px solid rgb(255 255 255 / 24%);
+  color: #f3f1e9;
+  background: #090a0d;
+  box-shadow: 0 36px 120px rgb(0 0 0 / 72%), inset 0 0 0 1px rgb(255 255 255 / 3%);
+  animation: grabit-demo-window-in 220ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.grabit-demo-header {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 22px 24px 20px;
+  border-bottom: 1px solid rgb(255 255 255 / 17%);
+  background: linear-gradient(90deg, rgb(242 203 71 / 8%), transparent 58%);
+}
+
+.grabit-demo-header span,
+.grabit-demo-task > span,
+.grabit-demo-verdict > span,
+.grabit-demo-proof section > span {
+  color: #f2cb47;
+  font: 700 11px/1.2 var(--font-geist-mono), monospace;
+  letter-spacing: 0.13em;
+}
+
+.grabit-demo-header h2 {
+  margin: 8px 0 0;
+  color: #f5f3ed;
+  font: 650 clamp(28px, 3vw, 42px)/1.02 var(--font-geist-sans), sans-serif;
+  letter-spacing: -0.045em;
+}
+
+.grabit-demo-header button,
+.grabit-demo-error button,
+.grabit-demo-actions :is(button, a) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 17px;
+  border: 1px solid rgb(255 255 255 / 25%);
+  color: #f3f1e9;
+  background: transparent;
+  font: 700 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.grabit-demo-header button:disabled,
+.grabit-demo-actions button:disabled {
+  opacity: 0.42;
+  cursor: wait;
+}
+
+.grabit-demo-task {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  padding: 17px 24px;
+  border-bottom: 1px solid rgb(255 255 255 / 12%);
+  background: #0d0f12;
+}
+
+.grabit-demo-task p {
+  margin: 0;
+  color: #cfcdc6;
+  font-size: 15px;
+  font-weight: 620;
+  line-height: 1.45;
+}
+
+.grabit-demo-task b {
+  color: #9ee7b2;
+  font: 700 10px/1.2 var(--font-geist-mono), monospace;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.grabit-demo-loading,
+.grabit-demo-error {
+  display: grid;
+  place-items: center;
+  min-height: 330px;
+  padding: 52px 24px;
+  text-align: center;
+}
+
+.grabit-demo-loading strong,
+.grabit-demo-error strong {
+  color: #f2cb47;
+  font: 750 16px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.12em;
+}
+
+.grabit-demo-loading p,
+.grabit-demo-error p {
+  max-width: 620px;
+  margin: 14px 0 0;
+  color: #aaa9a4;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.grabit-demo-loading > div {
+  display: flex;
+  gap: 6px;
+  margin-top: 28px;
+}
+
+.grabit-demo-loading i {
+  width: 28px;
+  height: 5px;
+  background: rgb(242 203 71 / 18%);
+  animation: grabit-demo-scan 900ms ease-in-out infinite alternate;
+}
+
+.grabit-demo-loading i:nth-child(2) { animation-delay: 90ms; }
+.grabit-demo-loading i:nth-child(3) { animation-delay: 180ms; }
+.grabit-demo-loading i:nth-child(4) { animation-delay: 270ms; }
+.grabit-demo-loading i:nth-child(5) { animation-delay: 360ms; }
+.grabit-demo-loading i:nth-child(6) { animation-delay: 450ms; }
+.grabit-demo-loading i:nth-child(7) { animation-delay: 540ms; }
+.grabit-demo-loading i:nth-child(8) { animation-delay: 630ms; }
+
+.grabit-demo-error button {
+  margin-top: 24px;
+  border-color: #f2cb47;
+  color: #111216;
+  background: #f2cb47;
+}
+
+.grabit-demo-result {
+  padding: 24px;
+}
+
+.grabit-demo-verdict {
+  padding-bottom: 22px;
+}
+
+.grabit-demo-verdict strong {
+  display: block;
+  margin-top: 8px;
+  color: #f5f3ed;
+  font: 670 clamp(25px, 2.6vw, 36px)/1.08 var(--font-geist-sans), sans-serif;
+  letter-spacing: -0.035em;
+}
+
+.grabit-demo-verdict p {
+  max-width: 880px;
+  margin: 11px 0 0;
+  color: #c3c1ba;
+  font-size: 15px;
+  font-weight: 590;
+  line-height: 1.5;
+}
+
+.grabit-demo-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  border: 1px solid rgb(255 255 255 / 16%);
+}
+
+.grabit-demo-metrics > div {
+  min-width: 0;
+  min-height: 124px;
+  padding: 18px;
+  border-right: 1px solid rgb(255 255 255 / 13%);
+}
+
+.grabit-demo-metrics > div:last-child {
+  border-right: 0;
+}
+
+.grabit-demo-metrics dt {
+  min-height: 2.4em;
+  color: #888991;
+  font: 700 9px/1.25 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.grabit-demo-metrics dd {
+  margin: 9px 0 0;
+  overflow: hidden;
+  color: #f2cb47;
+  font: 650 clamp(19px, 2vw, 29px)/1 var(--font-geist-mono), monospace;
+  letter-spacing: -0.04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.grabit-demo-metrics small {
+  display: block;
+  margin-top: 9px;
+  color: #96958f;
+  font-size: 10px;
+  font-weight: 580;
+  line-height: 1.35;
+}
+
+.grabit-demo-proof {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 14px;
+  border: 1px solid rgb(255 255 255 / 13%);
+}
+
+.grabit-demo-proof section {
+  min-height: 104px;
+  padding: 17px 18px;
+  border-right: 1px solid rgb(255 255 255 / 13%);
+}
+
+.grabit-demo-proof section:nth-child(2) {
+  border-right: 0;
+}
+
+.grabit-demo-proof section p {
+  margin: 9px 0 0;
+  color: #c5c3bc;
+  font-size: 13px;
+  font-weight: 590;
+  line-height: 1.45;
+}
+
+.grabit-demo-proof footer {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 13px 18px;
+  border-top: 1px solid rgb(255 255 255 / 13%);
+  color: #82838a;
+  font: 650 9px/1.2 var(--font-geist-mono), monospace;
+  letter-spacing: 0.08em;
+}
+
+.grabit-demo-proof footer b {
+  margin-right: auto;
+  color: #9ee7b2;
+}
+
+.grabit-demo-actions {
+  display: grid;
+  grid-template-columns: 0.72fr 1.28fr;
+  gap: 10px;
+  padding: 0 24px 24px;
+}
+
+.grabit-demo-actions :is(button, a) {
+  min-height: 54px;
+}
+
+.grabit-demo-actions a {
+  border-color: #f2cb47;
+  color: #111216;
+  background: #f2cb47;
+}
+
+.grabit-demo-actions :is(button, a):hover {
+  filter: brightness(1.1);
+}
+
+@keyframes grabit-demo-backdrop-in {
+  from { opacity: 0; }
+}
+
+@keyframes grabit-demo-window-in {
+  from { opacity: 0; transform: translateY(12px) scale(.985); }
+}
+
+@keyframes grabit-demo-scan {
+  to { background: #f2cb47; box-shadow: 0 0 18px rgb(242 203 71 / 34%); }
+}
+
+@media (min-width: 1800px) {
+  .grabit-demo-window {
+    width: min(1320px, calc(100vw - 72px));
+  }
+
+  .grabit-demo-header,
+  .grabit-demo-result {
+    padding-inline: 30px;
+  }
+
+  .grabit-demo-task,
+  .grabit-demo-actions {
+    padding-inline: 30px;
+  }
+
+  .grabit-demo-task p,
+  .grabit-demo-verdict p {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 760px) {
+  .grabit-demo-backdrop {
+    align-items: end;
+    padding: 0;
+  }
+
+  .grabit-demo-window {
+    width: 100%;
+    max-height: 92dvh;
+    border-width: 1px 0 0;
+  }
+
+  .grabit-demo-header {
+    padding: 18px 16px;
+  }
+
+  .grabit-demo-header h2 {
+    font-size: 27px;
+  }
+
+  .grabit-demo-header button {
+    min-height: 38px;
+    padding-inline: 11px;
+    font-size: 8px;
+  }
+
+  .grabit-demo-task {
+    grid-template-columns: 1fr;
+    gap: 7px;
+    padding: 15px 16px;
+  }
+
+  .grabit-demo-task b {
+    white-space: normal;
+  }
+
+  .grabit-demo-result {
+    padding: 18px 16px;
+  }
+
+  .grabit-demo-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grabit-demo-metrics > div {
+    min-height: 106px;
+    padding: 14px;
+    border-bottom: 1px solid rgb(255 255 255 / 13%);
+  }
+
+  .grabit-demo-metrics > div:nth-child(2) {
+    border-right: 0;
+  }
+
+  .grabit-demo-metrics > div:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+
+  .grabit-demo-proof {
+    grid-template-columns: 1fr;
+  }
+
+  .grabit-demo-proof section {
+    min-height: auto;
+    border-right: 0;
+    border-bottom: 1px solid rgb(255 255 255 / 13%);
+  }
+
+  .grabit-demo-proof footer {
+    grid-column: auto;
+  }
+
+  .grabit-demo-proof footer b {
+    width: 100%;
+  }
+
+  .grabit-demo-actions {
+    grid-template-columns: 1fr;
+    padding: 0 16px 18px;
   }
 }
 

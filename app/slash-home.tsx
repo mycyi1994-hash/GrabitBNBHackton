@@ -3,7 +3,7 @@
 import { AgentCelestial, type AgentCelestialVariant } from '@/app/agent-celestial';
 import { GrabitScene } from '@/app/grabit-scene';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type SlashAgent = {
   tokenId: string;
@@ -24,6 +24,26 @@ type SlashHomeProps = {
 
 type StoreFilter = 'all' | 'automate' | 'monitor';
 
+type DemoResult = {
+  category?: string;
+  verdict?: string;
+  summary?: string;
+  dataQuality?: string;
+  metrics?: Array<{ label?: string; value?: string; note?: string }>;
+  actions?: string[];
+  risks?: string[];
+  evidence?: {
+    sourceBlock?: string;
+    gasPriceGwei?: string;
+    observedAt?: string;
+  };
+};
+
+type DemoSelection = {
+  agent: SlashAgent;
+  index: number;
+};
+
 const agentCodes = ['RBL', 'GRID', 'YLD', 'HLTH'];
 const variants: AgentCelestialVariant[] = ['core', 'tech', 'income', 'alpha'];
 const agentProfiles = [
@@ -32,24 +52,28 @@ const agentProfiles = [
     risk: 'CONTROLLED',
     summary: 'Reprices a drifted portfolio against executable BSC pool routes before rebalancing.',
     bestFor: 'Allocations that have drifted away from their target weights',
+    demoTask: 'Price a 60/40 WBNB-USDT portfolio back to a 50/50 target with bounded execution cost.',
   },
   {
     role: 'SYSTEMATIC EXECUTION',
     risk: 'ACTIVE',
     summary: 'Builds fee-aware grid levels and break-even spacing for a selected BSC pool.',
     bestFor: 'Traders who need pool-costed grid levels before execution',
+    demoTask: 'Build a 10-level WBNB-USDT grid across a 15% band for a $1,000 test notional.',
   },
   {
     role: 'YIELD ROUTING',
     risk: 'VARIABLE',
     summary: 'Ranks Venus stablecoin markets by base supply APY and estimated switching cost.',
     bestFor: 'Stablecoin suppliers comparing Venus markets after gas',
+    demoTask: 'Rank current Venus stablecoin supply yields and show the best base APY with source block.',
   },
   {
     role: 'RISK MONITOR',
     risk: 'DEFENSIVE',
     summary: 'Monitors Venus health factor, liquidation distance and collateral stress on-chain.',
     bestFor: 'Borrowers who need liquidation-distance and stress alerts',
+    demoTask: 'Stress-test a Venus borrowing position and report health-factor liquidation distance.',
   },
 ];
 
@@ -57,7 +81,17 @@ function shortName(name: string) {
   return name.replace(/^Brain on BNB\s*[—-]\s*/i, '');
 }
 
-function AgentCard({ agent, index }: { agent: SlashAgent; index: number }) {
+function AgentCard({
+  agent,
+  index,
+  running,
+  onRun,
+}: {
+  agent: SlashAgent;
+  index: number;
+  running: boolean;
+  onRun: (agent: SlashAgent, index: number) => void;
+}) {
   const profile = agentProfiles[index] ?? agentProfiles[0];
   const variant = variants[index] ?? 'core';
   const verification = agent.endpointVerified === true ? 'VERIFIED' : agent.live ? 'LIVE' : 'CHECK';
@@ -67,7 +101,7 @@ function AgentCard({ agent, index }: { agent: SlashAgent; index: number }) {
       <Link
         className="grabit-card-hit"
         href={'/activate?registry=' + agent.tokenId}
-        aria-label={'View and hire ' + agent.name}
+        aria-label={'Open the Testnet terminal for ' + agent.name}
       />
       <div className="grabit-card-index" aria-hidden="true">
         <span>{String(index + 1).padStart(2, '0')}</span><i />
@@ -98,7 +132,18 @@ function AgentCard({ agent, index }: { agent: SlashAgent; index: number }) {
         <div className="grabit-capability-chips" aria-label="Agent capabilities">
           <span>BSC</span><span>TESTNET</span><span>A2A</span>
         </div>
-        <span className="grabit-view-agent" aria-hidden="true">VIEW + HIRE <span>↗</span></span>
+        <button
+          className="grabit-view-agent"
+          type="button"
+          disabled={running}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onRun(agent, index);
+          }}
+        >
+          {running ? 'RUNNING AGENT...' : 'RUN LIVE DEMO'} <span aria-hidden="true">↗</span>
+        </button>
       </div>
     </article>
   );
@@ -107,6 +152,10 @@ function AgentCard({ agent, index }: { agent: SlashAgent; index: number }) {
 export function SlashHome({ agents }: SlashHomeProps) {
   const [view, setView] = useState<'landing' | 'store'>('landing');
   const [filter, setFilter] = useState<StoreFilter>('all');
+  const [demoSelection, setDemoSelection] = useState<DemoSelection | null>(null);
+  const [demoResult, setDemoResult] = useState<DemoResult | null>(null);
+  const [demoError, setDemoError] = useState<string | null>(null);
+  const [demoRunning, setDemoRunning] = useState(false);
   const visibleAgents = agents.slice(0, 4);
   const firstAgent = visibleAgents[0];
   const indexedAgents = visibleAgents.map((agent, index) => ({ agent, index }));
@@ -122,6 +171,34 @@ export function SlashHome({ agents }: SlashHomeProps) {
     document.body.scrollTop = 0;
     document.querySelector('.grabit-market-page')?.scrollTo(0, 0);
   }, [view]);
+
+  const runDemo = useCallback(async (agent: SlashAgent, index: number) => {
+    const selection = { agent, index };
+    setDemoSelection(selection);
+    setDemoResult(null);
+    setDemoError(null);
+    setDemoRunning(true);
+    try {
+      const task = agentProfiles[index]?.demoTask || agent.description;
+      const response = await fetch(
+        `/api/hire/strategy-preview?registry=${encodeURIComponent(agent.tokenId)}&task=${encodeURIComponent(task)}`,
+        { cache: 'no-store' },
+      );
+      const payload = await response.json() as {
+        preview?: boolean;
+        result?: DemoResult;
+        error?: string;
+      };
+      if (!response.ok || !payload.preview || !payload.result) {
+        throw new Error(payload.error || 'The Agent did not return a preview result.');
+      }
+      setDemoResult(payload.result);
+    } catch (error) {
+      setDemoError(error instanceof Error ? error.message : 'The live Agent demo failed.');
+    } finally {
+      setDemoRunning(false);
+    }
+  }, []);
 
   if (view === 'store') {
     return (
@@ -146,11 +223,11 @@ export function SlashHome({ agents }: SlashHomeProps) {
         <main className="grabit-market-page">
           <header className="grabit-market-intro">
             <div>
-              <p className="grabit-section-kicker">CHOOSE BY AGENT ROLE / BSC TESTNET</p>
-              <h1>Build your agent stack.</h1>
-              <p>Start with execution, yield or risk monitoring—then inspect the identity, quote and permissions behind each Agent.</p>
+              <p className="grabit-section-kicker">SELECT → RUN → VERIFY → HIRE</p>
+              <h1>Run an Agent now.</h1>
+              <p>Choose one Agent and get a live BSC result immediately. No wallet or payment is required until you continue to Testnet hire.</p>
               <div className="grabit-market-truth">
-                <span><i /> TESTNET MODE</span><span>LIVE REGISTRY</span><span>ERC-8004</span>
+                <span><i /> LIVE DEMO READY</span><span>NO WALLET NEEDED</span><span>ERC-8004</span>
               </div>
             </div>
             <div className="grabit-role-map" aria-label="Four agent roles">
@@ -176,7 +253,15 @@ export function SlashHome({ agents }: SlashHomeProps) {
           </div>
 
           <section key={filter} className="grabit-agent-grid" aria-label="Agent marketplace">
-            {shownAgents.map(({ agent, index }) => <AgentCard key={agent.tokenId} agent={agent} index={index} />)}
+            {shownAgents.map(({ agent, index }) => (
+              <AgentCard
+                key={agent.tokenId}
+                agent={agent}
+                index={index}
+                running={demoRunning && demoSelection?.agent.tokenId === agent.tokenId}
+                onRun={runDemo}
+              />
+            ))}
           </section>
         </main>
 
@@ -185,6 +270,105 @@ export function SlashHome({ agents }: SlashHomeProps) {
           <p>Quotes and results must be verified before activation. No Mainnet capital moves from this marketplace preview.</p>
           <Link href="/dashboard">LEADERBOARD ↗</Link>
         </footer>
+
+        {demoSelection ? (
+          <div
+            className="grabit-demo-backdrop"
+            role="presentation"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget && !demoRunning) setDemoSelection(null);
+            }}
+          >
+            <section
+              className="grabit-demo-window"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="grabit-demo-title"
+            >
+              <header className="grabit-demo-header">
+                <div>
+                  <span>LIVE_AGENT_RUN // ERC-8004 #{demoSelection.agent.tokenId}</span>
+                  <h2 id="grabit-demo-title">{shortName(demoSelection.agent.name)}</h2>
+                </div>
+                <button type="button" disabled={demoRunning} onClick={() => setDemoSelection(null)}>
+                  [X] CLOSE
+                </button>
+              </header>
+
+              <div className="grabit-demo-task">
+                <span>TASK</span>
+                <p>{agentProfiles[demoSelection.index]?.demoTask}</p>
+                <b>{demoRunning ? 'READING LIVE BSC DATA...' : demoResult ? 'RESULT RECEIVED' : 'RUN STOPPED'}</b>
+              </div>
+
+              {demoRunning ? (
+                <div className="grabit-demo-loading" role="status">
+                  <strong>AGENT IS WORKING</strong>
+                  <p>Reading BSC state, calculating the strategy and attaching the source block.</p>
+                  <div aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /><i /></div>
+                </div>
+              ) : null}
+
+              {demoError ? (
+                <div className="grabit-demo-error" role="alert">
+                  <strong>AGENT RUN FAILED</strong>
+                  <p>{demoError}</p>
+                  <button type="button" onClick={() => void runDemo(demoSelection.agent, demoSelection.index)}>
+                    RETRY LIVE DEMO
+                  </button>
+                </div>
+              ) : null}
+
+              {demoResult ? (
+                <div className="grabit-demo-result">
+                  <div className="grabit-demo-verdict">
+                    <span>{demoResult.category || demoSelection.agent.category}</span>
+                    <strong>{demoResult.verdict || 'RESULT READY'}</strong>
+                    <p>{demoResult.summary}</p>
+                  </div>
+                  <dl className="grabit-demo-metrics">
+                    {(demoResult.metrics || []).slice(0, 4).map((metric, index) => (
+                      <div key={`${metric.label || 'metric'}-${index}`}>
+                        <dt>{metric.label}</dt>
+                        <dd>{metric.value}</dd>
+                        <small>{metric.note}</small>
+                      </div>
+                    ))}
+                  </dl>
+                  <div className="grabit-demo-proof">
+                    <section>
+                      <span>NEXT ACTION</span>
+                      <p>{demoResult.actions?.[0] || 'Review the result before Testnet execution.'}</p>
+                    </section>
+                    <section>
+                      <span>RISK CHECK</span>
+                      <p>{demoResult.risks?.[0] || 'Live values can change after this observation.'}</p>
+                    </section>
+                    <footer>
+                      <b>{demoResult.dataQuality || 'LIVE RESULT'}</b>
+                      <span>BLOCK {demoResult.evidence?.sourceBlock || '?'}</span>
+                      <span>{demoResult.evidence?.gasPriceGwei || '?'} GWEI</span>
+                      <span>NO CAPITAL MOVED</span>
+                    </footer>
+                  </div>
+                </div>
+              ) : null}
+
+              <footer className="grabit-demo-actions">
+                <button
+                  type="button"
+                  disabled={demoRunning}
+                  onClick={() => void runDemo(demoSelection.agent, demoSelection.index)}
+                >
+                  RUN AGAIN
+                </button>
+                <Link href={'/activate?registry=' + demoSelection.agent.tokenId}>
+                  CONTINUE TO TESTNET HIRE ↗
+                </Link>
+              </footer>
+            </section>
+          </div>
+        ) : null}
       </div>
     );
   }
