@@ -38,6 +38,13 @@ export function RetroInterface({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const restorePage = () => document.documentElement.classList.remove('page-is-leaving');
+    restorePage();
+    window.addEventListener('pageshow', restorePage);
+    return () => window.removeEventListener('pageshow', restorePage);
+  }, []);
+
+  useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       const target = event.target instanceof Element ? event.target : null;
       const control = target?.closest('a[href], button');

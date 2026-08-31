@@ -185,7 +185,17 @@ export function SlashHome({ agents }: SlashHomeProps) {
   return (
     <main className="grabit-ganymede-launch">
       <GrabitScene />
-      <div className="grabit-launch-interface">
+      <div
+        className="grabit-launch-interface"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 2147483000,
+          visibility: 'visible',
+          opacity: 1,
+          pointerEvents: 'none',
+        }}
+      >
       <header className="grabit-launch-nav">
         <button className="grabit-wordmark" type="button" onClick={() => setView('landing')} aria-label="Grabit home">
           <span>G</span>

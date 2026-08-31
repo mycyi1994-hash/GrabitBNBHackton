@@ -358,7 +358,11 @@ export function GrabitScene() {
   }, []);
 
   return (
-    <div className="grabit-celestial-scene" aria-label="ASCII particles form a rotating agent network with orbital rings">
+    <div
+      className="grabit-celestial-scene"
+      aria-hidden="true"
+      style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}
+    >
       <canvas ref={canvasRef} className="grabit-ascii-canvas" aria-hidden="true" />
     </div>
   );

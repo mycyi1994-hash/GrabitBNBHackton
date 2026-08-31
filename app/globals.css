@@ -9931,6 +9931,21 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
   display: none;
 }
 
+body:has(.grabit-ganymede-launch) .page-transition-stage,
+html.page-is-leaving body:has(.grabit-ganymede-launch) .page-transition-stage {
+  position: relative;
+  z-index: 0;
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+  animation: none !important;
+  pointer-events: auto;
+}
+
+body:has(.grabit-ganymede-launch) .page-transition-stage::after {
+  display: none;
+}
+
 .grabit-ganymede-launch {
   --grabit-obs-bg: #06070a;
   --grabit-obs-line: rgb(229 226 236 / 18%);
@@ -10002,6 +10017,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
 .grabit-celestial-scene {
   z-index: 0;
   pointer-events: none;
+  contain: strict;
   transform: translateX(11vw) scale(1.08);
   opacity: 0.92;
   filter:
@@ -10012,9 +10028,12 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
 .grabit-launch-interface {
   position: absolute;
   inset: 0;
-  z-index: 10;
+  z-index: 2147483000;
   isolation: isolate;
+  visibility: visible;
+  opacity: 1;
   pointer-events: none;
+  transform: translateZ(0);
 }
 
 .grabit-launch-interface :is(a, button) {
@@ -10210,6 +10229,7 @@ body:has(.grabit-ganymede-launch) .sfx-toggle {
 }
 
 .grabit-launch-copy h1 span {
+  color: inherit;
   white-space: nowrap;
 }
 
