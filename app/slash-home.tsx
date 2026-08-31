@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type SlashAgent = {
   tokenId: string;
@@ -14,156 +14,235 @@ type SlashHomeProps = {
   agents: SlashAgent[];
 };
 
-const BSC_ASCII = String.raw`
-              /\
-             /  \
-        /\  / /\ \  /\
-       /  \/ /  \ \/  \
-       \  /\ \  / /\  /
-        \/  \ \/ /  \/
-             \  /
-              \/`;
+const GRABIT_ASCII = String.raw`
+  _____  _____          ____   _____ _______
+ / ____||  __ \   /\   |  _ \ |_   _|__   __|
+| |  __ | |__) | /  \  | |_) |  | |    | |
+| | |_ ||  _  / / /\ \ |  _ <   | |    | |
+| |__| || | \ \/ ____ \| |_) | _| |_   | |
+ \_____||_|  \_\_/    \_\____/ |_____|  |_|`;
 
-function SlashLine({ character = '/' }: { character?: '/' | '-' | '=' }) {
-  return <div className="slash-line" aria-hidden="true">{character.repeat(320)}</div>;
+const BSC_FRAMES = [
+  String.raw`        /\
+       /==\
+  /\  / /\ \  /\
+ /  \/ <  > \/  \
+ \  /\  \/  /\  /
+  \/  \ == /  \/
+       \  /
+        \/`,
+  String.raw`        /\
+       /--\
+  /\  / /\ \  /\
+ /==\/ <  > \/==\
+ \==/\  \/  /\==/
+  \/  \ -- /  \/
+       \  /
+        \/`,
+  String.raw`        /\
+       /++\
+  /\  / /\ \  /\
+ /--\/ <==> \/--\
+ \--/\  \/  /\--/
+  \/  \ ++ /  \/
+       \  /
+        \/`,
+  String.raw`        /\
+       /==\
+  /\  / /\ \  /\
+ /  \/ <++> \/  \
+ \  /\  \/  /\  /
+  \/  \ == /  \/
+       \  /
+        \/`,
+];
+
+function AsciiRail({ character = '=', end = '+' }: { character?: '=' | '-'; end?: '+' | ':' }) {
+  return (
+    <div className="ascii-v2-rail" aria-hidden="true">
+      <span>{end}</span><b>{character.repeat(220)}</b><span>{end}</span>
+    </div>
+  );
 }
 
 export function SlashHome({ agents }: SlashHomeProps) {
   const [entered, setEntered] = useState(false);
+  const [logoFrame, setLogoFrame] = useState(0);
+  const [selected, setSelected] = useState(0);
   const liveCount = agents.filter((agent) => agent.live).length;
+  const selectedAgent = agents[selected] ?? agents[0];
+
+  const rankedAgents = useMemo(
+    () => [...agents].sort((a, b) => Number(b.live) - Number(a.live)),
+    [agents],
+  );
+
+  useEffect(() => {
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motionQuery.matches) return;
+    const timer = window.setInterval(() => {
+      setLogoFrame((frame) => (frame + 1) % BSC_FRAMES.length);
+    }, 240);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === 'Enter' && !entered) setEntered(true);
       if (event.key === 'Escape' && entered) setEntered(false);
+      if (!entered || agents.length === 0) return;
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        setSelected((value) => (value + 1) % agents.length);
+      }
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        setSelected((value) => (value - 1 + agents.length) % agents.length);
+      }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [entered]);
+  }, [agents.length, entered]);
 
   if (!entered) {
     return (
-      <main className="slash-gateway">
-        <section className="slash-gate-console" aria-label="Enter Grabit BNB Agent Market">
-          <SlashLine />
-          <header><span>/</span><strong>GRABIT://BNB_AGENT_MARKET</strong><span>/</span></header>
-          <SlashLine />
+      <main className="ascii-v2-gateway">
+        <section className="ascii-v2-boot" aria-label="Enter Grabit BNB Agent Market">
+          <AsciiRail />
+          <header className="ascii-v2-boot-head">
+            <span>|</span>
+            <b>GRABIT.SYS</b>
+            <small>BNB AGENT EXECUTION TERMINAL</small>
+            <strong>NET_56 :: ONLINE</strong>
+            <span>|</span>
+          </header>
+          <AsciiRail character="-" />
 
-          <div className="slash-gate-center">
-            <div className="slash-logo-orbit" aria-label="Rotating ASCII BSC logo">
-              <pre>{BSC_ASCII}</pre>
+          <div className="ascii-v2-boot-stage">
+            <div className="ascii-v2-wordmark" aria-label="Grabit">
+              <pre>{GRABIT_ASCII}</pre>
+              <p>SMART MONEY, OPERATED BY VERIFIED AGENTS.</p>
             </div>
-            <p>BNB SMART CHAIN / AGENT EXECUTION NETWORK</p>
+
+            <div className="ascii-v2-bsc" aria-label="Animated ASCII BNB Smart Chain mark">
+              <pre>{BSC_FRAMES[logoFrame]}</pre>
+              <div><span>&lt;</span> BNB SMART CHAIN <span>&gt;</span></div>
+            </div>
+
+            <div className="ascii-v2-path" aria-label="Product flow">
+              <b>FIND</b><span>---&gt;</span><b>VERIFY</b><span>---&gt;</span><b>HIRE</b><span>---&gt;</span><b>MONITOR</b>
+            </div>
+
             <button type="button" autoFocus onClick={() => setEntered(true)}>
-              [ ENTER GRABIT ]
+              [ ENTER AGENT MARKET ]
             </button>
-            <small>/ PRESS ENTER / TESTNET READY / NO MAINNET SPENDING /</small>
+            <small className="ascii-v2-boot-note">ENTER = OPEN&nbsp;&nbsp; // &nbsp;&nbsp;BSC TESTNET READY&nbsp;&nbsp; // &nbsp;&nbsp;NO MAINNET FUNDS</small>
           </div>
 
-          <SlashLine />
-          <footer><span>/</span><b>BSC 56 ONLINE</b><b>AGENTS {liveCount}/4 LIVE</b><span>/</span></footer>
-          <SlashLine />
+          <AsciiRail character="-" />
+          <footer className="ascii-v2-boot-foot">
+            <span>|</span>
+            <b>IDENTITIES {liveCount}/4</b>
+            <b>QUOTES 4/4</b>
+            <b>EXECUTION TESTNET_97</b>
+            <span>|</span>
+          </footer>
+          <AsciiRail />
         </section>
       </main>
     );
   }
 
   return (
-    <main className="slash-home">
-      <section className="slash-workspace" aria-label="Grabit Agent Market workspace">
-        <SlashLine />
-        <header className="slash-workspace-head">
-          <span>/</span>
-          <strong>GRABIT://COMMAND_CENTER</strong>
+    <main className="ascii-v2-home">
+      <section className="ascii-v2-terminal" aria-label="Grabit Agent Market workspace">
+        <AsciiRail />
+        <header className="ascii-v2-terminal-head">
+          <span>|</span>
+          <div><b>GRABIT://MARKET</b><small>BNB CHAIN AGENT COMMAND CENTER</small></div>
           <nav>
-            <a href="#store">[S] STORE</a>
-            <a href="#leaderboard">[L] LEADERBOARD</a>
+            <a href="#store">[1] STORE</a>
+            <a href="#leaderboard">[2] LEADERBOARD</a>
             <button type="button" onClick={() => setEntered(false)}>[ESC] EXIT</button>
           </nav>
-          <span>/</span>
+          <span>|</span>
         </header>
-        <SlashLine />
+        <AsciiRail character="-" />
 
-        <section className="slash-status">
-          <span>/</span>
-          <b>AGENTS {liveCount}/4 LIVE</b><i>/</i>
-          <b>QUOTES 4/4 READY</b><i>/</i>
-          <b>RESULTS 0/4 TESTED</b><i>/</i>
-          <b>JOBS 0 ACTIVE</b>
-          <span>/</span>
-        </section>
-        <SlashLine />
+        <div className="ascii-v2-ticker">
+          <span>|</span>
+          <b>STATUS :: ONLINE</b><i>{'//'}</i>
+          <b>{liveCount} VERIFIED AGENTS</b><i>{'//'}</i>
+          <b>CHAIN :: BSC</b><i>{'//'}</i>
+          <b>MODE :: TESTNET</b>
+          <span>|</span>
+        </div>
+        <AsciiRail character="-" />
 
-        <div className="slash-main-grid">
-          <section className="slash-panel slash-store" id="store">
-            <SlashLine />
-            <header><span>/</span><b>AGENT STORE</b><small>SELECT ONE JOB</small><span>/</span></header>
-            <SlashLine />
-            <div className="slash-agent-list">
+        <div className="ascii-v2-market-grid">
+          <section className="ascii-v2-store" id="store">
+            <div className="ascii-v2-section-title"><span>|</span><b>==[ AGENT STORE ]==</b><small>CHOOSE ONE LIVE STRATEGY</small><span>|</span></div>
+            <div className="ascii-v2-columns" aria-hidden="true">
+              <span>NO.</span><span>AGENT / CATEGORY</span><span>PRICE</span><span>STATE</span><span>ACTION</span>
+            </div>
+            <AsciiRail character="-" end=":" />
+            <div className="ascii-v2-agent-list">
               {agents.map((agent, index) => (
-                <div className="slash-agent-entry" key={agent.tokenId}>
-                  <a href={'/activate?registry=' + agent.tokenId}>
-                    <span>/</span>
-                    <strong>{agent.tokenId === '304493' ? '>' : ' '}{String(index + 1).padStart(2, '0')}</strong>
-                    <span><b>{agent.name}</b><small>{agent.category} / ERC-8004 #{agent.tokenId}</small></span>
-                    <i>/</i>
-                    <span>IDENTITY {agent.live ? 'PASS' : 'WAIT'}<br />QUOTE {agent.price}</span>
-                    <i>/</i>
-                    <b>[ OPEN ]</b>
-                    <span>/</span>
-                  </a>
-                  <SlashLine character="-" />
-                </div>
+                <a
+                  href={'/activate?registry=' + agent.tokenId}
+                  className={index === selected ? 'is-selected' : ''}
+                  key={agent.tokenId}
+                  onMouseEnter={() => setSelected(index)}
+                  onFocus={() => setSelected(index)}
+                >
+                  <span>{index === selected ? '>' : ' '}{String(index + 1).padStart(2, '0')}</span>
+                  <span><b>{agent.name}</b><small>{agent.category} :: ERC-8004 #{agent.tokenId}</small></span>
+                  <strong>{agent.price}</strong>
+                  <em>{agent.live ? '[LIVE]' : '[WAIT]'}</em>
+                  <i>[OPEN]</i>
+                </a>
               ))}
             </div>
-            <SlashLine />
+            <AsciiRail character="-" end=":" />
+            <div className="ascii-v2-selected">
+              <span>&gt; SELECTED</span>
+              <b>{selectedAgent?.name ?? 'NO AGENT'}</b>
+              <small>{selectedAgent ? `${selectedAgent.category} // ${selectedAgent.price}` : 'WAITING FOR REGISTRY'}</small>
+              {selectedAgent ? <a href={'/activate?registry=' + selectedAgent.tokenId}>[ PREVIEW + HIRE ]</a> : null}
+            </div>
           </section>
 
-          <div className="slash-side">
-            <section className="slash-panel slash-leader" id="leaderboard">
-              <SlashLine />
-              <header><span>/</span><b>EVIDENCE LEADERBOARD</b><small>NO MOCK PNL</small><span>/</span></header>
-              <SlashLine />
-              {agents.map((agent, index) => (
-                <div className="slash-leader-entry" key={agent.tokenId}>
-                  <a href={'/activate?registry=' + agent.tokenId}>
-                    <span>/</span>
-                    <b>{String(index + 1).padStart(2, '0')}</b>
-                    <span>{agent.category}<small>{agent.name}</small></span>
-                    <i>/</i>
-                    <strong>READY</strong>
-                    <span>/</span>
-                  </a>
-                  <SlashLine character="-" />
-                </div>
+          <aside className="ascii-v2-rank" id="leaderboard">
+            <div className="ascii-v2-section-title"><span>|</span><b>==[ EVIDENCE BOARD ]==</b><span>|</span></div>
+            <p>RANK&nbsp;&nbsp;AGENT PROOF&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;STATE</p>
+            <AsciiRail character="-" end=":" />
+            <ol>
+              {rankedAgents.map((agent, index) => (
+                <li key={agent.tokenId}>
+                  <b>#{index + 1}</b>
+                  <span>{agent.category}<small>{agent.name}</small></span>
+                  <strong>{agent.live ? 'READY' : 'WAIT'}</strong>
+                </li>
               ))}
-              <SlashLine />
-            </section>
-
-            <section className="slash-panel slash-command">
-              <SlashLine />
-              <header><span>/</span><b>NEXT COMMAND</b><small>TESTNET 97</small><span>/</span></header>
-              <SlashLine />
-              <pre>{String.raw`
-/ $ select yield_agent
-/ $ preview live_rates
-/ $ connect testnet_wallet
-/ $ hire --limit 0.10_USD
-/ _`}</pre>
-              <a href="/activate?registry=304493">[ ENTER / RUN YIELD AGENT ]</a>
-              <SlashLine />
-            </section>
-          </div>
+            </ol>
+            <AsciiRail character="-" end=":" />
+            <div className="ascii-v2-proof">
+              <b>PROOF, NOT PROMISES.</b>
+              <span>IDENTITY&nbsp; [PASS]</span>
+              <span>LIVE QUOTE [PASS]</span>
+              <span>RESULT&nbsp;&nbsp;&nbsp;&nbsp; [TEST]</span>
+            </div>
+          </aside>
         </div>
 
-        <SlashLine />
-        <footer className="slash-footer">
-          <span>/</span>
-          <b>IDENTITY 4/4 / QUOTE 4/4 / RESULT 0/4</b>
-          <b>ESC EXIT / ENTER OPEN</b>
-          <span>/</span>
+        <AsciiRail character="-" />
+        <footer className="ascii-v2-terminal-foot">
+          <span>|</span>
+          <b>UP/DOWN = SELECT&nbsp;&nbsp; // &nbsp;&nbsp;ENTER = OPEN&nbsp;&nbsp; // &nbsp;&nbsp;ESC = EXIT</b>
+          <strong>TESTNET_97 :: SAFE MODE</strong>
+          <span>|</span>
         </footer>
-        <SlashLine />
+        <AsciiRail />
       </section>
     </main>
   );

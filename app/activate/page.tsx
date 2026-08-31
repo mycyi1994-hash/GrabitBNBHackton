@@ -17,8 +17,12 @@ type ActivatePageProps = {
   searchParams: Promise<{ agent?: string; registry?: string }>;
 };
 
-function SlashLine({ character = '/' }: { character?: '/' | '=' }) {
-  return <div className="slash-line" aria-hidden="true">{character.repeat(320)}</div>;
+function AsciiRail({ character = '=' }: { character?: '-' | '=' }) {
+  return (
+    <div className="ascii-v2-rail" aria-hidden="true">
+      <span>+</span><b>{character.repeat(220)}</b><span>+</span>
+    </div>
+  );
 }
 
 export default async function ActivatePage({ searchParams }: ActivatePageProps) {
@@ -27,42 +31,42 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
   const selected = getCandidateByTokenId(tokenId) || marketplaceCandidates[0];
 
   return (
-    <main className="slash-activate-page">
+    <main className="slash-activate-page ascii-v2-execute">
       <section className="slash-activate-shell" aria-label="Grabit Agent test terminal">
-        <SlashLine />
+        <AsciiRail />
         <header className="slash-activate-top">
-          <span>/</span>
-          <Link href="/">[/] AGENT STORE</Link>
+          <span>|</span>
+          <Link href="/">[&lt;] AGENT STORE</Link>
           <strong>GRABIT://TEST_AGENT/{selected.tokenId}</strong>
-          <b>BSC TESTNET 97 [ONLINE]</b>
-          <span>/</span>
+          <b>TESTNET_97 :: ONLINE</b>
+          <span>|</span>
         </header>
-        <SlashLine />
+        <AsciiRail character="-" />
 
         <section className="slash-agent-head">
-          <span>/</span>
+          <span>|</span>
           <div>
-            <small>SELECTED AGENT / ERC-8004 #{selected.tokenId}</small>
+            <small>==[ SELECTED AGENT ]== &nbsp; ERC-8004 #{selected.tokenId}</small>
             <h1>{selected.name}</h1>
           </div>
-          <i>/</i>
+          <i>::</i>
           <nav aria-label="Agent test flow">
-            <span>[1] PREVIEW</span><b>/</b>
-            <span>[2] HIRE</span><b>/</b>
+            <span>[1] PREVIEW</span><b>---&gt;</b>
+            <span>[2] HIRE</span><b>---&gt;</b>
             <span>[3] RESULT</span>
           </nav>
-          <span>/</span>
+          <span>|</span>
         </section>
-        <SlashLine />
+        <AsciiRail character="-" />
 
         <details className="slash-help">
-          <summary>/ [?] WHAT SHOULD I TEST? /</summary>
+          <summary>[?] WHAT SHOULD I TEST? &nbsp; &gt;&gt; OPEN GUIDE</summary>
           <div>
-            <p>/ <b>NO WALLET:</b> Preview the result and check the verdict, metrics and source. /</p>
-            <p>/ <b>TESTNET:</b> Connect chain 97, run preflight and confirm five visible transactions. /</p>
+            <p>&gt; <b>NO WALLET:</b> Preview the result and check the verdict, metrics and source.</p>
+            <p>&gt; <b>TESTNET:</b> Connect chain 97, run preflight and confirm five visible transactions.</p>
           </div>
         </details>
-        <SlashLine />
+        <AsciiRail character="-" />
 
         <div className="slash-console-frame">
           <HireExecutionConsole
@@ -72,13 +76,13 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
           />
         </div>
 
-        <SlashLine />
+        <AsciiRail character="-" />
         <footer className="slash-activate-footer">
-          <span>/</span>
-          <b>PREVIEW FIRST / SIGN TESTNET ONLY / VERIFY RESULT</b>
-          <span>/</span>
+          <span>|</span>
+          <b>PREVIEW FIRST &nbsp; // &nbsp; SIGN TESTNET ONLY &nbsp; // &nbsp; VERIFY RESULT</b>
+          <span>|</span>
         </footer>
-        <SlashLine />
+        <AsciiRail />
       </section>
     </main>
   );

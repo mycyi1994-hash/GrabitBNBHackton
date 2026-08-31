@@ -17,21 +17,21 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
   ),
-  title: 'Agent Market 98 — BNB Chain DeFi Agents',
+  title: 'Grabit — BNB Chain Agent Market',
   description:
     'Inspect BSC DeFi agents by registry identity, endpoint evidence and execution readiness.',
   icons: {
     icon: '/og.png',
   },
   openGraph: {
-    title: 'Agent Market 98 — BNB Chain DeFi Agents',
+    title: 'Grabit — BNB Chain Agent Market',
     description:
       'Inspect BSC DeFi agents by registry identity, endpoint evidence and execution readiness.',
     images: ['/og.png'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Agent Market 98 — BNB Chain DeFi Agents',
+    title: 'Grabit — BNB Chain Agent Market',
     description:
       'Inspect BSC DeFi agents by registry identity, endpoint evidence and execution readiness.',
     images: ['/og.png'],
