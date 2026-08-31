@@ -23,6 +23,14 @@ import { marketplaceCandidates } from '@/lib/marketplace-candidates';
 
 const NO_STORE = { 'cache-control': 'no-store' };
 
+/** Relay errors carry the whole prepared-call payload; keep only the reason. */
+function relayMessage(error: unknown, fallback: string) {
+  if (!(error instanceof Error)) return fallback;
+  const firstBlock = error.message.split(/Request body:|URL:|Raw Call Arguments:/)[0].trim();
+  const message = (firstBlock || error.message).split('\n').slice(0, 3).join(' ').trim();
+  return message.length > 400 ? `${message.slice(0, 400)}…` : message || fallback;
+}
+
 export async function POST(request: Request) {
   let body: { registry?: string; chainId?: number | string; dryRun?: boolean };
   try {
@@ -135,7 +143,7 @@ export async function POST(request: Request) {
     return Response.json(
       {
         state: 'FAILED',
-        error: error instanceof Error ? error.message : 'The Altana session hire failed.',
+        error: relayMessage(error, 'The Altana session hire failed.'),
         observedAt: new Date().toISOString(),
         chainId,
       },

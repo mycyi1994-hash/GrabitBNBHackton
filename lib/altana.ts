@@ -194,9 +194,29 @@ export function getAltanaSessionSigner(): Signer {
 /**
  * The agent's smart-account address. Altana wallets are EIP-7702 accounts at
  * the admin signer's own address, so this is deterministic and needs no call.
+ * Use it for reads; a write needs `ensureAltanaAgentWallet` first.
  */
 export function getAltanaAgentWallet(): Wallet {
   return { address: getAltanaAdminSigner().address };
+}
+
+/**
+ * Registers the agent's EOA with the relay as an Altana smart account, and
+ * returns the wallet handle.
+ *
+ * The relay will not accept prepared calls for an address it has not seen
+ * delegated: `prepareCalls` still returns a quote, but `sendPreparedCalls`
+ * rejects the parameters. Registration signs the EIP-7702 authorization
+ * digests — counterfactual, so no transaction and no gas — and is idempotent,
+ * which is why every write path calls it rather than assuming an earlier run
+ * did. Deriving the address alone, as the read paths do, skips this and is the
+ * reason a grant could fail against a correctly funded wallet.
+ */
+export async function ensureAltanaAgentWallet(chainId: number): Promise<Wallet> {
+  const { address } = await altanaClient(chainId).createWallet({
+    signer: getAltanaAdminSigner(),
+  });
+  return { address };
 }
 
 /** Returns the reason the Altana surface is unavailable, or null when ready. */
@@ -405,8 +425,10 @@ export async function resolveAgentSession(chainId: number): Promise<Session> {
         : 'No Altana session is authorized on the agent account. Grant a session first.',
     );
   }
+  // The hire goes through the relay, so the account must be registered there.
+  const wallet = await ensureAltanaAgentWallet(chainId);
   return {
-    walletAddress: getAltanaAgentWallet().address,
+    walletAddress: wallet.address,
     signer: getAltanaSessionSigner(),
     publicKey: getAltanaSessionSigner().publicKey,
     permissions: agentSessionPermissions(chainId),

@@ -17,8 +17,8 @@ import {
   altanaNetwork,
   altanaNetworkSummary,
   describeSessionPermissions,
+  ensureAltanaAgentWallet,
   getAltanaAdminSigner,
-  getAltanaAgentWallet,
   getAltanaSessionSigner,
   isSupportedAltanaChain,
   readAccountSessionKey,
@@ -26,6 +26,18 @@ import {
 } from '@/lib/altana';
 
 const NO_STORE = { 'cache-control': 'no-store' };
+
+/**
+ * Relay failures arrive with the entire prepared-call payload appended — a
+ * multi-kilobyte hex dump that buries the one line describing what went wrong.
+ * Keep the message and drop the transcript.
+ */
+function relayMessage(error: unknown, fallback: string) {
+  if (!(error instanceof Error)) return fallback;
+  const firstBlock = error.message.split(/Request body:|URL:|Raw Call Arguments:/)[0].trim();
+  const message = (firstBlock || error.message).split('\n').slice(0, 3).join(' ').trim();
+  return message.length > 400 ? `${message.slice(0, 400)}…` : message || fallback;
+}
 
 function resolveChainId(value: unknown) {
   if (value === undefined || value === null || value === '') return DEFAULT_ALTANA_CHAIN_ID;
@@ -149,10 +161,13 @@ export async function POST(request: Request) {
 
   const network = altanaNetwork(chainId);
   const client = altanaClient(chainId);
-  const wallet = getAltanaAgentWallet();
   const adminSigner = getAltanaAdminSigner();
 
   try {
+    // The relay only accepts prepared calls for an address it has seen
+    // delegated. Counterfactual and idempotent, so it runs before every write.
+    const wallet = await ensureAltanaAgentWallet(chainId);
+
     if (action === 'revoke') {
       const sessionPublicKey = getAltanaSessionSigner().publicKey;
       const result = await client.revokeSession({
@@ -215,7 +230,7 @@ export async function POST(request: Request) {
       {
         action,
         state: 'FAILED',
-        error: error instanceof Error ? error.message : `The Altana ${action} failed.`,
+        error: relayMessage(error, `The Altana ${action} failed.`),
         observedAt: new Date().toISOString(),
         chainId,
       },
