@@ -9256,3 +9256,405 @@ body:has(.ascii-v2-execute) .sfx-toggle {
 
   .ascii-v2-execute .hire-step-panel { overflow: visible; }
 }
+
+/* Ganymede-derived GRABIT command center. */
+body:has(.ganymede-home) {
+  margin: 0;
+  overflow: hidden;
+  background: #05060c;
+}
+
+body:has(.ganymede-home) .sfx-toggle {
+  right: 16px;
+  bottom: 7px;
+  left: auto;
+  z-index: 90;
+  min-height: 24px;
+  padding: 3px 7px;
+  border: 1px solid #252b3c;
+  color: #69728e;
+  background: #080a12;
+  box-shadow: none;
+  font: 700 10px/1 "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+.ganymede-home {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: 100%;
+  min-height: 100dvh;
+  overflow: hidden;
+  color: #e1e5f2;
+  background: radial-gradient(1200px 700px at 68% -10%, #1b1a16 0%, #05060c 56%);
+  font-family: "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
+}
+
+.ganymede-home * {
+  box-sizing: border-box;
+  border-radius: 0;
+}
+
+.ganymede-head {
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+  min-height: 54px;
+  padding: 14px 22px;
+  border-bottom: 1px solid #24283a;
+  background: linear-gradient(180deg, rgb(243 186 47 / 5%), transparent);
+}
+
+.ganymede-head h1 {
+  margin: 0;
+  color: #f3ba2f;
+  font-size: clamp(14px, 1vw, 17px);
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 18px rgb(243 186 47 / 25%);
+  white-space: nowrap;
+}
+
+.ganymede-head > span {
+  color: #69728e;
+  font-size: clamp(10px, 0.7vw, 12px);
+  letter-spacing: 0.08em;
+}
+
+.ganymede-head nav {
+  display: flex;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.ganymede-head nav a {
+  color: #8e96ad;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+
+.ganymede-head nav a:hover,
+.ganymede-head nav a:focus-visible {
+  color: #f3ba2f;
+  outline: 0;
+}
+
+.ganymede-head time {
+  color: #69728e;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.ganymede-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(510px, 1fr);
+  min-height: 0;
+}
+
+.ganymede-sky {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border-right: 1px solid #24283a;
+}
+
+.ganymede-network-art {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 10px;
+  overflow: hidden;
+  color: #f3ba2f;
+  font: 700 clamp(9px, 0.72vw, 13px)/1 "SF Mono", "Cascadia Code", Consolas, monospace;
+  letter-spacing: 0;
+  text-shadow: 0 0 9px rgb(243 186 47 / 22%);
+  user-select: none;
+  white-space: pre;
+}
+
+.ganymede-network-art[data-state='waiting'] {
+  color: #ff6677;
+}
+
+.ganymede-sky > p {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  left: 16px;
+  z-index: 2;
+  margin: 0;
+  color: #69728e;
+  font-size: clamp(9px, 0.67vw, 12px);
+  letter-spacing: 0.06em;
+}
+
+.ganymede-console {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 13px;
+  padding: 17px 20px;
+  overflow: hidden;
+}
+
+.ganymede-summary {
+  display: flex;
+  gap: 18px;
+  align-items: flex-end;
+}
+
+.ganymede-summary > div > span {
+  display: block;
+  margin-bottom: 2px;
+  color: #69728e;
+  font-size: 11px;
+  letter-spacing: 0.13em;
+}
+
+.ganymede-summary strong {
+  color: #eef0f7;
+  font-size: clamp(36px, 3vw, 48px);
+  font-weight: 600;
+  line-height: 0.95;
+}
+
+.ganymede-summary > p {
+  margin: 0 0 5px;
+  color: #8b93a9;
+  font-size: 13px;
+}
+
+.ganymede-summary > p b {
+  color: #f3ba2f;
+}
+
+.ganymede-selected {
+  padding: 11px 13px;
+  border: 1px solid #24283a;
+  background: #0b0e18;
+}
+
+.ganymede-selected-head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  color: #69728e;
+  font-size: clamp(9px, 0.65vw, 11px);
+  letter-spacing: 0.07em;
+}
+
+.ganymede-selected h2 {
+  margin: 10px 0 2px;
+  overflow: hidden;
+  color: #eef0f7;
+  font: 600 clamp(20px, 1.65vw, 29px)/1.05 Arial, Helvetica, sans-serif;
+  letter-spacing: -0.035em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ganymede-selected > p {
+  margin: 0;
+  color: #f3ba2f;
+  font-size: clamp(10px, 0.7vw, 12px);
+  letter-spacing: 0.09em;
+}
+
+.ganymede-selected pre {
+  margin: 10px 0 0;
+  color: #9aa2b9;
+  font: 500 clamp(10px, 0.7vw, 12px)/1.45 "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+.ganymede-home .is-live {
+  color: #5ee39d;
+}
+
+.ganymede-home .is-waiting {
+  color: #ff6677;
+}
+
+.ganymede-agent-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: clamp(9px, 0.67vw, 12px);
+}
+
+.ganymede-agent-table th {
+  padding: 7px 8px;
+  border-bottom: 1px solid #24283a;
+  color: #69728e;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-align: right;
+}
+
+.ganymede-agent-table th:first-child,
+.ganymede-agent-table td:first-child {
+  width: 35%;
+  text-align: left;
+}
+
+.ganymede-agent-table th:nth-child(2),
+.ganymede-agent-table td:nth-child(2) {
+  width: 27%;
+}
+
+.ganymede-agent-table th:nth-child(3),
+.ganymede-agent-table td:nth-child(3) {
+  width: 22%;
+}
+
+.ganymede-agent-table td {
+  padding: 7px 8px;
+  overflow: hidden;
+  border-bottom: 1px solid rgb(36 40 58 / 65%);
+  color: #aeb4c6;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ganymede-agent-table tr:hover,
+.ganymede-agent-table tr.is-selected {
+  background: rgb(243 186 47 / 7%);
+}
+
+.ganymede-agent-table tr.is-selected td {
+  color: #e5e8f2;
+}
+
+.ganymede-agent-table td:first-child button {
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  color: #d7dbe8;
+  background: transparent;
+  cursor: pointer;
+  font: 700 inherit/1.2 inherit;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ganymede-agent-table tr.is-selected td:first-child button {
+  color: #f3ba2f;
+}
+
+.ganymede-primary {
+  display: grid;
+  min-height: 44px;
+  place-items: center;
+  color: #090a0e;
+  background: #f3ba2f;
+  font-size: clamp(11px, 0.76vw, 14px);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+
+.ganymede-primary:hover,
+.ganymede-primary:focus-visible {
+  color: #f3ba2f;
+  outline: 1px solid #f3ba2f;
+  outline-offset: 3px;
+  background: #11141e;
+}
+
+.ganymede-disclosure {
+  margin: auto 0 0;
+  color: #69728e;
+  font-size: clamp(8px, 0.59vw, 10px);
+  letter-spacing: 0.07em;
+  text-align: center;
+}
+
+.ganymede-foot {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  min-height: 36px;
+  padding: 8px 22px;
+  border-top: 1px solid #24283a;
+  color: #69728e;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.ganymede-foot b {
+  color: #5ee39d;
+}
+
+.ganymede-foot span:nth-last-of-type(1) {
+  color: #8d94a8;
+}
+
+.ganymede-foot strong {
+  margin-left: auto;
+  color: #f3ba2f;
+  font-weight: 600;
+}
+
+@media (max-width: 980px) {
+  .ganymede-main {
+    grid-template-columns: 1fr;
+  }
+
+  .ganymede-sky {
+    display: none;
+  }
+
+  .ganymede-console {
+    overflow-y: auto;
+  }
+
+  .ganymede-head > span,
+  .ganymede-head nav {
+    display: none;
+  }
+
+  .ganymede-head time {
+    margin-left: auto;
+  }
+
+  .ganymede-foot {
+    overflow-x: auto;
+  }
+
+  .ganymede-foot strong {
+    display: none;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 981px) {
+  .ganymede-console {
+    gap: 8px;
+    padding-block: 10px;
+  }
+
+  .ganymede-selected {
+    padding-block: 8px;
+  }
+
+  .ganymede-selected pre {
+    line-height: 1.28;
+  }
+
+  .ganymede-agent-table td,
+  .ganymede-agent-table th {
+    padding-block: 5px;
+  }
+
+  .ganymede-primary {
+    min-height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ganymede-network-art {
+    text-shadow: none;
+  }
+}
