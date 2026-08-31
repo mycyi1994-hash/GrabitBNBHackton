@@ -11428,19 +11428,55 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 .grabit-view-agent {
   position: relative;
   z-index: 13;
-  display: inline-flex;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  gap: 8px;
   align-items: center;
-  justify-content: center;
-  min-width: 154px;
+  min-width: 190px;
   min-height: 40px;
-  border: 1px solid color-mix(in srgb, var(--product-accent) 48%, transparent);
-  color: var(--market-text);
-  background: transparent;
-  font: 650 10px/1 var(--font-geist-mono), monospace;
-  letter-spacing: 0.12em;
+  padding: 0 4px 0 15px;
+  border: 0;
+  border-left: 1px solid var(--market-line);
+  color: var(--market-text-2);
+  background: rgb(255 255 255 / 1.5%);
+  font-family: var(--font-geist-mono), monospace;
   cursor: pointer;
-  transition: color 160ms, background 160ms;
+  transition: color 160ms, background 160ms, border-color 160ms;
+}
+
+.grabit-view-agent > i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--product-accent) 76%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--product-accent) 36%, transparent);
+}
+
+.grabit-view-agent > span {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.grabit-view-agent > small {
+  color: var(--market-text-3);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.grabit-view-agent > b {
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 31px;
+  border: 1px solid var(--market-line-soft);
+  color: color-mix(in srgb, var(--product-accent) 78%, var(--market-text));
+  font-size: 11px;
+  font-weight: 500;
 }
 
 .grabit-view-agent:disabled {
@@ -11450,9 +11486,9 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 
 .grabit-agent-card:hover .grabit-view-agent,
 .grabit-agent-card:focus-within .grabit-view-agent {
-  border-color: var(--product-accent);
-  color: #111216;
-  background: var(--product-accent);
+  border-color: color-mix(in srgb, var(--product-accent) 34%, transparent);
+  color: var(--market-text);
+  background: color-mix(in srgb, var(--product-accent) 5%, transparent);
 }
 
 .grabit-market-disclaimer {
@@ -12035,39 +12071,68 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
   display: grid;
   place-items: center;
   padding: 24px;
-  background:
-    radial-gradient(circle at 50% 42%, rgb(242 203 71 / 8%), transparent 42%),
-    rgb(2 3 5 / 91%);
+  background: rgb(2 3 5 / 90%);
   backdrop-filter: blur(12px);
   animation: grabit-demo-backdrop-in 180ms ease-out both;
 }
 
 .grabit-demo-window {
+  position: relative;
+  isolation: isolate;
   width: min(1120px, calc(100vw - 48px));
   max-height: calc(100dvh - 48px);
   overflow: auto;
-  border: 1px solid rgb(255 255 255 / 24%);
-  color: #f3f1e9;
-  background: #090a0d;
-  box-shadow: 0 36px 120px rgb(0 0 0 / 72%), inset 0 0 0 1px rgb(255 255 255 / 3%);
+  border: 1px solid color-mix(in srgb, var(--product-accent) 28%, transparent);
+  color: var(--market-text);
+  background:
+    linear-gradient(rgb(229 226 236 / 1.6%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(229 226 236 / 1.6%) 1px, transparent 1px),
+    linear-gradient(145deg, rgb(13 14 19 / 99%), rgb(7 8 11 / 99%));
+  background-size: 36px 36px, 36px 36px, auto;
+  box-shadow: 0 36px 120px rgb(0 0 0 / 76%), inset 0 0 70px color-mix(in srgb, var(--product-accent) 3%, transparent);
   animation: grabit-demo-window-in 220ms cubic-bezier(.2,.8,.2,1) both;
 }
 
+.grabit-demo-window::before {
+  content: "";
+  position: absolute;
+  inset: 0 58% auto 0;
+  z-index: 3;
+  height: 2px;
+  background: var(--product-accent);
+  opacity: 0.72;
+}
+
+.grabit-demo-celestial {
+  position: absolute;
+  top: -19%;
+  right: -3%;
+  z-index: 0;
+  width: 48%;
+  height: 78%;
+  overflow: hidden;
+  opacity: 0.12;
+  filter: saturate(0.72);
+  pointer-events: none;
+}
+
 .grabit-demo-header {
+  position: relative;
+  z-index: 1;
   display: flex;
   gap: 28px;
   align-items: flex-start;
   justify-content: space-between;
   padding: 22px 24px 20px;
-  border-bottom: 1px solid rgb(255 255 255 / 17%);
-  background: linear-gradient(90deg, rgb(242 203 71 / 8%), transparent 58%);
+  border-bottom: 1px solid var(--market-line);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--product-accent) 5%, transparent), transparent 58%);
 }
 
 .grabit-demo-header span,
 .grabit-demo-task > span,
 .grabit-demo-verdict > span,
 .grabit-demo-proof section > span {
-  color: #f2cb47;
+  color: color-mix(in srgb, var(--product-accent) 78%, var(--market-text));
   font: 700 11px/1.2 var(--font-geist-mono), monospace;
   letter-spacing: 0.13em;
 }
@@ -12079,6 +12144,14 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
   letter-spacing: -0.045em;
 }
 
+.grabit-demo-header small {
+  display: block;
+  margin-top: 8px;
+  color: var(--market-text-3);
+  font: 600 9px/1.3 var(--font-geist-mono), monospace;
+  letter-spacing: 0.08em;
+}
+
 .grabit-demo-header button,
 .grabit-demo-error button,
 .grabit-demo-actions :is(button, a) {
@@ -12087,9 +12160,9 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
   justify-content: center;
   min-height: 44px;
   padding: 0 17px;
-  border: 1px solid rgb(255 255 255 / 25%);
-  color: #f3f1e9;
-  background: transparent;
+  border: 1px solid var(--market-line);
+  color: var(--market-text-2);
+  background: rgb(8 9 13 / 72%);
   font: 700 10px/1 var(--font-geist-mono), monospace;
   letter-spacing: 0.1em;
   text-decoration: none;
@@ -12103,13 +12176,15 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 }
 
 .grabit-demo-task {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 18px;
   align-items: center;
   padding: 17px 24px;
-  border-bottom: 1px solid rgb(255 255 255 / 12%);
-  background: #0d0f12;
+  border-bottom: 1px solid var(--market-line-soft);
+  background: rgb(8 9 13 / 78%);
 }
 
 .grabit-demo-task p {
@@ -12121,7 +12196,7 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 }
 
 .grabit-demo-task b {
-  color: #9ee7b2;
+  color: var(--market-positive);
   font: 700 10px/1.2 var(--font-geist-mono), monospace;
   letter-spacing: 0.08em;
   white-space: nowrap;
@@ -12129,6 +12204,8 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 
 .grabit-demo-loading,
 .grabit-demo-error {
+  position: relative;
+  z-index: 1;
   display: grid;
   place-items: center;
   min-height: 330px;
@@ -12138,7 +12215,7 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 
 .grabit-demo-loading strong,
 .grabit-demo-error strong {
-  color: #f2cb47;
+  color: color-mix(in srgb, var(--product-accent) 82%, var(--market-text));
   font: 750 16px/1 var(--font-geist-mono), monospace;
   letter-spacing: 0.12em;
 }
@@ -12162,7 +12239,7 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 .grabit-demo-loading i {
   width: 28px;
   height: 5px;
-  background: rgb(242 203 71 / 18%);
+  background: color-mix(in srgb, var(--product-accent) 18%, transparent);
   animation: grabit-demo-scan 900ms ease-in-out infinite alternate;
 }
 
@@ -12176,12 +12253,14 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 
 .grabit-demo-error button {
   margin-top: 24px;
-  border-color: #f2cb47;
-  color: #111216;
-  background: #f2cb47;
+  border-color: color-mix(in srgb, var(--product-accent) 48%, transparent);
+  color: var(--market-text);
+  background: color-mix(in srgb, var(--product-accent) 7%, transparent);
 }
 
 .grabit-demo-result {
+  position: relative;
+  z-index: 1;
   padding: 24px;
 }
 
@@ -12210,14 +12289,15 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   margin: 0;
-  border: 1px solid rgb(255 255 255 / 16%);
+  border: 1px solid var(--market-line);
+  background: rgb(5 6 9 / 42%);
 }
 
 .grabit-demo-metrics > div {
   min-width: 0;
   min-height: 124px;
   padding: 18px;
-  border-right: 1px solid rgb(255 255 255 / 13%);
+  border-right: 1px solid var(--market-line-soft);
 }
 
 .grabit-demo-metrics > div:last-child {
@@ -12235,7 +12315,7 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 .grabit-demo-metrics dd {
   margin: 9px 0 0;
   overflow: hidden;
-  color: #f2cb47;
+  color: color-mix(in srgb, var(--product-accent) 82%, var(--market-text));
   font: 650 clamp(19px, 2vw, 29px)/1 var(--font-geist-mono), monospace;
   letter-spacing: -0.04em;
   text-overflow: ellipsis;
@@ -12255,13 +12335,14 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-top: 14px;
-  border: 1px solid rgb(255 255 255 / 13%);
+  border: 1px solid var(--market-line-soft);
+  background: rgb(5 6 9 / 32%);
 }
 
 .grabit-demo-proof section {
   min-height: 104px;
   padding: 17px 18px;
-  border-right: 1px solid rgb(255 255 255 / 13%);
+  border-right: 1px solid var(--market-line-soft);
 }
 
 .grabit-demo-proof section:nth-child(2) {
@@ -12282,7 +12363,7 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
   flex-wrap: wrap;
   gap: 16px;
   padding: 13px 18px;
-  border-top: 1px solid rgb(255 255 255 / 13%);
+  border-top: 1px solid var(--market-line-soft);
   color: #82838a;
   font: 650 9px/1.2 var(--font-geist-mono), monospace;
   letter-spacing: 0.08em;
@@ -12290,10 +12371,12 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 
 .grabit-demo-proof footer b {
   margin-right: auto;
-  color: #9ee7b2;
+  color: var(--market-positive);
 }
 
 .grabit-demo-actions {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 0.72fr 1.28fr;
   gap: 10px;
@@ -12305,9 +12388,9 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 }
 
 .grabit-demo-actions a {
-  border-color: #f2cb47;
-  color: #111216;
-  background: #f2cb47;
+  border-color: color-mix(in srgb, var(--product-accent) 48%, transparent);
+  color: color-mix(in srgb, var(--product-accent) 82%, var(--market-text));
+  background: color-mix(in srgb, var(--product-accent) 6%, transparent);
 }
 
 .grabit-demo-actions :is(button, a):hover {
@@ -12323,7 +12406,10 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
 }
 
 @keyframes grabit-demo-scan {
-  to { background: #f2cb47; box-shadow: 0 0 18px rgb(242 203 71 / 34%); }
+  to {
+    background: var(--product-accent);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--product-accent) 34%, transparent);
+  }
 }
 
 @media (min-width: 1800px) {

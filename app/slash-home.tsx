@@ -142,7 +142,10 @@ function AgentCard({
             onRun(agent, index);
           }}
         >
-          {running ? 'RUNNING AGENT...' : 'RUN LIVE DEMO'} <span aria-hidden="true">↗</span>
+          <i aria-hidden="true" />
+          <span>{running ? 'OBSERVING...' : 'RUN AGENT'}</span>
+          <small>{running ? 'LIVE BSC' : 'LIVE DEMO'}</small>
+          <b aria-hidden="true">↗</b>
         </button>
       </div>
     </article>
@@ -171,6 +174,15 @@ export function SlashHome({ agents }: SlashHomeProps) {
     document.body.scrollTop = 0;
     document.querySelector('.grabit-market-page')?.scrollTo(0, 0);
   }, [view]);
+
+  useEffect(() => {
+    if (!demoSelection) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !demoRunning) setDemoSelection(null);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [demoRunning, demoSelection]);
 
   const runDemo = useCallback(async (agent: SlashAgent, index: number) => {
     const selection = { agent, index };
@@ -273,7 +285,7 @@ export function SlashHome({ agents }: SlashHomeProps) {
 
         {demoSelection ? (
           <div
-            className="grabit-demo-backdrop"
+            className={`grabit-demo-backdrop grabit-product-${variants[demoSelection.index] ?? 'core'}`}
             role="presentation"
             onMouseDown={(event) => {
               if (event.target === event.currentTarget && !demoRunning) setDemoSelection(null);
@@ -285,13 +297,17 @@ export function SlashHome({ agents }: SlashHomeProps) {
               aria-modal="true"
               aria-labelledby="grabit-demo-title"
             >
+              <div className="grabit-demo-celestial" aria-hidden="true">
+                <AgentCelestial variant={variants[demoSelection.index] ?? 'core'} />
+              </div>
               <header className="grabit-demo-header">
                 <div>
-                  <span>LIVE_AGENT_RUN // ERC-8004 #{demoSelection.agent.tokenId}</span>
+                  <span>OBSERVATION SESSION / {String(demoSelection.index + 1).padStart(2, '0')} OF 04</span>
                   <h2 id="grabit-demo-title">{shortName(demoSelection.agent.name)}</h2>
+                  <small>ERC-8004 #{demoSelection.agent.tokenId} · {agentProfiles[demoSelection.index]?.role}</small>
                 </div>
                 <button type="button" disabled={demoRunning} onClick={() => setDemoSelection(null)}>
-                  [X] CLOSE
+                  CLOSE / ESC
                 </button>
               </header>
 
@@ -360,10 +376,10 @@ export function SlashHome({ agents }: SlashHomeProps) {
                   disabled={demoRunning}
                   onClick={() => void runDemo(demoSelection.agent, demoSelection.index)}
                 >
-                  RUN AGAIN
+                  REPEAT OBSERVATION
                 </button>
                 <Link href={'/activate?registry=' + demoSelection.agent.tokenId}>
-                  CONTINUE TO TESTNET HIRE ↗
+                  OPEN TESTNET TERMINAL ↗
                 </Link>
               </footer>
             </section>
