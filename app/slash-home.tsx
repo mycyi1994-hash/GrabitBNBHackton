@@ -378,9 +378,15 @@ export function SlashHome({ agents }: SlashHomeProps) {
                 >
                   REPEAT OBSERVATION
                 </button>
-                <Link href={'/activate?registry=' + demoSelection.agent.tokenId}>
+                <button
+                  className="grabit-demo-primary"
+                  type="button"
+                  onClick={() => {
+                    window.location.assign(`/activate?registry=${encodeURIComponent(demoSelection.agent.tokenId)}`);
+                  }}
+                >
                   OPEN TESTNET TERMINAL ↗
-                </Link>
+                </button>
               </footer>
             </section>
           </div>

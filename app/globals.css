@@ -12387,7 +12387,7 @@ body:has(.grabit-market-shell) .page-transition-stage::after {
   min-height: 54px;
 }
 
-.grabit-demo-actions a {
+.grabit-demo-actions .grabit-demo-primary {
   border-color: color-mix(in srgb, var(--product-accent) 48%, transparent);
   color: color-mix(in srgb, var(--product-accent) 82%, var(--market-text));
   background: color-mix(in srgb, var(--product-accent) 6%, transparent);
