@@ -15009,6 +15009,14 @@ body:has(.grabit-terminal-page) .sfx-toggle { bottom: 52px; }
   margin-top: var(--grabit-rhythm);
 }
 
+/* Inside the Ganymede tab panel the gutter is already supplied, and the panel
+   is the section rather than a strip appended under one. */
+.product-tab-panel .grabit-altana {
+  padding: 0;
+  margin-top: 0;
+  border-top: 0;
+}
+
 /* The header is the only way back to the store, so it stays put. */
 .grabit-terminal-topbar {
   position: sticky;

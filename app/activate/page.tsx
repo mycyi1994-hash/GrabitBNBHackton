@@ -43,8 +43,11 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
   const variant = categoryVariant[selected.category];
   const profile = agentProfiles[selected.category];
 
+  // Two page classes on purpose: grabit-terminal-page carries the execution
+  // console's own observatory styling, grabit-detail-page the Ganymede surface
+  // around it. Dropping the first orphaned every rule the console depends on.
   return (
-    <main className={`grabit-detail-page grabit-product-${variant}`}>
+    <main className={`grabit-detail-page grabit-terminal-page grabit-product-${variant}`}>
       <header className="product-detail-topbar">
         <Link className="detail-brand" href="/" aria-label="Grabit Agent Market overview">
           <span>G</span>
