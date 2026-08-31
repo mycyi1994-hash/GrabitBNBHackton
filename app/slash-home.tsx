@@ -3,7 +3,9 @@
 import { AgentCelestial, type AgentCelestialVariant } from '@/app/agent-celestial';
 import { GrabitScene } from '@/app/grabit-scene';
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActiveAgents } from '@/components/active-agents';
+import { EvidenceLeaderboard } from '@/components/evidence-leaderboard';
 
 type SlashAgent = {
   tokenId: string;
@@ -18,8 +20,18 @@ type SlashAgent = {
   endpointVerified: boolean | null;
 };
 
+type VerificationGate = {
+  identityRegistered: boolean;
+  endpointReachable: boolean;
+  quoteAccepted: boolean;
+  taskDelivered: boolean;
+  jobSettled: boolean;
+};
+
 type SlashHomeProps = {
   agents: SlashAgent[];
+  gate: VerificationGate;
+  ownerConcentration: number;
 };
 
 type StoreFilter = 'all' | 'automate' | 'monitor';
@@ -152,13 +164,17 @@ function AgentCard({
   );
 }
 
-export function SlashHome({ agents }: SlashHomeProps) {
+export function SlashHome({ agents, gate, ownerConcentration }: SlashHomeProps) {
   const [view, setView] = useState<'landing' | 'store'>('landing');
   const [filter, setFilter] = useState<StoreFilter>('all');
   const [demoSelection, setDemoSelection] = useState<DemoSelection | null>(null);
   const [demoResult, setDemoResult] = useState<DemoResult | null>(null);
   const [demoError, setDemoError] = useState<string | null>(null);
   const [demoRunning, setDemoRunning] = useState(false);
+  const [pendingAnchor, setPendingAnchor] = useState<'board' | 'active' | null>(null);
+  const storeRef = useRef<HTMLElement>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef<HTMLDivElement>(null);
   const visibleAgents = agents.slice(0, 4);
   const firstAgent = visibleAgents[0];
   const indexedAgents = visibleAgents.map((agent, index) => ({ agent, index }));
@@ -168,12 +184,29 @@ export function SlashHome({ agents }: SlashHomeProps) {
     return true;
   });
 
+  const scrollTo = useCallback((target: { current: HTMLElement | null }) => {
+    target.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
   useEffect(() => {
     window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
     document.querySelector('.grabit-market-page')?.scrollTo(0, 0);
   }, [view]);
+
+  // Entering the store from a landing call-to-action that names a section: let
+  // the view render and its top-scroll settle, then move to the section asked
+  // for. Without this the leaderboard link would have to leave the workspace.
+  useEffect(() => {
+    if (view !== 'store' || !pendingAnchor) return;
+    const timer = window.setTimeout(() => {
+      const target = pendingAnchor === 'board' ? boardRef : activeRef;
+      target.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setPendingAnchor(null);
+    }, 80);
+    return () => window.clearTimeout(timer);
+  }, [pendingAnchor, view]);
 
   useEffect(() => {
     if (!demoSelection) return;
@@ -222,8 +255,9 @@ export function SlashHome({ agents }: SlashHomeProps) {
           </button>
           <nav className="grabit-market-menu" aria-label="Primary navigation">
             <button type="button" onClick={() => setView('landing')}>OVERVIEW</button>
-            <button className="is-active" type="button" aria-current="page">AGENTS</button>
-            <Link href="/dashboard">LEADERBOARD</Link>
+            <button className="is-active" type="button" onClick={() => scrollTo(storeRef)}>AGENTS</button>
+            <button type="button" onClick={() => scrollTo(boardRef)}>LEADERBOARD</button>
+            <button type="button" onClick={() => scrollTo(activeRef)}>ACTIVE</button>
           </nav>
           {firstAgent ? (
             <Link className="grabit-market-wallet" href={'/activate?registry=' + firstAgent.tokenId}>
@@ -264,7 +298,7 @@ export function SlashHome({ agents }: SlashHomeProps) {
             </p>
           </div>
 
-          <section key={filter} className="grabit-agent-grid" aria-label="Agent marketplace">
+          <section key={filter} className="grabit-agent-grid" ref={storeRef} aria-label="Agent marketplace">
             {shownAgents.map(({ agent, index }) => (
               <AgentCard
                 key={agent.tokenId}
@@ -275,12 +309,26 @@ export function SlashHome({ agents }: SlashHomeProps) {
               />
             ))}
           </section>
+
+          <div ref={boardRef}>
+            <EvidenceLeaderboard
+              agents={visibleAgents}
+              gate={gate}
+              ownerConcentration={ownerConcentration}
+            />
+          </div>
+
+          <div ref={activeRef}>
+            <ActiveAgents
+              hireHref={firstAgent ? `/activate?registry=${firstAgent.tokenId}` : '/activate'}
+            />
+          </div>
         </main>
 
         <footer className="grabit-market-disclaimer">
           <span>TESTNET / PRE-LAUNCH</span>
           <p>Quotes and results must be verified before activation. No Mainnet capital moves from this marketplace preview.</p>
-          <Link href="/dashboard">LEADERBOARD ↗</Link>
+          <button type="button" onClick={() => scrollTo(boardRef)}>LEADERBOARD ↗</button>
         </footer>
 
         {demoSelection ? (
@@ -443,7 +491,16 @@ export function SlashHome({ agents }: SlashHomeProps) {
           <button className="grabit-primary-action" type="button" onClick={() => setView('store')}>
             EXPLORE AGENTS <span aria-hidden="true">↗</span>
           </button>
-          <Link className="grabit-secondary-action" href="/dashboard">VIEW LEADERBOARD</Link>
+          <button
+            className="grabit-secondary-action"
+            type="button"
+            onClick={() => {
+              setPendingAnchor('board');
+              setView('store');
+            }}
+          >
+            VIEW LEADERBOARD
+          </button>
         </div>
         <div className="grabit-assurance">
           <span>IDENTITY VERIFIED</span>
