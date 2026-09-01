@@ -4,12 +4,32 @@
     "operatorRateUsdPerHour": 60,
     "rationale": "A mid-level DeFi analyst rate. It is stated rather than hidden because the manual side has no out-of-pocket cost, only labour, and a comparison that prices labour at zero would flatter the agent."
   },
+  "manualBaseline": {
+    "description": "An operator working from BscScan with a general-purpose AI assistant.",
+    "rationale": "This is the realistic alternative to hiring an agent in 2026, and it is a harder baseline than an operator working alone, so any advantage the marketplace shows is measured against the stronger comparison. It is still 'without an agent hired through this marketplace', which is what the requirement asks. Naming it matters: a reader who assumed 'manual' meant unaided would be reading the wrong comparison.",
+    "caveat": "Task 302258 is the exception on timing. Its method was derived in conversation before the clock was started, so its recorded time covers verification and write-up only and understates the manual cost. That error runs against the agent, not for it. Every later task was timed from before the first question was asked."
+  },
   "rubric": [
-    { "id": "answers_the_ask", "text": "Produces the artifact that was asked for, not a description of how one would produce it." },
-    { "id": "numbers_sourced", "text": "Every quantitative claim names where it came from: a contract address, a block height, or a named public endpoint." },
-    { "id": "assumptions_stated", "text": "Inputs the answer had to assume are written down rather than silently chosen." },
-    { "id": "risks_named", "text": "At least one concrete way the plan loses money or fails is identified." },
-    { "id": "reproducible", "text": "A third party can re-derive the same numbers from what is written, without asking the author." }
+    {
+      "id": "answers_the_ask",
+      "text": "Produces the artifact that was asked for, not a description of how one would produce it."
+    },
+    {
+      "id": "numbers_sourced",
+      "text": "Every quantitative claim names where it came from: a contract address, a block height, or a named public endpoint."
+    },
+    {
+      "id": "assumptions_stated",
+      "text": "Inputs the answer had to assume are written down rather than silently chosen."
+    },
+    {
+      "id": "risks_named",
+      "text": "At least one concrete way the plan loses money or fails is identified."
+    },
+    {
+      "id": "reproducible",
+      "text": "A third party can re-derive the same numbers from what is written, without asking the author."
+    }
   ],
   "tasks": [
     {
