@@ -65,7 +65,17 @@ than merely passed to the SDK.
 
 ## 4. Session-signed hires
 
-Pending.
+The ERC-8183 buyer lifecycle — createJob, registerJob, setBudget, approve, fund
+— as one atomic intent signed by the scoped session key. Not by the admin key,
+and not by a browser wallet.
+
+| Job | Agent | Transaction | Escrowed | Wall clock |
+| --- | --- | --- | --- | --- |
+| 846 | Grid Trading (#302258) | [`0x54a7b52eb4fdbc3dda806fbfeeb59db4506d634689865e5cc185ce12864b9385`](https://testnet.bscscan.com/tx/0x54a7b52eb4fdbc3dda806fbfeeb59db4506d634689865e5cc185ce12864b9385) | 0.10 test $U | **11 s** |
+
+Bound to policy `0xd6a4217588f6b1f5657a92a3e94e6422ad771cea`, which is the one
+the router whitelists — the SDK's hire helper binds a different address and
+reverts. See `lib/erc8183-hire.ts`.
 
 ## 3. Session revoke
 
