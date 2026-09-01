@@ -2609,9 +2609,19 @@ main { min-height: 100vh; }
 
 /* Windows 95 Explorer shell */
 body {
-  padding-bottom: 42px;
   background: #008080;
   font-family: Tahoma, "MS Sans Serif", Arial, sans-serif;
+}
+
+/*
+ * Clearance for the fixed Win95 taskbar, on the one route that still draws
+ * one. It used to sit on bare `body`, where it stacked underneath every
+ * full-height page: a `min-height: 100dvh` screen plus 42px of body padding
+ * always overflows by 42px, which is exactly what stopped the agent detail
+ * screen fitting on one screen no matter how much its content was trimmed.
+ */
+body:has(.win95-desktop) {
+  padding-bottom: 42px;
 }
 
 .win95-desktop {

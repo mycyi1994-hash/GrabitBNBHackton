@@ -1,44 +1,21 @@
 'use client';
 
-import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect } from 'react';
 
-type AudioWindow = Window & typeof globalThis & {
-  webkitAudioContext?: typeof AudioContext;
-};
-
+/**
+ * Page-transition shell.
+ *
+ * Same-origin link clicks are intercepted so the outgoing page can fade before
+ * the navigation commits, which is what keeps the workspace from flashing white
+ * between routes. Everything else — modified clicks, new tabs, downloads,
+ * cross-origin links and in-page anchors — is left to the browser.
+ *
+ * This used to also carry a Win95 click-sound layer and a fixed "SFX ON/OFF"
+ * button pinned to the bottom-left corner. The button survived the redesign
+ * only as a leftover: it sat outside every current screen's frame, and the
+ * clearance reserved for it pushed full-height pages past the viewport.
+ */
 export function RetroInterface({ children }: { children: ReactNode }) {
-  // Off by default, per the scope freeze: sound is opt-in before release.
-  const [soundEnabled, setSoundEnabled] = useState(false);
-  const audioRef = useRef<AudioContext | null>(null);
-
-  const playTone = useCallback((frequency: number, duration = 0.07) => {
-    if (!soundEnabled) return;
-    const AudioContextClass = window.AudioContext ?? (window as AudioWindow).webkitAudioContext;
-    if (!AudioContextClass) return;
-    const context = audioRef.current ?? new AudioContextClass();
-    audioRef.current = context;
-    void context.resume();
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.type = 'square';
-    oscillator.frequency.value = frequency;
-    gain.gain.setValueAtTime(0.035, context.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + duration);
-    oscillator.connect(gain);
-    gain.connect(context.destination);
-    oscillator.start();
-    oscillator.stop(context.currentTime + duration);
-  }, [soundEnabled]);
-
-  useEffect(() => {
-    const preference = window.localStorage.getItem('agent-market-sfx');
-    const timer = window.setTimeout(() => {
-      // Sound is off unless this viewer turned it on before.
-      if (preference === 'on') setSoundEnabled(true);
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, []);
-
   useEffect(() => {
     const restorePage = () => document.documentElement.classList.remove('page-is-leaving');
     restorePage();
@@ -49,13 +26,8 @@ export function RetroInterface({ children }: { children: ReactNode }) {
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
       const target = event.target instanceof Element ? event.target : null;
-      const control = target?.closest('a[href], button');
-      if (!control || control.classList.contains('sfx-toggle')) return;
-
-      if (!(control instanceof HTMLAnchorElement)) {
-        playTone(520);
-        return;
-      }
+      const control = target?.closest('a[href]');
+      if (!(control instanceof HTMLAnchorElement)) return;
 
       if (
         event.defaultPrevented ||
@@ -67,48 +39,29 @@ export function RetroInterface({ children }: { children: ReactNode }) {
         control.target === '_blank' ||
         control.hasAttribute('download')
       ) {
-        playTone(560);
         return;
       }
 
       const destination = new URL(control.href, window.location.href);
-      if (destination.origin !== window.location.origin) {
-        playTone(560);
-        return;
-      }
+      if (destination.origin !== window.location.origin) return;
+
+      // An in-page anchor is not a navigation; let the browser scroll to it.
       if (
         destination.pathname === window.location.pathname &&
         destination.search === window.location.search &&
         destination.hash
       ) {
-        playTone(620);
         return;
       }
 
       event.preventDefault();
       document.documentElement.classList.add('page-is-leaving');
-      playTone(640, 0.06);
-      window.setTimeout(() => playTone(880, 0.08), 55);
       window.setTimeout(() => window.location.assign(destination.href), 190);
     };
 
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
-  }, [playTone]);
+  }, []);
 
-  function toggleSound() {
-    const next = !soundEnabled;
-    setSoundEnabled(next);
-    window.localStorage.setItem('agent-market-sfx', next ? 'on' : 'off');
-    if (next) window.setTimeout(() => playTone(760, 0.09), 0);
-  }
-
-  return (
-    <>
-      <div className="page-transition-stage">{children}</div>
-      <button className="sfx-toggle" type="button" aria-pressed={soundEnabled} onClick={toggleSound}>
-        SFX {soundEnabled ? 'ON' : 'OFF'}
-      </button>
-    </>
-  );
+  return <div className="page-transition-stage">{children}</div>;
 }

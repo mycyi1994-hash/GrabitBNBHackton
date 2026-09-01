@@ -729,10 +729,10 @@
    it, everything on one screen without scrolling. Ladder 1c, compressed.
    =========================================================================== */
 
-.detail-2b { display: grid; grid-template-columns: minmax(0, 1fr) 368px; }
+.detail-2b { display: grid; grid-template-columns: minmax(0, 1fr) 424px; }
 
 .detail-2b-left { padding: 28px; border-right: 1px solid rgba(242, 239, 232, 0.1); min-width: 0; }
-.detail-2b-right { padding: 22px 24px; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.detail-2b-right { padding: 16px 24px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 
 .detail-2b h1 {
   max-width: 30ch;
@@ -813,6 +813,47 @@
 /* Right pane */
 
 .detail-2b-right .rail-panel { padding: 0; border: 0; }
+
+/*
+ * Everything on this screen has to be visible at once — that is the whole
+ * point of study 2b — and the evidence rail is what sets the height. These
+ * rules tighten its vertical rhythm without dropping a single row or
+ * shrinking the type below the sizes in the handoff.
+ */
+.detail-2b-right .evidence-rows { margin-top: 10px; }
+.detail-2b-right .evidence-rows > div { padding: 6px 0; }
+.detail-2b-right .evidence-rows > div:last-child { border-bottom: 0; }
+.detail-2b-right .registry-link { margin-top: 10px; }
+.detail-2b-right .peek-intro { margin-top: 8px; }
+.detail-2b-right .peek-list { margin-top: 10px; gap: 9px; }
+.detail-2b-right .peek-row p { line-height: 1.4; }
+.detail-2b-right .peek-more { margin-top: 10px; }
+.detail-2b-right .owner-siblings { margin-top: 10px; }
+.detail-2b-right .owner-siblings li { line-height: 1.65; }
+
+/*
+ * Short screens. A 1366x768 laptop is 132px shorter than the layout above is
+ * built for, and "everything at once" has to hold there too — so the rhythm
+ * tightens one more step rather than the screen starting to scroll. Nothing is
+ * dropped: the same seven evidence rows, the same permissions, the same
+ * lifecycle. Only the air between them goes.
+ */
+@media (max-height: 880px) {
+  .detail-2b-left { padding: 20px 24px; }
+  .detail-2b-right { padding: 12px 24px; gap: 10px; }
+  .detail-2b h1 { font-size: 27px; }
+  .detail-2b-price { margin: 8px 0 12px; }
+  .detail-2b .lifecycle-step { padding: 11px 0; }
+  .detail-2b-panels { margin-top: 12px; }
+  .detail-2b-panels .waiting-panel { padding: 12px 16px; }
+  .ladder-gate-figure { padding: 10px 18px; }
+  .ladder-gate-body { padding: 10px 18px; }
+  .detail-2b-right .evidence-rows > div { padding: 3px 0; }
+  .detail-2b-right .peek-list { gap: 6px; }
+  .detail-2b-right .peek-more { margin-top: 6px; }
+  .detail-2b-right .peek-intro { margin-top: 6px; }
+  .detail-2b-right .owner-siblings li { line-height: 1.45; }
+}
 
 .peek-intro { margin: 12px 0 0; color: rgba(242, 239, 232, 0.65); font-size: 13.5px; line-height: 1.5; }
 
