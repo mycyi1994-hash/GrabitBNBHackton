@@ -125,15 +125,22 @@ async function keyids() {
 function keys() {
   const adminKey = generatePrivateKey();
   const sessionKey = generatePrivateKey();
+  // The canary's counterparty. Every hire needs a provider to escrow against,
+  // so omitting it here left the whole hire path unreachable with a 503 that
+  // only appeared at the moment of use.
+  const providerKey = generatePrivateKey();
   const admin = privateKeyToAccount(adminKey);
   const session = privateKeyToAccount(sessionKey);
+  const provider = privateKeyToAccount(providerKey);
 
   console.log('\nTestnet-only keys. Never reuse a Mainnet key, never commit .env.local,');
   console.log('and never paste these into a chat, an issue or a terminal that is being recorded.\n');
   console.log(`GRABIT_ALTANA_ADMIN_PRIVATE_KEY=${adminKey}`);
   console.log(`GRABIT_ALTANA_SESSION_PRIVATE_KEY=${sessionKey}`);
+  console.log(`GRABIT_TESTNET_PROVIDER_PRIVATE_KEY=${providerKey}`);
   console.log(`\nAgent wallet address — this is the one you fund: ${admin.address}`);
   console.log(`Session key address (no funding needed):        ${session.address}`);
+  console.log(`Provider address (no funding needed):          ${provider.address}`);
   console.log(`\n  tBNB faucet:    ${NETWORK.faucetGas}`);
   console.log(`  test $U faucet: ${NETWORK.faucetToken}`);
   console.log(`  explorer:       ${NETWORK.explorer}/address/${admin.address}`);
@@ -195,7 +202,15 @@ async function check() {
     client.readContract({ address: NETWORK.keyStore, abi: KEYSTORE_ABI, functionName: 'isValidKey', args: [admin.address, keyId] }).catch(() => false),
   ]);
 
+  const providerKey = env.GRABIT_TESTNET_PROVIDER_PRIVATE_KEY;
+  const providerOk = /^0x[0-9a-fA-F]{64}$/.test(providerKey || '');
+
   const rows = [
+    ['testnet provider key set', providerOk,
+      providerOk
+        ? `provider ${privateKeyToAccount(providerKey).address}`
+        : 'GRABIT_TESTNET_PROVIDER_PRIVATE_KEY missing from .env.local — every hire 503s without it',
+      ''],
     ['tBNB for gas', gas >= MIN_GAS_WEI, `${formatEther(gas)} tBNB (need ${formatEther(MIN_GAS_WEI)})`, NETWORK.faucetGas],
     ['test $U for one hire', token !== null && token >= HIRE_BUDGET, token === null ? 'could not read balance' : `${formatUnits(token, 18)} $U (need ${formatUnits(HIRE_BUDGET, 18)})`, NETWORK.faucetToken],
     ['test $U for the 4-task report', token !== null && token >= REPORT_BUDGET, token === null ? 'could not read balance' : `${formatUnits(token, 18)} $U (want ${formatUnits(REPORT_BUDGET, 18)})`, NETWORK.faucetToken],
