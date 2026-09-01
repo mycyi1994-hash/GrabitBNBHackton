@@ -71,7 +71,13 @@ and not by a browser wallet.
 
 | Job | Agent | Transaction | Escrowed | Wall clock |
 | --- | --- | --- | --- | --- |
-| 846 | Grid Trading (#302258) | [`0x54a7b52eb4fdbc3dda806fbfeeb59db4506d634689865e5cc185ce12864b9385`](https://testnet.bscscan.com/tx/0x54a7b52eb4fdbc3dda806fbfeeb59db4506d634689865e5cc185ce12864b9385) | 0.10 test $U | **11 s** |
+| 846 | Grid Trading (#302258) | [`0x54a7b52e…4b9385`](https://testnet.bscscan.com/tx/0x54a7b52eb4fdbc3dda806fbfeeb59db4506d634689865e5cc185ce12864b9385) | 0.10 test $U | **11 s** |
+| 847 | Rebalancing (#304494) | [`0x764cf03d…92b2b5`](https://testnet.bscscan.com/tx/0x764cf03ddba497ba0fa6baf7931666767e72bb07890cebdeead46f098892b2b5) | 0.10 test $U | **5 s** |
+| 848 | Yield Optimisation (#304493) | [`0x8e3194ba…4f21a3`](https://testnet.bscscan.com/tx/0x8e3194ba324edb7e73f27b069072d09ebb58c250e4696809338a2ac61b4f21a3) | 0.10 test $U | **5 s** |
+
+Three categories, 0.30 test $U escrowed in total, well inside the session's
+1.00 $U daily ceiling. The first took eleven seconds and the next two five
+each — the difference is the SDK's client warming up, not the chain.
 
 Bound to policy `0xd6a4217588f6b1f5657a92a3e94e6422ad771cea`, which is the one
 the router whitelists — the SDK's hire helper binds a different address and
