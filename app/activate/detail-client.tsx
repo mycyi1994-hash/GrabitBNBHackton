@@ -108,14 +108,17 @@ export function AgentDetail({
             </button>
           </div>
 
-          <div className="lifecycle-step">
+          <div className="lifecycle-step is-open">
             <span>02</span>
             <div>
-              <h3>Grant authority</h3>
-              <p>Eight named permissions, a 24-hour spending cap, an expiry that runs out on its own.</p>
+              <h3>Read what it would be allowed to do</h3>
+              <p>
+                Eleven limits: eight calls it may make, three things it never can, a daily cap and an
+                expiry that runs out on its own. Reading them costs nothing.
+              </p>
             </div>
-            <Link className="lifecycle-action is-waiting" href="/authority">
-              REVIEW FIRST
+            <Link className="lifecycle-action is-open" href="/authority">
+              SEE ALL 11 LIMITS
             </Link>
           </div>
 
@@ -218,10 +221,7 @@ export function AgentDetail({
             ))}
           </div>
           <Link className="authority-cta" href="/authority">
-            <b>
-              SEE ALL 11 PERMISSIONS
-              <small>8 it may use · 3 it never can · and revoke</small>
-            </b>
+            all 11, in full, with revoke
             <span aria-hidden="true">→</span>
           </Link>
         </section>
