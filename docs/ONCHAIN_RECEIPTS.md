@@ -83,6 +83,15 @@ Bound to policy `0xd6a4217588f6b1f5657a92a3e94e6422ad771cea`, which is the one
 the router whitelists — the SDK's hire helper binds a different address and
 reverts. See `lib/erc8183-hire.ts`.
 
+**These three cannot be delivered against.** Their descriptions carry the bare
+task string, and the reference provider only accepts a Job whose description is
+its signed-quote envelope, so its allowlist rejects all three with 409. The
+escrow is not lost — `claimRefund(jobId)` returns it after `expiredAt` — but
+0.30 test $U sits until then. They are kept here rather than removed: the
+session-signed hire itself worked, and it is the funding path these transactions
+prove. The fix is in the commit that follows them, and the delivered jobs are
+below.
+
 ## 3. Session revoke
 
 Pending.

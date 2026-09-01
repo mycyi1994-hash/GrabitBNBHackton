@@ -24,7 +24,7 @@ import { CANARY_TASKS, jobBudgetAtomic, jobBudgetDisplay } from '@/lib/erc8183';
 import { hireWithVerifiedPolicy } from '@/lib/erc8183-hire';
 import { marketplaceCandidates } from '@/lib/marketplace-candidates';
 import { candidateEvidence, HIRE_OPENS_AT, ladderState } from '@/lib/verification-ladder';
-import { getTestnetProviderAccount } from '@/lib/testnet-reference-provider';
+import { buildReferenceJobDescription, getTestnetProviderAccount } from '@/lib/testnet-reference-provider';
 
 const NO_STORE = { 'cache-control': 'no-store' };
 
@@ -169,11 +169,17 @@ export async function POST(request: Request) {
     // Not hireErc8183Agent: it hardcodes an OptimisticPolicy address the
     // chain-97 router does not whitelist, so every hire through it reverts at
     // registerJob with PolicyNotWhitelisted(). See lib/erc8183-hire.ts.
+    // A canary is delivered by Grabit's own provider, which only accepts a Job
+    // whose description is its signed-quote envelope. Creating one with the
+    // bare task string funds an escrow nothing can ever deliver against.
+    const description =
+      mode === 'canary' ? (await buildReferenceJobDescription(candidate, task)).description : task;
+
     const result = await hireWithVerifiedPolicy(
       session,
       {
         provider,
-        task,
+        task: description,
         budget: jobBudgetAtomic(chainId),
       },
       { network },
