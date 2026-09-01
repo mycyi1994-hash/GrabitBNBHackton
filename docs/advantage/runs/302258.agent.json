@@ -1,0 +1,29 @@
+{
+  "taskId": "302258",
+  "side": "agent",
+  "prompt": "Build a read-only WBNB grid plan with 10 levels across a 15% band and 1000 USD notional. Include fees, break-even spacing and source block. Do not trade.",
+  "startedAt": "2026-09-01T03:43:59.647Z",
+  "finishedAt": "2026-09-01T03:44:06.711Z",
+  "elapsedSeconds": 8,
+  "cost": {
+    "onchain": {
+      "budgetAtomic": "100000000000000000",
+      "budgetDisplay": "0.10 test $U",
+      "jobId": "850",
+      "transactionHash": "0x67aa71c48b2e7ca00c8b74917cb1f958ce1574a1a56c3a720dd40fd8f68e2ea8",
+      "explorerUrl": "https://testnet.bscscan.com/tx/0x67aa71c48b2e7ca00c8b74917cb1f958ce1574a1a56c3a720dd40fd8f68e2ea8"
+    },
+    "operatorSeconds": 0,
+    "operatorRateUsdPerHour": 60,
+    "totalUsd": 0
+  },
+  "outputPath": "docs/advantage/outputs/302258.agent.md",
+  "delivery": {
+    "jobId": "850",
+    "elapsedSeconds": 1,
+    "transactionHash": "0xe80708fea14bfb5db41428d0a262107695f560563767ec0b6d3e0d65858731e0",
+    "explorerUrl": "https://testnet.bscscan.com/tx/0xe80708fea14bfb5db41428d0a262107695f560563767ec0b6d3e0d65858731e0",
+    "deliverable": "0x749eb8410d58246b61611551c0b8f5d4c798712c96b4d271cc3b2461f6b98bb2",
+    "deliveredAt": "2026-09-01T03:44:08.888Z"
+  }
+}

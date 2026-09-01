@@ -1,0 +1,29 @@
+{
+  "taskId": "304494",
+  "side": "agent",
+  "prompt": "Price a read-only rebalance plan for a WBNB/USDT position. Include the proposed weights, estimated pool costs and source block. Do not move funds.",
+  "startedAt": "2026-09-01T03:44:11.451Z",
+  "finishedAt": "2026-09-01T03:44:16.695Z",
+  "elapsedSeconds": 6,
+  "cost": {
+    "onchain": {
+      "budgetAtomic": "100000000000000000",
+      "budgetDisplay": "0.10 test $U",
+      "jobId": "851",
+      "transactionHash": "0x74bf586e63280f88d3be548020bd78a273683e773e2916a0823ca581e9bcd2e9",
+      "explorerUrl": "https://testnet.bscscan.com/tx/0x74bf586e63280f88d3be548020bd78a273683e773e2916a0823ca581e9bcd2e9"
+    },
+    "operatorSeconds": 0,
+    "operatorRateUsdPerHour": 60,
+    "totalUsd": 0
+  },
+  "outputPath": "docs/advantage/outputs/304494.agent.md",
+  "delivery": {
+    "jobId": "851",
+    "elapsedSeconds": 1,
+    "transactionHash": "0xb2e5c92139aafd8911a330aabf9ef736ec016b0015966113e8a3b37ff02db08d",
+    "explorerUrl": "https://testnet.bscscan.com/tx/0xb2e5c92139aafd8911a330aabf9ef736ec016b0015966113e8a3b37ff02db08d",
+    "deliverable": "0x6fc9e87c4c13f0c790db45a82d091fb8472bab2ae8c52d25a62212cba9cddb47",
+    "deliveredAt": "2026-09-01T03:44:18.177Z"
+  }
+}

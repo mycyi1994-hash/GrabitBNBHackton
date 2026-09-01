@@ -1,0 +1,24 @@
+{
+  "taskId": "302258",
+  "side": "manual",
+  "prompt": "Build a read-only WBNB grid plan with 10 levels across a 15% band and 1000 USD notional. Include fees, break-even spacing and source block. Do not trade.",
+  "startedAt": "2026-09-01T02:41:49.439Z",
+  "finishedAt": "2026-09-01T02:43:39.704Z",
+  "elapsedSeconds": 110,
+  "cost": {
+    "onchain": null,
+    "operatorSeconds": 110,
+    "operatorRateUsdPerHour": 60,
+    "totalUsd": 1.83
+  },
+  "outputPath": "D:\\hackton\\GrabitBNBHackton\\docs\\advantage\\outputs\\302258.manual.md",
+  "rubric": {
+    "answers_the_ask": true,
+    "numbers_sourced": true,
+    "assumptions_stated": true,
+    "risks_named": true,
+    "reproducible": true
+  },
+  "notes": "tick cross-check made the price defensible; band-exit risk is the real weakness of the plan",
+  "scoredAt": "2026-09-01T02:44:48.332Z"
+}
