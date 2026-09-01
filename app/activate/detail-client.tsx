@@ -217,8 +217,12 @@ export function AgentDetail({
               </div>
             ))}
           </div>
-          <Link className="peek-more" href="/authority">
-            + 5 more · full list on the authority screen ↗
+          <Link className="authority-cta" href="/authority">
+            <b>
+              SEE ALL 11 PERMISSIONS
+              <small>8 it may use · 3 it never can · and revoke</small>
+            </b>
+            <span aria-hidden="true">→</span>
           </Link>
         </section>
 

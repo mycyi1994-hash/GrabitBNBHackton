@@ -38,10 +38,14 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
     <main className="agent-detail">
       <div className="agent-detail-frame">
         <header className="agent-detail-bar">
-          <p className="agent-detail-crumb">
-            <Link href="/">STORE</Link> / {profile.crumb} / #{selected.tokenId} ·{' '}
-            {shortName(selected.name).toUpperCase()}
-          </p>
+          <div className="agent-detail-bar-left">
+            <Link className="detail-back" href="/">
+              <span aria-hidden="true">←</span> ALL AGENTS
+            </Link>
+            <p className="agent-detail-crumb">
+              {profile.crumb} / #{selected.tokenId} · {shortName(selected.name).toUpperCase()}
+            </p>
+          </div>
           <span className="network-badge">TEST NETWORK · CHAIN {ERC8183_TESTNET.chainId}</span>
         </header>
 
