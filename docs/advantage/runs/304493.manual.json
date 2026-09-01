@@ -19,6 +19,6 @@
     "risks_named": true,
     "reproducible": true
   },
-  "notes": "tick cross-check made the price defensible; band-exit risk is the real weakness of the plan",
+  "notes": "blocks-per-year is derived from the observed 0.45s block time and stated, so a reader who disagrees with it can recompute; the gas break-even is the finding, and it is about holding period rather than size",
   "scoredAt": "2026-09-01T03:10:28.429Z"
 }

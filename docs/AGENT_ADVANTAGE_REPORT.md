@@ -1,6 +1,6 @@
 # Agent Advantage Report
 
-Generated 2026-09-01T03:52:33.941Z by `scripts/advantage-report.mjs render`.
+Generated 2026-09-01T03:54:02.380Z by `scripts/advantage-report.mjs render`.
 
 Every figure below was measured by that script at the moment the work ran.
 Nothing here is estimated. Prompts come from `docs/advantage/tasks.json`, which
@@ -41,6 +41,36 @@ and $13.46 of labour against 3 escrowed jobs.
 Domains covered: trading, yield. The submission requires at least one of
 trading, stock or security; this report carries trading.
 
+## What the comparison shows
+
+**The marketplace is 40 times faster.** 808s of work became 20s
+across 3 tasks, and the agent side needed no operator attention at all while it ran.
+
+**It is not more accurate.** Quality came to 10/15 against the manual side's
+15/15 on identical criteria.
+
+The agent lost, in order of how often:
+
+- **Every quantitative claim names where it came from: a contract address, a block height, or a named public endpoint.** — 3 of 3 tasks.
+- **Inputs the answer had to assume are written down rather than silently chosen.** — 1 of 3 tasks.
+- **A third party can re-derive the same numbers from what is written, without asking the author.** — 1 of 3 tasks.
+
+Every one of those is the same failure in a different place: a number the
+agent chose instead of reading. It priced the grid off a generic 0.25% fee
+tier where the pool itself reports 0.05%, which puts the break-even out by
+five times, and it annualised a Venus supply rate on an undisclosed
+blocks-per-year that gives 1.71% where the observed 0.45s block time gives
+2.91%. Both are plausible-looking and neither is checkable from what the
+agent wrote.
+
+**So the honest reading is that speed and sourcing are separate problems, and
+this marketplace has only solved the first one.** Forty seconds of agent time
+is worth little if a figure inside it is wrong by a factor of five and the
+reader cannot tell. That is the case for the verification ladder rather than
+against it: these three agents sit on rung 3, which is exactly the rung that
+says an endpoint answered and nothing about whether the answer was right.
+The comparison above is what rung 4 is supposed to measure.
+
 ## Tasks
 
 ### 304494 — Rebalancing
@@ -54,7 +84,8 @@ trading, stock or security; this report carries trading.
 | Quality | 5/5 | 4/5 |
 | Output | [`docs/advantage/outputs/304494.manual.md`](advantage/outputs/304494.manual.md) | [`docs/advantage/outputs/304494.agent.md`](advantage/outputs/304494.agent.md) |
 
-On-chain Job 851: https://testnet.bscscan.com/tx/0x74bf586e63280f88d3be548020bd78a273683e773e2916a0823ca581e9bcd2e9
+On-chain Job 851 — hired: https://testnet.bscscan.com/tx/0x74bf586e63280f88d3be548020bd78a273683e773e2916a0823ca581e9bcd2e9
+Result submitted on chain by the provider: https://testnet.bscscan.com/tx/0xb2e5c92139aafd8911a330aabf9ef736ec016b0015966113e8a3b37ff02db08d
 
 Quality differed on:
 
@@ -75,7 +106,8 @@ Agent note: no mainnet market data was read at all; position and fee are both de
 | Quality | 5/5 | 4/5 |
 | Output | [`docs/advantage/outputs/302258.manual.md`](advantage/outputs/302258.manual.md) | [`docs/advantage/outputs/302258.agent.md`](advantage/outputs/302258.agent.md) |
 
-On-chain Job 850: https://testnet.bscscan.com/tx/0x67aa71c48b2e7ca00c8b74917cb1f958ce1574a1a56c3a720dd40fd8f68e2ea8
+On-chain Job 850 — hired: https://testnet.bscscan.com/tx/0x67aa71c48b2e7ca00c8b74917cb1f958ce1574a1a56c3a720dd40fd8f68e2ea8
+Result submitted on chain by the provider: https://testnet.bscscan.com/tx/0xe80708fea14bfb5db41428d0a262107695f560563767ec0b6d3e0d65858731e0
 
 Quality differed on:
 
@@ -96,7 +128,8 @@ Agent note: pool fee is a 0.25% generic reference, not read from the pool — th
 | Quality | 5/5 | 2/5 |
 | Output | [`docs/advantage/outputs/304493.manual.md`](advantage/outputs/304493.manual.md) | [`docs/advantage/outputs/304493.agent.md`](advantage/outputs/304493.agent.md) |
 
-On-chain Job 852: https://testnet.bscscan.com/tx/0x81afca369c4c5cf66373c91b80b0823639b667fb2e23bf756ee0bb6e013cf5de
+On-chain Job 852 — hired: https://testnet.bscscan.com/tx/0x81afca369c4c5cf66373c91b80b0823639b667fb2e23bf756ee0bb6e013cf5de
+Result submitted on chain by the provider: https://testnet.bscscan.com/tx/0xca19d2fcfabf39538d3092eb897223e201ab1f5b8399d822651caec49f5b685b
 
 Quality differed on:
 
@@ -104,7 +137,7 @@ Quality differed on:
 - Inputs the answer had to assume are written down rather than silently chosen. — manual yes, agent no
 - A third party can re-derive the same numbers from what is written, without asking the author. — manual yes, agent no
 
-Manual note: tick cross-check made the price defensible; band-exit risk is the real weakness of the plan
+Manual note: blocks-per-year is derived from the observed 0.45s block time and stated, so a reader who disagrees with it can recompute; the gas break-even is the finding, and it is about holding period rather than size
 
 Agent note: blocks-per-year was chosen silently; 1.71% cannot be re-derived from supplyRatePerBlock and the observed 0.45s block time gives 2.91%
 

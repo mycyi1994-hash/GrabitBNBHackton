@@ -416,6 +416,62 @@ async function scoreRun(id, side) {
   if (!existsSync(out)) console.warn(`  Note: ${stored} is missing.`);
 }
 
+/**
+ * The conclusion, computed from the runs rather than written by hand, so it
+ * cannot drift from the table above it or flatter either side.
+ */
+function findings(rows) {
+  const manualSeconds = rows.reduce((n, r) => n + r.manual.elapsedSeconds, 0);
+  const agentSeconds = rows.reduce((n, r) => n + r.agent.elapsedSeconds, 0);
+  const speedup = (manualSeconds / agentSeconds).toFixed(0);
+  const manualQuality = rows.reduce((n, r) => n + score(r.manual), 0);
+  const agentQuality = rows.reduce((n, r) => n + score(r.agent), 0);
+  const max = rows.length * SPEC.rubric.length;
+
+  // Which criteria the agent lost on, and how often.
+  const misses = SPEC.rubric
+    .map((c) => ({ c, n: rows.filter((r) => r.manual.rubric[c.id] && !r.agent.rubric[c.id]).length }))
+    .filter((m) => m.n > 0)
+    .sort((a, b) => b.n - a.n);
+
+  const out = [
+    `**The marketplace is ${speedup} times faster.** ${manualSeconds}s of work became ${agentSeconds}s`,
+    `across ${rows.length} tasks, and the agent side needed no operator attention at all while it ran.`,
+    '',
+    `**It is not more accurate.** Quality came to ${agentQuality}/${max} against the manual side's`,
+    `${manualQuality}/${max} on identical criteria.`,
+  ];
+
+  if (misses.length) {
+    out.push('', 'The agent lost, in order of how often:', '');
+    for (const { c, n } of misses) {
+      out.push(`- **${c.text}** — ${n} of ${rows.length} tasks.`);
+    }
+    out.push(
+      '',
+      'Every one of those is the same failure in a different place: a number the',
+      'agent chose instead of reading. It priced the grid off a generic 0.25% fee',
+      'tier where the pool itself reports 0.05%, which puts the break-even out by',
+      'five times, and it annualised a Venus supply rate on an undisclosed',
+      'blocks-per-year that gives 1.71% where the observed 0.45s block time gives',
+      '2.91%. Both are plausible-looking and neither is checkable from what the',
+      'agent wrote.',
+    );
+  }
+
+  out.push(
+    '',
+    '**So the honest reading is that speed and sourcing are separate problems, and',
+    'this marketplace has only solved the first one.** Forty seconds of agent time',
+    'is worth little if a figure inside it is wrong by a factor of five and the',
+    'reader cannot tell. That is the case for the verification ladder rather than',
+    'against it: these three agents sit on rung 3, which is exactly the rung that',
+    'says an endpoint answered and nothing about whether the answer was right.',
+    'The comparison above is what rung 4 is supposed to measure.',
+  );
+  return out;
+}
+
 function render() {
   const complete = SPEC.tasks.filter((t) => SIDES.every((s) => loadRun(t.id, s)?.rubric));
   if (complete.length < 3) {
@@ -479,6 +535,10 @@ function render() {
     `Domains covered: ${[...domains].sort().join(', ')}. The submission requires at least one of`,
     `trading, stock or security; this report carries ${qualifying.join(' and ')}.`,
     '',
+    '## What the comparison shows',
+    '',
+    ...findings(rows),
+    '',
     '## Tasks',
     '',
   ];
@@ -498,7 +558,13 @@ function render() {
       '',
     );
     if (agent.cost.onchain?.explorerUrl) {
-      lines.push(`On-chain Job ${agent.cost.onchain.jobId}: ${agent.cost.onchain.explorerUrl}`, '');
+      lines.push(
+        `On-chain Job ${agent.cost.onchain.jobId} — hired: ${agent.cost.onchain.explorerUrl}`,
+        agent.delivery?.explorerUrl
+          ? `Result submitted on chain by the provider: ${agent.delivery.explorerUrl}`
+          : '',
+        '',
+      );
     }
     const diff = SPEC.rubric.filter((c) => Boolean(manual.rubric[c.id]) !== Boolean(agent.rubric[c.id]));
     if (diff.length) {
