@@ -11,7 +11,8 @@
  *   node scripts/advantage-report.mjs manual start  <taskId>
  *   node scripts/advantage-report.mjs manual stop   <taskId>
  *   node scripts/advantage-report.mjs manual cancel <taskId>
- *   node scripts/advantage-report.mjs agent <taskId> [--base http://localhost:3000]
+ *   node scripts/advantage-report.mjs agent   <taskId> [--base http://localhost:3000]
+ *   node scripts/advantage-report.mjs deliver <taskId> [--base ...]
  *   node scripts/advantage-report.mjs score <taskId> <manual|agent>
  *   node scripts/advantage-report.mjs render
  *
@@ -287,6 +288,83 @@ async function agent(id, base) {
   console.log(`Next: node scripts/advantage-report.mjs score ${entry.id} agent\n`);
 }
 
+/**
+ * Ask the reference provider to run the task and submit its result on chain,
+ * then fold the deliverable into the agent-side output file.
+ *
+ * Hiring and delivering are separate steps, and only the first is signed by
+ * the session key — the provider signs its own submission with its own gas.
+ * Scoring the agent side before this runs measures a funding receipt rather
+ * than an answer, which would understate the agent to the same degree that
+ * fabricating an answer would overstate it.
+ */
+async function deliver(id, base) {
+  const entry = task(id);
+  const run = loadRun(entry.id, 'agent');
+  if (!run) throw new Error(`No agent run for ${entry.id}. Hire it first.`);
+  const jobId = run.cost?.onchain?.jobId;
+  if (!jobId) throw new Error(`The agent run for ${entry.id} carries no job id.`);
+
+  const url = `${base.replace(/\/$/, '')}/api/hire/testnet-provider`;
+  console.log(`\nAsking the provider to deliver Job ${jobId} (${entry.category})...\n`);
+
+  const startedAt = new Date();
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ action: 'submit', jobId: Number(jobId) }),
+  }).catch((error) => {
+    throw new Error(`Could not reach ${url}. Is the dev server running? ${error.message}`);
+  });
+  const payload = await response.json();
+  const elapsedSeconds = Math.round((new Date() - startedAt) / 1000);
+
+  if (!response.ok) {
+    console.error(`\nDelivery failed (HTTP ${response.status}): ${payload.error || 'unknown'}`);
+    console.error('\nNothing was recorded.\n');
+    process.exitCode = 1;
+    return;
+  }
+
+  const out = resolve(ROOT, storedPath(run.outputPath));
+  const existing = existsSync(out) ? readFileSync(out, 'utf8') : '';
+  writeFileSync(
+    out,
+    [
+      existing.trimEnd(),
+      '',
+      '## Delivered result',
+      '',
+      `Submitted on chain by the reference provider at ${startedAt.toISOString()}, ${elapsedSeconds}s after asking.`,
+      payload.txHash ? `Transaction: https://testnet.bscscan.com/tx/${payload.txHash}` : '',
+      payload.deliverable ? `Deliverable digest: \`${payload.deliverable}\`` : '',
+      '',
+      '```json',
+      JSON.stringify(payload.result ?? payload, null, 2),
+      '```',
+      '',
+    ].filter((line) => line !== '').join('\n'),
+  );
+
+  saveRun({
+    ...run,
+    // The hire and the delivery are both part of what the buyer waited for.
+    elapsedSeconds: run.elapsedSeconds + elapsedSeconds,
+    delivery: {
+      jobId: String(jobId),
+      elapsedSeconds,
+      transactionHash: payload.txHash ?? null,
+      explorerUrl: payload.txHash ? `https://testnet.bscscan.com/tx/${payload.txHash}` : null,
+      deliverable: payload.deliverable ?? null,
+      deliveredAt: new Date().toISOString(),
+    },
+  });
+
+  console.log(`Delivered in ${elapsedSeconds}s. Total agent time for ${entry.id}: ${run.elapsedSeconds + elapsedSeconds}s.`);
+  if (payload.txHash) console.log(`Transaction: https://testnet.bscscan.com/tx/${payload.txHash}`);
+  console.log(`The result is appended to ${storedPath(run.outputPath)} — read it before scoring.\n`);
+}
+
 const score = (run) => SPEC.rubric.filter((c) => run.rubric?.[c.id]).length;
 
 /** A markdown link to an output file, relative to the report's own directory. */
@@ -448,6 +526,7 @@ try {
   if (command === 'list') list();
   else if (command === 'manual') await manual(rest[0], rest[1]);
   else if (command === 'agent') await agent(rest[0], base);
+  else if (command === 'deliver') await deliver(rest[0], base);
   else if (command === 'score') await scoreRun(rest[0], rest[1]);
   else if (command === 'render') render();
   else {

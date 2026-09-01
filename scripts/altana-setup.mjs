@@ -6,13 +6,17 @@
  *   node scripts/altana-setup.mjs check   report whether the agent can act yet
  *   node scripts/altana-setup.mjs keyids  show what KeyStore holds, and which
  *                                         key-id derivation actually matches
+ *   node scripts/altana-setup.mjs fund-provider [amount]
+ *                                         send tBNB from the agent wallet to
+ *                                         the reference provider, which needs
+ *                                         gas to submit results and settle
  *
  * Keys are generated locally and printed once. Nothing is transmitted, and
  * nothing is written to disk by this script — paste the lines into .env.local
  * yourself so the keys never pass through a tool that logs its output.
  */
 import { readFileSync } from 'node:fs';
-import { createPublicClient, formatEther, formatUnits, http, keccak256, padHex, toHex } from 'viem';
+import { createPublicClient, createWalletClient, formatEther, formatUnits, http, keccak256, padHex, parseEther, toHex } from 'viem';
 import { secp256k1 } from '@noble/curves/secp256k1';
 import { bscTestnet } from 'viem/chains';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
@@ -82,6 +86,54 @@ function keyIdCandidates(account) {
     ['padHex(address, 32) unhashed', padded],
     ['keccak256(address)', keccak256(account.address)],
   ];
+}
+
+/**
+ * The provider signs its own result submission and settlement, so it needs its
+ * own gas. The hire itself does not — the agent wallet escrows — which is why
+ * a wallet that can hire can still be unable to receive a deliverable.
+ */
+async function fundProvider(amountEther = '0.01') {
+  const loaded = readEnv();
+  if (!loaded) {
+    console.error('\nNo .env.local found. Run: node scripts/altana-setup.mjs keys\n');
+    process.exit(1);
+  }
+  const { env } = loaded;
+  if (!env.GRABIT_TESTNET_PROVIDER_PRIVATE_KEY) {
+    console.error('\nGRABIT_TESTNET_PROVIDER_PRIVATE_KEY is missing from .env.local.\n');
+    process.exit(1);
+  }
+  const admin = privateKeyToAccount(env.GRABIT_ALTANA_ADMIN_PRIVATE_KEY);
+  const provider = privateKeyToAccount(env.GRABIT_TESTNET_PROVIDER_PRIVATE_KEY);
+  const value = parseEther(amountEther);
+
+  const { client, url } = await firstReachableClient();
+  const [adminBalance, providerBalance] = await Promise.all([
+    client.getBalance({ address: admin.address }),
+    client.getBalance({ address: provider.address }),
+  ]);
+
+  console.log(`\nRPC       ${url}`);
+  console.log(`From      ${admin.address}   ${formatEther(adminBalance)} tBNB`);
+  console.log(`To        ${provider.address}   ${formatEther(providerBalance)} tBNB`);
+  console.log(`Amount    ${amountEther} tBNB\n`);
+
+  if (adminBalance <= value) {
+    console.error('The agent wallet does not hold enough tBNB to send that and still pay gas.\n');
+    process.exit(1);
+  }
+  if (providerBalance >= value) {
+    console.log('The provider already holds at least this much. Nothing sent.\n');
+    return;
+  }
+
+  const wallet = createWalletClient({ account: admin, chain: bscTestnet, transport: http(url) });
+  const hash = await wallet.sendTransaction({ to: provider.address, value });
+  console.log(`Sent. ${NETWORK.explorer}/tx/${hash}`);
+  console.log('\nWaiting for confirmation...');
+  const receipt = await client.waitForTransactionReceipt({ hash });
+  console.log(`${receipt.status === 'success' ? 'Confirmed' : 'FAILED'} in block ${receipt.blockNumber}.\n`);
 }
 
 async function keyids() {
@@ -253,10 +305,13 @@ const guard = (fn) =>
 if (command === 'keys') keys();
 else if (command === 'check') await guard(check);
 else if (command === 'keyids') await guard(keyids);
+else if (command === 'fund-provider') await guard(() => fundProvider(process.argv[3]));
 else {
   console.log('\nUsage:\n  node scripts/altana-setup.mjs keys    generate the two server-only keys');
   console.log('  node scripts/altana-setup.mjs check   report whether the agent can act yet');
   console.log('  node scripts/altana-setup.mjs keyids  show what KeyStore holds and which\n' +
-              '                                        key-id derivation matches\n');
+              '                                        key-id derivation matches');
+  console.log('  node scripts/altana-setup.mjs fund-provider [amount]\n' +
+              '                                        send tBNB to the reference provider\n');
   process.exit(1);
 }
