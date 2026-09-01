@@ -25,5 +25,14 @@
     "explorerUrl": "https://testnet.bscscan.com/tx/0xca19d2fcfabf39538d3092eb897223e201ab1f5b8399d822651caec49f5b685b",
     "deliverable": "0xf414ac10278eb59bc9ded5a76179c4d2003c6b8728f8ddb80cd2aa8f1cc6367d",
     "deliveredAt": "2026-09-01T03:44:25.648Z"
-  }
+  },
+  "rubric": {
+    "answers_the_ask": true,
+    "numbers_sourced": false,
+    "assumptions_stated": false,
+    "risks_named": true,
+    "reproducible": false
+  },
+  "notes": "blocks-per-year was chosen silently; 1.71% cannot be re-derived from supplyRatePerBlock and the observed 0.45s block time gives 2.91%",
+  "scoredAt": "2026-09-01T03:52:30.392Z"
 }

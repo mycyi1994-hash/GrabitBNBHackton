@@ -25,5 +25,14 @@
     "explorerUrl": "https://testnet.bscscan.com/tx/0xb2e5c92139aafd8911a330aabf9ef736ec016b0015966113e8a3b37ff02db08d",
     "deliverable": "0x6fc9e87c4c13f0c790db45a82d091fb8472bab2ae8c52d25a62212cba9cddb47",
     "deliveredAt": "2026-09-01T03:44:18.177Z"
-  }
+  },
+  "rubric": {
+    "answers_the_ask": true,
+    "numbers_sourced": false,
+    "assumptions_stated": true,
+    "risks_named": true,
+    "reproducible": true
+  },
+  "notes": "no mainnet market data was read at all; position and fee are both demo inputs",
+  "scoredAt": "2026-09-01T03:52:21.141Z"
 }

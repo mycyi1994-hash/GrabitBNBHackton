@@ -25,5 +25,14 @@
     "explorerUrl": "https://testnet.bscscan.com/tx/0xe80708fea14bfb5db41428d0a262107695f560563767ec0b6d3e0d65858731e0",
     "deliverable": "0x749eb8410d58246b61611551c0b8f5d4c798712c96b4d271cc3b2461f6b98bb2",
     "deliveredAt": "2026-09-01T03:44:08.888Z"
-  }
+  },
+  "rubric": {
+    "answers_the_ask": true,
+    "numbers_sourced": false,
+    "assumptions_stated": true,
+    "risks_named": true,
+    "reproducible": true
+  },
+  "notes": "pool fee is a 0.25% generic reference, not read from the pool — the real fee is 0.05%, so break-even is 5x off",
+  "scoredAt": "2026-09-01T03:52:08.858Z"
 }

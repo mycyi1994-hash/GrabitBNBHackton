@@ -2,7 +2,23 @@
   "taskId": "304494",
   "side": "manual",
   "prompt": "Price a read-only rebalance plan for a WBNB/USDT position. Include the proposed weights, estimated pool costs and source block. Do not move funds.",
-  "startedAt": "2026-09-01T02:59:50.274Z",
-  "finishedAt": null,
-  "elapsedSeconds": null
+  "startedAt": "2026-09-01T03:48:02.700Z",
+  "finishedAt": "2026-09-01T03:50:32.667Z",
+  "elapsedSeconds": 150,
+  "cost": {
+    "onchain": null,
+    "operatorSeconds": 150,
+    "operatorRateUsdPerHour": 60,
+    "totalUsd": 2.5
+  },
+  "outputPath": "docs/advantage/outputs/304494.manual.md",
+  "rubric": {
+    "answers_the_ask": true,
+    "numbers_sourced": true,
+    "assumptions_stated": true,
+    "risks_named": true,
+    "reproducible": true
+  },
+  "notes": "tick cross-check pins the price; the block is a bound, not a point, and the write-up says so",
+  "scoredAt": "2026-09-01T03:51:53.690Z"
 }
