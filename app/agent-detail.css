@@ -1,0 +1,959 @@
+/*
+ * Agent detail and the verification ladder — transcribed from the design
+ * handoff (`design_handoff_grabit_agent_market`), study 2a with ladder 1b at
+ * detail scale and ladder 1a at card scale.
+ *
+ * Colour is fixed in role by the handoff: accent marks the single primary
+ * action and the callable-verified line, and nothing else. `unproven` carries
+ * rungs 1–3, the test network and stale data. Ink alphas and hairline values
+ * are used verbatim.
+ */
+
+.agent-detail {
+  --ground: #06070a;
+  --surface: #0b0c10;
+  --ink: #f2efe8;
+  --accent: #e9e3d4;
+  --proven: #a8c5b0;
+  --unproven: #c8b48c;
+  --forbidden: #d2a9a3;
+  --hair: rgba(242, 239, 232, 0.14);
+  --hair-row: rgba(242, 239, 232, 0.08);
+  --hatch-tan: repeating-linear-gradient(135deg, rgba(200, 180, 140, 0.14) 0 6px, transparent 6px 12px);
+  --hatch-neutral: repeating-linear-gradient(135deg, rgba(242, 239, 232, 0.035) 0 7px, transparent 7px 14px);
+
+  /*
+   * The frame is a fixed-height card, not a document. On a viewport taller
+   * than it needs, pinning it to the top left the whole lower half of the
+   * screen as an empty black field; centring puts the one thing on the page in
+   * the middle of the page. `justify-content` rather than `place-items` so the
+   * frame keeps its own width and its border-inline still reads as a frame.
+   */
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--ink);
+  background: var(--ground);
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
+
+.agent-detail-frame {
+  max-width: 1680px;
+  margin: 0 auto;
+  border-inline: 1px solid var(--hair);
+}
+
+/* ---- top bar ---- */
+
+.agent-detail-bar {
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid rgba(242, 239, 232, 0.1);
+}
+
+.agent-detail-crumb {
+  color: rgba(242, 239, 232, 0.4);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.agent-detail-crumb a { color: inherit; text-decoration: none; }
+.agent-detail-crumb a:hover { color: var(--ink); }
+
+/*
+ * The crumb's "STORE" was the only way back and read as a label rather than a
+ * control. This is the same destination, sized and bordered like something you
+ * press.
+ */
+.detail-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid var(--hair);
+  color: rgba(242, 239, 232, 0.75);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 120ms, color 120ms;
+}
+
+.detail-back:hover { border-color: var(--accent); color: var(--ink); }
+.detail-back span { font-size: 14px; line-height: 1; }
+
+.agent-detail-bar-left { display: flex; align-items: center; gap: 18px; min-width: 0; }
+
+.network-badge {
+  padding: 7px 12px;
+  border: 1px solid var(--unproven);
+  color: var(--unproven);
+  background: var(--hatch-tan);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+/* The live network never shares the test network's style, colour or wording. */
+.network-badge.is-live {
+  border: 1px dashed rgba(242, 239, 232, 0.18);
+  color: rgba(242, 239, 232, 0.3);
+  background: none;
+}
+
+/* ---- body ---- */
+
+.agent-detail-body { padding: 44px 40px 40px; }
+
+.agent-detail h1 {
+  max-width: 24ch;
+  margin: 0;
+  font-size: 44px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-wrap: pretty;
+}
+
+.agent-detail-sub {
+  margin: 14px 0 0;
+  color: rgba(242, 239, 232, 0.6);
+  font-size: 17px;
+}
+
+.agent-detail-grid {
+  margin-top: 34px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 44px;
+  align-items: start;
+}
+
+/* ---- ladder 1b, detail scale ---- */
+
+.ladder-frame {
+  padding: 22px 24px;
+  border: 1px solid rgba(200, 180, 140, 0.35);
+}
+
+.ladder-rows ol { margin: 0; padding: 0; list-style: none; }
+
+.ladder-rows li {
+  padding: 11px 0;
+  display: grid;
+  grid-template-columns: 14px 156px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  border-top: 1px solid rgba(242, 239, 232, 0.07);
+}
+
+.ladder-rows li:first-child { border-top: 0; }
+
+/* The verified line, drawn as a real rule across the ladder. */
+.ladder-rows li.is-verified-line { border-top: 1px solid var(--accent); }
+
+.ladder-rows li > i {
+  width: 9px;
+  height: 9px;
+  margin-top: 5px;
+  border-radius: 1px;
+  border: 1px solid rgba(242, 239, 232, 0.25);
+}
+
+.ladder-rows li.is-reached > i { border-color: var(--unproven); background: var(--unproven); }
+
+.ladder-rows li b {
+  color: rgba(242, 239, 232, 0.3);
+  font: 400 12px/1.35 var(--font-geist-mono), monospace;
+  letter-spacing: 0.05em;
+}
+
+.ladder-rows li.is-reached b { color: var(--unproven); }
+
+.ladder-rows li p {
+  margin: 0;
+  color: rgba(242, 239, 232, 0.35);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.ladder-rows li.is-reached p { color: rgba(242, 239, 232, 0.8); }
+
+.ladder-stop {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid rgba(200, 180, 140, 0.4);
+  background: var(--hatch-tan);
+}
+
+.ladder-stop span {
+  color: var(--unproven);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.08em;
+}
+
+.ladder-stop p { margin: 8px 0 0; color: rgba(242, 239, 232, 0.8); font-size: 14px; line-height: 1.5; }
+
+.ladder-frame-foot {
+  margin-top: 18px;
+  padding-top: 14px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  border-top: 1px solid rgba(200, 180, 140, 0.3);
+}
+
+.ladder-frame-foot b { color: var(--unproven); font: 500 13px/1.4 var(--font-geist-mono), monospace; }
+.ladder-frame-foot span { color: rgba(242, 239, 232, 0.45); font: 400 12px/1.4 var(--font-geist-mono), monospace; }
+
+/* ---- ladder 1a, both scales ---- */
+
+.ladder-bar-track { display: flex; align-items: center; gap: 3px; }
+.ladder-bar-track > span { display: contents; }
+
+.ladder-seg {
+  height: 7px;
+  width: 30px;
+  display: block;
+  background: rgba(242, 239, 232, 0.13);
+}
+
+.ladder-seg.is-filled { background: var(--unproven); }
+.ladder-seg.is-filled.is-proven { background: var(--proven); }
+
+.ladder-bar-line {
+  width: 11px;
+  height: 16px;
+  display: block;
+  border-left: 1px solid var(--accent);
+}
+
+.ladder-bar.is-detail .ladder-seg { height: 9px; width: 44px; }
+.ladder-bar.is-detail .ladder-bar-line { width: 16px; height: 22px; }
+
+.ladder-bar-read {
+  margin: 10px 0 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ladder-bar-read b { color: var(--unproven); font: 500 13px/1 var(--font-geist-mono), monospace; letter-spacing: 0.08em; }
+.ladder-bar-read span { color: rgba(242, 239, 232, 0.4); font: 400 12px/1 var(--font-geist-mono), monospace; }
+
+.ladder-bar-note {
+  margin: 14px 0 0;
+  padding-left: 12px;
+  border-left: 2px solid var(--unproven);
+  color: rgba(242, 239, 232, 0.72);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ---- lifecycle sequence ---- */
+
+.lifecycle { margin-top: 4px; }
+
+.lifecycle-step {
+  padding: 24px 0;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  border-bottom: 1px solid var(--hair-row);
+}
+
+.lifecycle-step > span {
+  color: rgba(242, 239, 232, 0.25);
+  font: 400 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.08em;
+}
+
+.lifecycle-step h3 { margin: 0; color: rgba(242, 239, 232, 0.45); font-size: 19px; font-weight: 600; }
+.lifecycle-step p { max-width: 46ch; margin: 7px 0 0; color: rgba(242, 239, 232, 0.35); font-size: 14px; line-height: 1.55; }
+
+.lifecycle-step.is-now > span { color: var(--accent); }
+.lifecycle-step.is-now h3 { color: var(--ink); }
+.lifecycle-step.is-now p { color: rgba(242, 239, 232, 0.72); }
+
+.lifecycle-step.is-blocked h3 { color: rgba(242, 239, 232, 0.62); }
+.lifecycle-step.is-blocked p { color: rgba(242, 239, 232, 0.6); }
+
+.lifecycle-action {
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 2px;
+  color: rgba(242, 239, 232, 0.3);
+  background: none;
+  font: 500 12.5px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Exactly one primary action on the screen. */
+.lifecycle-action.is-primary {
+  color: var(--ground);
+  background: var(--accent);
+  cursor: pointer;
+}
+
+.lifecycle-action.is-waiting { border: 1px dashed rgba(242, 239, 232, 0.16); }
+.lifecycle-action.is-blocked { border: 1px solid rgba(200, 180, 140, 0.5); color: var(--unproven); }
+
+/* ---- waiting panels ---- */
+
+.waiting-panel {
+  margin-top: 24px;
+  padding: 22px 24px;
+  border: 1px dashed rgba(242, 239, 232, 0.18);
+}
+
+.waiting-panel > span {
+  color: rgba(242, 239, 232, 0.45);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.waiting-panel p { max-width: 64ch; margin: 10px 0 0; color: rgba(242, 239, 232, 0.72); font-size: 15px; line-height: 1.55; }
+
+/* ---- right rail ---- */
+
+.detail-rail { display: grid; gap: 2px; }
+
+.rail-panel { padding: 20px 22px; border: 1px solid rgba(242, 239, 232, 0.12); }
+
+.rail-panel > span {
+  color: rgba(242, 239, 232, 0.45);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.evidence-rows { margin: 14px 0 0; }
+
+.evidence-rows > div {
+  padding: 10px 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid rgba(242, 239, 232, 0.06);
+}
+
+.evidence-rows dt { color: rgba(242, 239, 232, 0.45); font: 400 12px/1.4 var(--font-geist-mono), monospace; letter-spacing: 0.06em; }
+.evidence-rows dd { margin: 0; color: rgba(242, 239, 232, 0.8); font: 400 12px/1.4 var(--font-geist-mono), monospace; text-align: right; }
+.evidence-rows dd.is-unproven { color: var(--unproven); }
+
+.registry-link {
+  margin-top: 14px;
+  display: inline-block;
+  border-bottom: 1px solid rgba(233, 227, 212, 0.3);
+  color: var(--accent);
+  font: 400 12px/1.4 var(--font-geist-mono), monospace;
+  text-decoration: none;
+}
+
+.registry-link:hover { color: #fff; }
+
+.rail-panel h3 { margin: 12px 0 0; color: var(--unproven); font-size: 24px; font-weight: 500; line-height: 1.3; }
+.rail-panel p { margin: 12px 0 0; color: rgba(242, 239, 232, 0.7); font-size: 14px; line-height: 1.55; }
+
+.owner-siblings { margin: 14px 0 0; padding: 0; list-style: none; }
+.owner-siblings li { color: rgba(242, 239, 232, 0.45); font: 400 12px/1.9 var(--font-geist-mono), monospace; }
+
+@media (max-width: 1180px) {
+  .agent-detail-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .agent-detail h1 { font-size: 34px; }
+  .agent-detail-body { padding: 32px 24px; }
+  .agent-detail-bar { padding: 12px 24px; }
+  .lifecycle-step { grid-template-columns: 34px minmax(0, 1fr); gap: 14px; }
+  .lifecycle-action { grid-column: 2; justify-self: start; }
+  .ladder-rows li { grid-template-columns: 14px 132px minmax(0, 1fr); gap: 12px; }
+}
+
+/* ===========================================================================
+   Store — one card pattern, two tiers.
+   Handoff: card 300px min, 18px padding, 1px rgba(242,239,232,.12); the
+   one-line job holds min-height 58px so cards align; the ladder is 1a.
+   =========================================================================== */
+
+.store-surface {
+  --ground: #06070a;
+  --ink: #f2efe8;
+  --accent: #e9e3d4;
+  --proven: #a8c5b0;
+  --unproven: #c8b48c;
+  --forbidden: #d2a9a3;
+  --hair: rgba(242, 239, 232, 0.12);
+
+  color: var(--ink);
+  background: var(--ground);
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
+
+.store-inner { max-width: 1680px; margin: 0 auto; padding: 0 40px 64px; }
+
+.store-tier { margin-top: 40px; }
+
+.store-tier-head {
+  padding-bottom: 14px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--hair);
+}
+
+.store-tier-head h2 {
+  margin: 0;
+  color: var(--ink);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.12em;
+}
+
+.store-tier-head p { margin: 0; max-width: 62ch; color: rgba(242, 239, 232, 0.5); font-size: 13px; line-height: 1.5; }
+
+.store-grid {
+  margin-top: 2px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 2px;
+  /* Cards size to their own content; a short row must not stretch its card. */
+  align-items: start;
+}
+
+.agent-card {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--hair);
+  background: var(--ground);
+  color: inherit;
+  text-decoration: none;
+}
+
+.agent-card:hover { border-color: rgba(242, 239, 232, 0.28); }
+
+.agent-card-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  color: rgba(242, 239, 232, 0.4);
+  font: 400 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.06em;
+}
+
+.agent-card h3 { margin: 12px 0 0; color: var(--ink); font-size: 16px; font-weight: 600; }
+
+.agent-card-job {
+  min-height: 58px;
+  margin: 8px 0 14px;
+  color: rgba(242, 239, 232, 0.75);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.agent-card-foot {
+  margin-top: 14px;
+  padding-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid rgba(242, 239, 232, 0.1);
+}
+
+.agent-card-price { color: var(--ink); font: 400 13px/1 var(--font-geist-mono), monospace; }
+
+.agent-card-cta {
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 2px;
+  color: var(--ground);
+  background: var(--accent);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.06em;
+}
+
+.agent-card-note { margin: 12px 0 0; color: rgba(242, 239, 232, 0.4); font: 400 12px/1.4 var(--font-geist-mono), monospace; }
+
+/* Waiting tier — states what it is waiting for rather than showing nothing. */
+.store-empty-tier {
+  margin-top: 2px;
+  padding: 22px 24px;
+  border: 1px dashed rgba(242, 239, 232, 0.18);
+}
+
+.store-empty-tier span { color: rgba(242, 239, 232, 0.45); font: 500 12px/1 var(--font-geist-mono), monospace; letter-spacing: 0.1em; }
+.store-empty-tier p { max-width: 72ch; margin: 10px 0 0; color: rgba(242, 239, 232, 0.72); font-size: 15px; line-height: 1.55; }
+
+/* Stopped-below-rung-4 tier — shown, never hidden, each naming its check. */
+.stopped-card { border-style: dashed; border-color: rgba(242, 239, 232, 0.16); }
+.stopped-card h3 { color: rgba(242, 239, 232, 0.72); font-size: 15px; }
+.stopped-card .agent-card-top { color: rgba(242, 239, 232, 0.3); }
+
+.stopped-check {
+  margin: 12px 0 0;
+  padding: 11px 12px;
+  border: 1px solid rgba(200, 180, 140, 0.3);
+  background: var(--hatch-tan, repeating-linear-gradient(135deg, rgba(200, 180, 140, 0.14) 0 6px, transparent 6px 12px));
+}
+
+.stopped-check b { color: var(--unproven); font: 500 12px/1 var(--font-geist-mono), monospace; letter-spacing: 0.08em; }
+.stopped-check p { margin: 7px 0 0; color: rgba(242, 239, 232, 0.7); font-size: 13px; line-height: 1.45; }
+
+/* ===========================================================================
+   Authority
+   =========================================================================== */
+
+.authority-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2px;
+}
+
+.authority-card { padding: 20px 22px; border: 1px solid var(--hair, rgba(242, 239, 232, 0.12)); }
+
+.authority-card > span {
+  color: rgba(242, 239, 232, 0.45);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.authority-figure { margin: 16px 0 0; color: var(--ink); font: 400 34px/1 var(--font-geist-mono), monospace; }
+.authority-card p { margin: 12px 0 0; color: rgba(242, 239, 232, 0.7); font-size: 14px; line-height: 1.55; }
+
+.authority-source {
+  margin: 14px 0 0;
+  color: rgba(242, 239, 232, 0.4);
+  font: 400 12px/1.5 var(--font-geist-mono), monospace;
+}
+
+.expiry-bar {
+  height: 6px;
+  margin: 16px 0 0;
+  background: rgba(242, 239, 232, 0.12);
+}
+
+.expiry-bar i { height: 100%; display: block; background: var(--proven); }
+
+.permission-grid {
+  margin-top: 2px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2px;
+}
+
+.permission-row {
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  border: 1px solid var(--hair, rgba(242, 239, 232, 0.12));
+}
+
+.permission-mark { font: 500 12px/1.5 var(--font-geist-mono), monospace; letter-spacing: 0.08em; }
+.permission-mark.is-may { color: var(--proven); }
+.permission-mark.is-never { color: var(--forbidden); }
+
+.permission-row p { margin: 0; color: var(--ink); font-size: 16px; line-height: 1.45; }
+.permission-row code {
+  margin-top: 8px;
+  display: block;
+  color: rgba(242, 239, 232, 0.35);
+  font: 400 12px/1.5 var(--font-geist-mono), monospace;
+  word-break: break-all;
+}
+
+.revoke-panel {
+  margin-top: 2px;
+  padding: 20px 22px;
+  border: 1px solid rgba(210, 169, 163, 0.35);
+}
+
+.revoke-panel h3 { margin: 0; color: var(--ink); font-size: 19px; font-weight: 600; }
+.revoke-panel p { max-width: 66ch; margin: 10px 0 0; color: rgba(242, 239, 232, 0.7); font-size: 14px; line-height: 1.55; }
+
+/* ===========================================================================
+   Leaderboard
+   =========================================================================== */
+
+.board-table { margin-top: 2px; border: 1px solid var(--hair, rgba(242, 239, 232, 0.12)); overflow-x: auto; }
+
+.board-row {
+  min-width: 900px;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1.6fr) 200px 110px 90px 130px 120px;
+  gap: 16px;
+  align-items: center;
+  min-height: 62px;
+  border-bottom: 1px solid rgba(242, 239, 232, 0.06);
+  color: rgba(242, 239, 232, 0.72);
+  font-size: 13px;
+}
+
+.board-row:last-child { border-bottom: 0; }
+
+.board-row.is-head {
+  min-height: 42px;
+  color: rgba(242, 239, 232, 0.45);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.1em;
+}
+
+.board-rank { color: rgba(242, 239, 232, 0.25); font: 400 13px/1 var(--font-geist-mono), monospace; }
+.board-row b { color: var(--ink); font-size: 14px; font-weight: 600; }
+.board-row small { display: block; margin-top: 3px; color: rgba(242, 239, 232, 0.4); font: 400 12px/1.4 var(--font-geist-mono), monospace; }
+.board-row .is-mono { font: 400 12px/1.4 var(--font-geist-mono), monospace; }
+.board-row .is-unproven { color: var(--unproven); }
+
+.board-note { margin: 14px 0 0; max-width: 78ch; color: rgba(242, 239, 232, 0.45); font-size: 13px; line-height: 1.55; }
+
+/* ===========================================================================
+   Active agents
+   =========================================================================== */
+
+.active-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2px; }
+
+.active-panel { padding: 20px 22px; border: 1px solid var(--hair, rgba(242, 239, 232, 0.12)); }
+.active-panel > span { color: rgba(242, 239, 232, 0.45); font: 500 12px/1 var(--font-geist-mono), monospace; letter-spacing: 0.1em; }
+.active-panel strong { display: block; margin: 14px 0 0; color: var(--ink); font: 400 32px/1 var(--font-geist-mono), monospace; }
+.active-panel p { margin: 12px 0 0; color: rgba(242, 239, 232, 0.7); font-size: 14px; line-height: 1.55; }
+
+.active-waiting { margin-top: 12px; color: var(--unproven); font-size: 14px; line-height: 1.5; }
+.active-stale { margin-top: 12px; color: rgba(242, 239, 232, 0.4); font: 400 12px/1.5 var(--font-geist-mono), monospace; }
+
+.lifecycle-strip {
+  margin-top: 2px;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.lifecycle-stage {
+  padding: 14px 12px 16px;
+  border-top: 2px solid rgba(242, 239, 232, 0.12);
+  background: rgba(11, 12, 16, 0.6);
+}
+
+.lifecycle-stage.is-done { border-top-color: var(--proven); }
+.lifecycle-stage.is-now { border-top-color: var(--accent); }
+
+.lifecycle-stage span { color: rgba(242, 239, 232, 0.3); font: 400 12px/1 var(--font-geist-mono), monospace; }
+.lifecycle-stage b { display: block; margin-top: 8px; color: rgba(242, 239, 232, 0.55); font-size: 13px; font-weight: 500; line-height: 1.35; }
+.lifecycle-stage.is-done b, .lifecycle-stage.is-now b { color: var(--ink); }
+.lifecycle-stage a { display: block; margin-top: 8px; color: var(--accent); font: 400 12px/1.4 var(--font-geist-mono), monospace; text-decoration: none; }
+.lifecycle-stage a:hover { text-decoration: underline; }
+
+@media (max-width: 1180px) {
+  .lifecycle-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .store-inner { padding: 0 24px 48px; }
+}
+
+/* Authority surface wrapper */
+
+.authority-surface {
+  --ink: #f2efe8;
+  --accent: #e9e3d4;
+  --proven: #a8c5b0;
+  --unproven: #c8b48c;
+  --forbidden: #d2a9a3;
+  --hair: rgba(242, 239, 232, 0.12);
+
+  color: var(--ink);
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
+
+.authority-title { margin: 0; color: var(--ink); font-size: 30px; font-weight: 500; letter-spacing: -0.02em; }
+.authority-lede { max-width: 72ch; margin: 12px 0 24px; color: rgba(242, 239, 232, 0.65); font-size: 15px; line-height: 1.55; }
+
+.authority-subhead {
+  margin: 32px 0 2px;
+  color: rgba(242, 239, 232, 0.45);
+  font: 500 12px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.authority-unavailable {
+  margin: 24px 0 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(200, 180, 140, 0.4);
+  color: rgba(242, 239, 232, 0.8);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.authority-unavailable b { margin-right: 10px; color: var(--unproven); font: 500 12px/1 var(--font-geist-mono), monospace; letter-spacing: 0.1em; }
+
+.authority-actions { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+
+.authority-button {
+  min-height: 48px;
+  padding: 0 20px;
+  border: 1px solid rgba(242, 239, 232, 0.28);
+  border-radius: 2px;
+  color: rgba(242, 239, 232, 0.8);
+  background: transparent;
+  font: 500 12.5px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+/* Grant and revoke carry equal weight. */
+.authority-button.is-primary { border-color: var(--accent); color: #06070a; background: var(--accent); }
+.authority-button.is-revoke { border-color: rgba(210, 169, 163, 0.55); color: var(--forbidden); }
+.authority-button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.authority-notice {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(242, 239, 232, 0.1);
+  color: rgba(242, 239, 232, 0.7);
+  font-size: 13.5px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.revoke-panel { margin-top: 32px; }
+
+/* ---------------------------------------------------------------------------
+   Store view container.
+
+   .grabit-market-page was a three-row grid built when the store held three
+   sections. It now holds four, and the third row's minmax(0, 1fr) collapsed the
+   leaderboard to zero height so it drew on top of Active Agents. Rows are no
+   longer fixed, and the document scrolls rather than the panel.
+--------------------------------------------------------------------------- */
+
+.grabit-market-shell {
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+}
+
+.grabit-market-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 0;
+  overflow: visible;
+}
+
+.grabit-market-page > * { flex: 0 0 auto; }
+
+/* These sections bring their own gutters, so they run to the frame edge. */
+.grabit-market-page > .store-surface { margin-inline: calc(-1 * clamp(24px, 4vw, 68px)); }
+
+/* ===========================================================================
+   Study 2b — dense two-pane. Decision on the left, evidence permanently beside
+   it, everything on one screen without scrolling. Ladder 1c, compressed.
+   =========================================================================== */
+
+.detail-2b { display: grid; grid-template-columns: minmax(0, 1fr) 424px; }
+
+.detail-2b-left { padding: 28px; border-right: 1px solid rgba(242, 239, 232, 0.1); min-width: 0; }
+.detail-2b-right { padding: 16px 24px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+.detail-2b h1 {
+  max-width: 30ch;
+  margin: 0;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+
+.detail-2b-price {
+  margin: 10px 0 18px;
+  color: rgba(242, 239, 232, 0.5);
+  font: 400 13px/1.4 var(--font-geist-mono), monospace;
+}
+
+/* Ladder 1c, compressed */
+
+.ladder-gate {
+  display: grid;
+  grid-template-columns: auto 1px minmax(0, 1fr);
+  border: 1px solid rgba(242, 239, 232, 0.12);
+}
+
+.ladder-gate-figure { padding: 14px 18px; display: grid; align-content: center; justify-items: center; }
+.ladder-gate-figure b { color: var(--unproven); font: 400 32px/1 var(--font-geist-mono), monospace; }
+.ladder-gate-figure span { margin-top: 4px; color: rgba(242, 239, 232, 0.4); font: 400 12px/1 var(--font-geist-mono), monospace; }
+
+/* The only use of accent in the component: the one distance that matters. */
+.ladder-gate-line { background: var(--accent); }
+
+.ladder-gate-body {
+  padding: 14px 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  background: var(--hatch-tan);
+}
+
+.ladder-gate-body > div { min-width: 0; }
+.ladder-gate-body b { color: var(--unproven); font: 500 12px/1 var(--font-geist-mono), monospace; letter-spacing: 0.08em; }
+.ladder-gate-body p { margin: 8px 0 0; color: rgba(242, 239, 232, 0.8); font-size: 13.5px; line-height: 1.45; }
+
+.ladder-gate-stamp {
+  margin: 0;
+  color: rgba(242, 239, 232, 0.4);
+  font: 400 12px/1.5 var(--font-geist-mono), monospace;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ladder-gate-stamp span { display: block; }
+
+/* Dense lifecycle */
+
+.detail-2b .lifecycle-step {
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 15px 0;
+}
+
+.detail-2b .lifecycle-step h3 { font-size: 16px; }
+.detail-2b .lifecycle-step p { max-width: 62ch; margin-top: 5px; font-size: 13.5px; line-height: 1.45; }
+.detail-2b .lifecycle-action { padding: 11px 16px; white-space: nowrap; }
+
+/* Two-up waiting panels */
+
+.detail-2b-panels { margin-top: 18px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; }
+
+.detail-2b-panels .waiting-panel { margin: 0; padding: 16px 18px; }
+.detail-2b-panels .waiting-panel p { font-size: 13.5px; line-height: 1.5; }
+.detail-2b-panels .is-return { border-color: rgba(200, 180, 140, 0.35); }
+.detail-2b-panels .is-return > span { color: var(--unproven); }
+
+/* Right pane */
+
+.detail-2b-right .rail-panel { padding: 0; border: 0; }
+
+/*
+ * Everything on this screen has to be visible at once — that is the whole
+ * point of study 2b — and the evidence rail is what sets the height. These
+ * rules tighten its vertical rhythm without dropping a single row or
+ * shrinking the type below the sizes in the handoff.
+ */
+.detail-2b-right .evidence-rows { margin-top: 10px; }
+.detail-2b-right .evidence-rows > div { padding: 6px 0; }
+.detail-2b-right .evidence-rows > div:last-child { border-bottom: 0; }
+.detail-2b-right .registry-link { margin-top: 10px; }
+.detail-2b-right .peek-intro { margin-top: 8px; }
+.detail-2b-right .peek-list { margin-top: 10px; gap: 9px; }
+.detail-2b-right .peek-row p { line-height: 1.4; }
+.detail-2b-right .peek-more { margin-top: 10px; }
+
+/*
+ * The full permission list was reachable only through a line of small grey
+ * mono at the foot of the rail. It is the screen this product is arguing for,
+ * so it gets a control the size of that claim.
+ */
+.authority-cta {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--accent);
+  color: var(--ink);
+  font: 500 13px/1.3 var(--font-geist-mono), monospace;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: background 120ms, color 120ms;
+}
+
+.authority-cta:hover { background: var(--accent); color: #0b0c10; }
+.authority-cta b { font-weight: 500; }
+.authority-cta small { display: block; margin-top: 4px; opacity: 0.65; font-size: 11px; letter-spacing: 0.06em; }
+.authority-cta span { font-size: 15px; line-height: 1; }
+.detail-2b-right .owner-siblings { margin-top: 10px; }
+.detail-2b-right .owner-siblings li { line-height: 1.65; }
+
+/*
+ * Short screens. A 1366x768 laptop is 132px shorter than the layout above is
+ * built for, and "everything at once" has to hold there too — so the rhythm
+ * tightens one more step rather than the screen starting to scroll. Nothing is
+ * dropped: the same seven evidence rows, the same permissions, the same
+ * lifecycle. Only the air between them goes.
+ */
+@media (max-height: 880px) {
+  .detail-2b-left { padding: 20px 24px; }
+  .detail-2b-right { padding: 9px 24px; gap: 7px; }
+  .detail-2b h1 { font-size: 27px; }
+  .detail-2b-price { margin: 8px 0 12px; }
+  .detail-2b .lifecycle-step { padding: 11px 0; }
+  .detail-2b-panels { margin-top: 12px; }
+  .detail-2b-panels .waiting-panel { padding: 12px 16px; }
+  .ladder-gate-figure { padding: 10px 18px; }
+  .ladder-gate-body { padding: 10px 18px; }
+  .detail-2b-right .evidence-rows > div { padding: 3px 0; }
+  .detail-2b-right .peek-list { gap: 6px; }
+  .detail-2b-right .peek-more { margin-top: 6px; }
+  .detail-2b-right .peek-intro { margin-top: 6px; }
+  .detail-2b-right .owner-siblings li { line-height: 1.45; }
+
+  /* The back control and the authority call to action tighten here too. */
+  .agent-detail-bar { padding: 9px 24px; }
+  .detail-back { padding: 6px 12px; }
+  .network-badge { padding: 5px 10px; }
+  .detail-2b .lifecycle-step { padding: 9px 0; }
+  .authority-cta { margin-top: 7px; padding: 8px 12px; }
+  .detail-2b-right .peek-row p { line-height: 1.35; }
+  .authority-cta small { margin-top: 2px; }
+  .detail-2b-right .peek-list { gap: 5px; }
+  .detail-2b-right .evidence-rows > div { padding: 2px 0; }
+  .detail-2b h1 { font-size: 25px; }
+  .detail-2b-panels .waiting-panel { padding: 10px 14px; }
+  .detail-2b-left { padding: 18px 24px; }
+}
+
+.peek-intro { margin: 12px 0 0; color: rgba(242, 239, 232, 0.65); font-size: 13.5px; line-height: 1.5; }
+
+.peek-list { margin: 14px 0 0; display: grid; gap: 12px; }
+
+.peek-row { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px; align-items: start; }
+.peek-row span { font: 500 12px/1.45 var(--font-geist-mono), monospace; letter-spacing: 0.06em; }
+.peek-row span.is-may { color: var(--proven); }
+.peek-row span.is-never { color: var(--forbidden); }
+.peek-row p { margin: 0; color: rgba(242, 239, 232, 0.72); font-size: 13px; line-height: 1.45; }
+
+.peek-more { margin: 14px 0 0; color: rgba(242, 239, 232, 0.4); font: 400 12px/1.4 var(--font-geist-mono), monospace; text-decoration: none; display: inline-block; }
+.peek-more:hover { color: var(--ink); }
+
+/* The preview result, once it has run. */
+.preview-result { margin-top: 18px; padding: 18px 20px; border: 1px solid rgba(242, 239, 232, 0.14); }
+.preview-result > span { color: var(--proven); font: 500 12px/1 var(--font-geist-mono), monospace; letter-spacing: 0.1em; }
+.preview-result h3 { margin: 10px 0 0; color: var(--ink); font-size: 19px; font-weight: 600; }
+.preview-result > p { margin: 8px 0 0; color: rgba(242, 239, 232, 0.75); font-size: 13.5px; line-height: 1.5; }
+.preview-metrics { margin: 14px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1px; background: rgba(242, 239, 232, 0.08); border: 1px solid rgba(242, 239, 232, 0.08); }
+.preview-metrics > div { padding: 10px 12px; background: #06070a; }
+.preview-metrics dt { color: rgba(242, 239, 232, 0.4); font: 400 12px/1 var(--font-geist-mono), monospace; letter-spacing: 0.06em; }
+.preview-metrics dd { margin: 6px 0 0; color: var(--ink); font: 400 14px/1.2 var(--font-geist-mono), monospace; }
+.preview-source { margin: 12px 0 0; color: rgba(242, 239, 232, 0.4); font: 400 12px/1.5 var(--font-geist-mono), monospace; }
+
+@media (max-width: 1180px) {
+  .detail-2b { grid-template-columns: minmax(0, 1fr); }
+  .detail-2b-left { border-right: 0; border-bottom: 1px solid rgba(242, 239, 232, 0.1); }
+  .detail-2b-panels { grid-template-columns: minmax(0, 1fr); }
+}

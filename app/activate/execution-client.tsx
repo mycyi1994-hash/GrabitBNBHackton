@@ -598,7 +598,7 @@ function MainnetHireExecutionConsole({ tokenId, agentName, defaultTask }: HireEx
           </div>
 
           <div className="transaction-stack">
-            {(plan?.calls || Array.from({ length: 5 }, (_, index) => ({ step: index + 1, what: ['Create the job', 'Bind dispute policy', 'Set the budget', 'Approve exact $U', 'Fund the escrow'][index], to: '', data: null }))).map((call, index) => {
+            {(plan?.calls || Array.from({ length: 5 }, (_, index): ProviderCall => ({ step: index + 1, what: ['Create the job', 'Bind dispute policy', 'Set the budget', 'Approve exact $U', 'Fund the escrow'][index], to: '', data: null }))).map((call, index) => {
               const runtime = steps[index];
               const active = nextStep === index;
               const disabled = !canExecute || !active || runningStep !== null || (index > 0 && !jobId);

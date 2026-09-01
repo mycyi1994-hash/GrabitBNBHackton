@@ -3,7 +3,12 @@
 import { AgentCelestial, type AgentCelestialVariant } from '@/app/agent-celestial';
 import { GrabitScene } from '@/app/grabit-scene';
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActiveAgents } from '@/components/active-agents';
+import { EvidenceLeaderboard } from '@/components/evidence-leaderboard';
+import { StoreGrid, type StoreAgent } from '@/components/store-grid';
+import { agentProfiles as agentProfileMap } from '@/lib/agent-profiles';
+import { marketplaceCategoryOrder } from '@/lib/marketplace-candidates';
 
 type SlashAgent = {
   tokenId: string;
@@ -16,13 +21,32 @@ type SlashAgent = {
   feedbacks: number | null;
   validations: number | null;
   endpointVerified: boolean | null;
+  observedAt: string;
+};
+
+type VerificationGate = {
+  identityRegistered: boolean;
+  endpointReachable: boolean;
+  quoteAccepted: boolean;
+  taskDelivered: boolean;
+  jobSettled: boolean;
+};
+
+type DiscoveredRow = {
+  category: string;
+  tokenId: string;
+  name: string;
+  level: string;
+  blocker: string;
+  observedAt: string;
 };
 
 type SlashHomeProps = {
   agents: SlashAgent[];
+  gate: VerificationGate;
+  ownerConcentration: number;
+  discovered: DiscoveredRow[];
 };
-
-type StoreFilter = 'all' | 'automate' | 'monitor';
 
 type DemoResult = {
   category?: string;
@@ -44,129 +68,39 @@ type DemoSelection = {
   index: number;
 };
 
-const agentCodes = ['RBL', 'GRID', 'YLD', 'HLTH'];
+const agentCodes = marketplaceCategoryOrder.map((category) => agentProfileMap[category].code);
 const variants: AgentCelestialVariant[] = ['core', 'tech', 'income', 'alpha'];
-const agentProfiles = [
-  {
-    role: 'PORTFOLIO MAINTENANCE',
-    risk: 'CONTROLLED',
-    summary: 'Reprices a drifted portfolio against executable BSC pool routes before rebalancing.',
-    bestFor: 'Allocations that have drifted away from their target weights',
-    demoTask: 'Price a 60/40 WBNB-USDT portfolio back to a 50/50 target with bounded execution cost.',
-  },
-  {
-    role: 'SYSTEMATIC EXECUTION',
-    risk: 'ACTIVE',
-    summary: 'Builds fee-aware grid levels and break-even spacing for a selected BSC pool.',
-    bestFor: 'Traders who need pool-costed grid levels before execution',
-    demoTask: 'Build a 10-level WBNB-USDT grid across a 15% band for a $1,000 test notional.',
-  },
-  {
-    role: 'YIELD ROUTING',
-    risk: 'VARIABLE',
-    summary: 'Ranks Venus stablecoin markets by base supply APY and estimated switching cost.',
-    bestFor: 'Stablecoin suppliers comparing Venus markets after gas',
-    demoTask: 'Rank current Venus stablecoin supply yields and show the best base APY with source block.',
-  },
-  {
-    role: 'RISK MONITOR',
-    risk: 'DEFENSIVE',
-    summary: 'Monitors Venus health factor, liquidation distance and collateral stress on-chain.',
-    bestFor: 'Borrowers who need liquidation-distance and stress alerts',
-    demoTask: 'Stress-test a Venus borrowing position and report health-factor liquidation distance.',
-  },
-];
+// One source with the terminal: the same Agent must not be described twice.
+const agentProfiles = marketplaceCategoryOrder.map((category) => agentProfileMap[category]);
 
 function shortName(name: string) {
   return name.replace(/^Brain on BNB\s*[—-]\s*/i, '');
 }
 
-function AgentCard({
-  agent,
-  index,
-  running,
-  onRun,
-}: {
-  agent: SlashAgent;
-  index: number;
-  running: boolean;
-  onRun: (agent: SlashAgent, index: number) => void;
-}) {
-  const profile = agentProfiles[index] ?? agentProfiles[0];
-  const variant = variants[index] ?? 'core';
-  const verification = agent.endpointVerified === true ? 'VERIFIED' : agent.live ? 'LIVE' : 'CHECK';
-
-  return (
-    <article className={'grabit-agent-card grabit-product-' + variant}>
-      <Link
-        className="grabit-card-hit"
-        href={'/activate?registry=' + agent.tokenId}
-        aria-label={'Open the Testnet terminal for ' + agent.name}
-      />
-      <div className="grabit-card-index" aria-hidden="true">
-        <span>{String(index + 1).padStart(2, '0')}</span><i />
-      </div>
-      <div className="grabit-card-hero">
-        <div className="grabit-card-copy">
-          <span className="grabit-product-role">{profile.role}</span>
-          <div className="grabit-card-labels">
-            <span className="grabit-agent-code">{agentCodes[index] ?? 'AGT'}</span>
-            <span className="grabit-registry-badge">ERC-8004 #{agent.tokenId}</span>
-            <span className="grabit-risk-badge">{profile.risk}</span>
-          </div>
-          <h2>{shortName(agent.name)}</h2>
-          <p>{profile.summary}</p>
-          <div className="grabit-best-for"><span>BEST FOR</span><b>{profile.bestFor}</b></div>
-        </div>
-        <div className="grabit-card-planet" aria-hidden="true">
-          <AgentCelestial variant={variant} />
-        </div>
-      </div>
-      <dl className="grabit-card-metrics">
-        <div><dt>ENDPOINT</dt><dd>{verification}<small>{agent.live ? 'LIVE' : 'WAIT'}</small></dd></div>
-        <div><dt>JOB PRICE</dt><dd>{agent.price}</dd></div>
-        <div><dt>FEEDBACK</dt><dd>{agent.feedbacks ?? '—'}</dd></div>
-        <div><dt>VALIDATIONS</dt><dd>{agent.validations ?? '—'}</dd></div>
-      </dl>
-      <div className="grabit-card-actions">
-        <div className="grabit-capability-chips" aria-label="Agent capabilities">
-          <span>BSC</span><span>TESTNET</span><span>A2A</span>
-        </div>
-        <button
-          className="grabit-view-agent"
-          type="button"
-          disabled={running}
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onRun(agent, index);
-          }}
-        >
-          <i aria-hidden="true" />
-          <span>{running ? 'OBSERVING...' : 'RUN AGENT'}</span>
-          <small>{running ? 'LIVE BSC' : 'LIVE DEMO'}</small>
-          <b aria-hidden="true">↗</b>
-        </button>
-      </div>
-    </article>
-  );
-}
-
-export function SlashHome({ agents }: SlashHomeProps) {
+export function SlashHome({ agents, gate, ownerConcentration, discovered }: SlashHomeProps) {
   const [view, setView] = useState<'landing' | 'store'>('landing');
-  const [filter, setFilter] = useState<StoreFilter>('all');
   const [demoSelection, setDemoSelection] = useState<DemoSelection | null>(null);
   const [demoResult, setDemoResult] = useState<DemoResult | null>(null);
   const [demoError, setDemoError] = useState<string | null>(null);
   const [demoRunning, setDemoRunning] = useState(false);
+  const [pendingAnchor, setPendingAnchor] = useState<'board' | 'active' | null>(null);
+  const storeRef = useRef<HTMLElement>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef<HTMLDivElement>(null);
   const visibleAgents = agents.slice(0, 4);
+  const storeAgents: StoreAgent[] = visibleAgents.map((agent, index) => ({
+    tokenId: agent.tokenId,
+    crumb: agentProfileMap[marketplaceCategoryOrder[index]].crumb,
+    name: agent.name.replace(/^Brain on BNB\s*[—-]\s*/i, ''),
+    job: agentProfileMap[marketplaceCategoryOrder[index]].headline,
+    price: agent.price.replace('$U', 'test $U'),
+    observedAt: agent.observedAt,
+  }));
   const firstAgent = visibleAgents[0];
-  const indexedAgents = visibleAgents.map((agent, index) => ({ agent, index }));
-  const shownAgents = indexedAgents.filter(({ index }) => {
-    if (filter === 'automate') return index < 3;
-    if (filter === 'monitor') return index === 3;
-    return true;
-  });
+
+  const scrollTo = useCallback((target: { current: HTMLElement | null }) => {
+    target.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -174,6 +108,19 @@ export function SlashHome({ agents }: SlashHomeProps) {
     document.body.scrollTop = 0;
     document.querySelector('.grabit-market-page')?.scrollTo(0, 0);
   }, [view]);
+
+  // Entering the store from a landing call-to-action that names a section: let
+  // the view render and its top-scroll settle, then move to the section asked
+  // for. Without this the leaderboard link would have to leave the workspace.
+  useEffect(() => {
+    if (view !== 'store' || !pendingAnchor) return;
+    const timer = window.setTimeout(() => {
+      const target = pendingAnchor === 'board' ? boardRef : activeRef;
+      target.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setPendingAnchor(null);
+    }, 80);
+    return () => window.clearTimeout(timer);
+  }, [pendingAnchor, view]);
 
   useEffect(() => {
     if (!demoSelection) return;
@@ -222,8 +169,9 @@ export function SlashHome({ agents }: SlashHomeProps) {
           </button>
           <nav className="grabit-market-menu" aria-label="Primary navigation">
             <button type="button" onClick={() => setView('landing')}>OVERVIEW</button>
-            <button className="is-active" type="button" aria-current="page">AGENTS</button>
-            <Link href="/dashboard">LEADERBOARD</Link>
+            <button className="is-active" type="button" onClick={() => scrollTo(storeRef)}>AGENTS</button>
+            <button type="button" onClick={() => scrollTo(boardRef)}>LEADERBOARD</button>
+            <button type="button" onClick={() => scrollTo(activeRef)}>ACTIVE</button>
           </nav>
           {firstAgent ? (
             <Link className="grabit-market-wallet" href={'/activate?registry=' + firstAgent.tokenId}>
@@ -253,34 +201,43 @@ export function SlashHome({ agents }: SlashHomeProps) {
             </div>
           </header>
 
-          <div className="grabit-market-toolbar">
-            <div className="grabit-strategy-filters" role="group" aria-label="Filter agents">
-              <button type="button" className={filter === 'all' ? 'is-active' : ''} aria-pressed={filter === 'all'} onClick={() => setFilter('all')}>ALL · 4</button>
-              <button type="button" className={filter === 'automate' ? 'is-active' : ''} aria-pressed={filter === 'automate'} onClick={() => setFilter('automate')}>AUTOMATE · 3</button>
-              <button type="button" className={filter === 'monitor' ? 'is-active' : ''} aria-pressed={filter === 'monitor'} onClick={() => setFilter('monitor')}>MONITOR · 1</button>
-            </div>
-            <p className="grabit-market-status">
-              <b>{String(shownAgents.length).padStart(2, '0')} AGENTS</b> · LIVE BSC REGISTRY
-            </p>
+          <section className="store-surface" ref={storeRef} aria-label="Agent marketplace">
+            <StoreGrid
+              agents={storeAgents}
+              discovered={discovered}
+              runningTokenId={demoRunning ? (demoSelection?.agent.tokenId ?? null) : null}
+              onPreview={(tokenId) => {
+                const index = visibleAgents.findIndex((entry) => entry.tokenId === tokenId);
+                if (index >= 0) void runDemo(visibleAgents[index], index);
+              }}
+            />
+          </section>
+
+          <div ref={boardRef}>
+            <EvidenceLeaderboard
+              agents={storeAgents.map((agent) => ({
+                ...agent,
+                // No job has been delivered or failed, and the table says so
+                // rather than leaving the columns out.
+                jobsDelivered: 0,
+                jobsFailed: 0,
+              }))}
+              ownerConcentration={ownerConcentration}
+              discovered={discovered}
+            />
           </div>
 
-          <section key={filter} className="grabit-agent-grid" aria-label="Agent marketplace">
-            {shownAgents.map(({ agent, index }) => (
-              <AgentCard
-                key={agent.tokenId}
-                agent={agent}
-                index={index}
-                running={demoRunning && demoSelection?.agent.tokenId === agent.tokenId}
-                onRun={runDemo}
-              />
-            ))}
-          </section>
+          <div ref={activeRef}>
+            <ActiveAgents
+              hireHref={firstAgent ? `/activate?registry=${firstAgent.tokenId}` : '/activate'}
+            />
+          </div>
         </main>
 
         <footer className="grabit-market-disclaimer">
           <span>TESTNET / PRE-LAUNCH</span>
           <p>Quotes and results must be verified before activation. No Mainnet capital moves from this marketplace preview.</p>
-          <Link href="/dashboard">LEADERBOARD ↗</Link>
+          <button type="button" onClick={() => scrollTo(boardRef)}>LEADERBOARD ↗</button>
         </footer>
 
         {demoSelection ? (
@@ -443,8 +400,44 @@ export function SlashHome({ agents }: SlashHomeProps) {
           <button className="grabit-primary-action" type="button" onClick={() => setView('store')}>
             EXPLORE AGENTS <span aria-hidden="true">↗</span>
           </button>
-          <Link className="grabit-secondary-action" href="/dashboard">VIEW LEADERBOARD</Link>
+          <button
+            className="grabit-secondary-action"
+            type="button"
+            onClick={() => {
+              setPendingAnchor('board');
+              setView('store');
+            }}
+          >
+            VIEW LEADERBOARD
+          </button>
         </div>
+        <dl className="grabit-launch-readiness" aria-label="Verification readiness">
+          <div>
+            <dt>IDENTITY</dt>
+            <dd>{gate.identityRegistered ? `${visibleAgents.length} / ${visibleAgents.length}` : `0 / ${visibleAgents.length}`}</dd>
+            <small>ERC-8004 on chain 56</small>
+          </div>
+          <div>
+            <dt>ENDPOINT</dt>
+            <dd>{gate.endpointReachable ? `${visibleAgents.length} / ${visibleAgents.length}` : `0 / ${visibleAgents.length}`}</dd>
+            <small>A2A reached</small>
+          </div>
+          <div className="is-pending">
+            <dt>DELIVERED</dt>
+            <dd>{gate.taskDelivered ? `${visibleAgents.length} / ${visibleAgents.length}` : `0 / ${visibleAgents.length}`}</dd>
+            <small>No paid task yet</small>
+          </div>
+          <div className="is-pending">
+            <dt>SETTLED JOBS</dt>
+            <dd>{gate.jobSettled ? '1' : '0'}</dd>
+            <small>ERC-8183 escrow</small>
+          </div>
+        </dl>
+        <p className="grabit-launch-next">
+          <b>NEXT</b> Run any Agent read-only, then open the Testnet terminal to grant a scoped
+          session and hire one.
+        </p>
+
         <div className="grabit-assurance">
           <span>IDENTITY VERIFIED</span>
           <span>PERMISSIONS VISIBLE</span>

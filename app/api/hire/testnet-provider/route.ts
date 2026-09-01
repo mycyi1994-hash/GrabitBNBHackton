@@ -1,3 +1,4 @@
+import { operatorGuard } from '@/lib/operator-auth';
 import { formatEther, hexToString, type Address } from 'viem';
 import { ERC8183_TESTNET, sameAddress } from '@/lib/erc8183';
 import {
@@ -137,6 +138,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const refusal = operatorGuard(request);
+  if (refusal) return refusal;
+
   try {
     const input = await request.json() as { action?: unknown; jobId?: unknown };
     const action = String(input.action || '');

@@ -1,0 +1,93 @@
+{
+  "note": "Single source of truth for the Agent Advantage Report. lib/erc8183.ts derives CANARY_TASKS from this file, so the prompt the product sends an agent and the prompt a human is timed against are provably the same string.",
+  "costModel": {
+    "operatorRateUsdPerHour": 60,
+    "rationale": "A mid-level DeFi analyst rate. It is stated rather than assumed because a comparison that prices human labour at zero flatters the agent by construction."
+  },
+  "manualBaseline": {
+    "description": "An operator working from BscScan with a general-purpose AI assistant.",
+    "rationale": "This is the realistic alternative to hiring an agent in 2026, and it is a harder baseline than an operator working alone, so any advantage the marketplace shows is measured against the stronger comparison. It is still 'without an agent hired through this marketplace', which is what the requirement asks. Naming it matters: a reader who assumed 'manual' meant unaided would be reading the wrong comparison.",
+    "caveat": "Task 302258 is the exception on timing. Its method was derived in conversation before the clock was started, so its recorded time covers verification and write-up only and understates the manual cost. That error runs against the agent, not for it. Every later task was timed from before the first question was asked."
+  },
+  "networks": {
+    "analysis": "BNB Smart Chain mainnet (chain 56)",
+    "settlement": "BNB Smart Chain testnet (chain 97)",
+    "rationale": "The tasks ask for live market state \u2014 pool prices, Venus collateral factors, real positions \u2014 and that state only exists on mainnet. A testnet pool with no real liquidity would make every number meaningless. Payment is a different question: ERC-8183 and the Altana session key are exercised on chain 97, where the $U token is a valueless test token, because no part of this demonstration should move real funds. So each task reads mainnet and escrows on testnet, and both sides of the comparison read the same mainnet state."
+  },
+  "rubric": [
+    {
+      "id": "answers_the_ask",
+      "text": "Produces the artifact that was asked for, not a description of how one would produce it."
+    },
+    {
+      "id": "numbers_sourced",
+      "text": "Every quantitative claim names where it came from: a contract address, a block height, or a named public endpoint."
+    },
+    {
+      "id": "assumptions_stated",
+      "text": "Inputs the answer had to assume are written down rather than silently chosen."
+    },
+    {
+      "id": "risks_named",
+      "text": "At least one concrete way the plan loses money or fails is identified."
+    },
+    {
+      "id": "reproducible",
+      "text": "A third party can re-derive the same numbers from what is written, without asking the author."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "304494",
+      "category": "Rebalancing",
+      "domain": "trading",
+      "prompt": "Price a read-only rebalance plan for a WBNB/USDT position. Include the proposed weights, estimated pool costs and source block. Do not move funds.",
+      "manualProcedure": [
+        "Read the current WBNB/USDT pool reserves directly from the pair contract on BscScan and record the block height you read them at.",
+        "Read the position's current token balances and compute present weights.",
+        "Choose target weights and compute the trade size that reaches them.",
+        "Price that trade against the pool: constant-product output, the pool's fee, and the resulting slippage.",
+        "Write the plan, the cost, the block height, the assumptions and at least one risk into docs/advantage/outputs/304494.manual.md."
+      ]
+    },
+    {
+      "id": "302258",
+      "category": "Grid Trading",
+      "domain": "trading",
+      "prompt": "Build a read-only WBNB grid plan with 10 levels across a 15% band and 1000 USD notional. Include fees, break-even spacing and source block. Do not trade.",
+      "manualProcedure": [
+        "Read the current WBNB price from an on-chain source and record the block height.",
+        "Lay out 10 levels across a 15 percent band around it and record each level price.",
+        "Split 1000 USD notional across the levels and record the per-level size.",
+        "Compute the round-trip fee per level and the spacing at which a round trip breaks even.",
+        "Write the grid, the fees, the break-even spacing, the block height, the assumptions and at least one risk into docs/advantage/outputs/302258.manual.md."
+      ]
+    },
+    {
+      "id": "304493",
+      "category": "Yield Optimisation",
+      "domain": "yield",
+      "prompt": "Rank current Venus supply yields for USDT on BNB Chain, include net APY, gas break-even and source block. Do not move funds.",
+      "manualProcedure": [
+        "Read the Venus USDT market's supply rate per block from the vToken contract and record the block height.",
+        "Annualise it into a supply APY, stating the blocks-per-year figure you used.",
+        "Subtract or add any reward component and state which you included.",
+        "Price the gas of entering and exiting, and compute the deposit size at which the yield covers it.",
+        "Write the ranking, the net APY, the gas break-even, the block height, the assumptions and at least one risk into docs/advantage/outputs/304493.manual.md."
+      ]
+    },
+    {
+      "id": "302257",
+      "category": "Health Factor Monitoring",
+      "domain": "security",
+      "prompt": "Calculate health factor and liquidation distance for a sample Venus position, include stress cases and source block. Do not move funds.",
+      "manualProcedure": [
+        "Pick a sample Venus position and record its collateral and borrow balances at a named block height.",
+        "Read each market's collateral factor from the Comptroller.",
+        "Compute the health factor from weighted collateral over borrows.",
+        "Compute how far each collateral asset can fall before the position is liquidatable.",
+        "Run at least two stress cases and write the health factor, the liquidation distance, the stress results, the block height, the assumptions and at least one risk into docs/advantage/outputs/302257.manual.md."
+      ]
+    }
+  ]
+}

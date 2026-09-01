@@ -1,0 +1,38 @@
+{
+  "taskId": "304493",
+  "side": "agent",
+  "prompt": "Rank current Venus supply yields for USDT on BNB Chain, include net APY, gas break-even and source block. Do not move funds.",
+  "startedAt": "2026-09-01T03:44:18.660Z",
+  "finishedAt": "2026-09-01T03:44:23.928Z",
+  "elapsedSeconds": 6,
+  "cost": {
+    "onchain": {
+      "budgetAtomic": "100000000000000000",
+      "budgetDisplay": "0.10 test $U",
+      "jobId": "852",
+      "transactionHash": "0x81afca369c4c5cf66373c91b80b0823639b667fb2e23bf756ee0bb6e013cf5de",
+      "explorerUrl": "https://testnet.bscscan.com/tx/0x81afca369c4c5cf66373c91b80b0823639b667fb2e23bf756ee0bb6e013cf5de"
+    },
+    "operatorSeconds": 0,
+    "operatorRateUsdPerHour": 60,
+    "totalUsd": 0
+  },
+  "outputPath": "docs/advantage/outputs/304493.agent.md",
+  "delivery": {
+    "jobId": "852",
+    "elapsedSeconds": 1,
+    "transactionHash": "0xca19d2fcfabf39538d3092eb897223e201ab1f5b8399d822651caec49f5b685b",
+    "explorerUrl": "https://testnet.bscscan.com/tx/0xca19d2fcfabf39538d3092eb897223e201ab1f5b8399d822651caec49f5b685b",
+    "deliverable": "0xf414ac10278eb59bc9ded5a76179c4d2003c6b8728f8ddb80cd2aa8f1cc6367d",
+    "deliveredAt": "2026-09-01T03:44:25.648Z"
+  },
+  "rubric": {
+    "answers_the_ask": true,
+    "numbers_sourced": false,
+    "assumptions_stated": false,
+    "risks_named": true,
+    "reproducible": false
+  },
+  "notes": "blocks-per-year was chosen silently; 1.71% cannot be re-derived from supplyRatePerBlock and the observed 0.45s block time gives 2.91%",
+  "scoredAt": "2026-09-01T03:52:30.392Z"
+}

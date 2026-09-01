@@ -1,29 +1,27 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { AgentCelestial, type AgentCelestialVariant } from '@/app/agent-celestial';
+import { AgentDetail } from '@/app/activate/detail-client';
 import {
   getCandidateByTokenId,
   getRegistryIdForLegacySlug,
 } from '@/lib/marketplace-data';
-import { marketplaceCandidates, type MarketplaceCategory } from '@/lib/marketplace-candidates';
-import { CANARY_TASKS } from '@/lib/erc8183';
-import { HireExecutionConsole } from '@/app/activate/execution-client';
+import { marketplaceCandidates } from '@/lib/marketplace-candidates';
+import { agentProfiles } from '@/lib/agent-profiles';
+import { candidateEvidence, ladderState } from '@/lib/verification-ladder';
+import { ERC8183_TESTNET } from '@/lib/erc8183';
 
 export const metadata: Metadata = {
-  title: 'Testnet Terminal — Grabit',
-  description: 'Preview, hire and verify a BSC Testnet Agent in one observatory terminal.',
+  title: 'Agent detail — Grabit',
+  description: 'Read an agent’s verification evidence, run it free, and see exactly what it may do.',
 };
 
 type ActivatePageProps = {
   searchParams: Promise<{ agent?: string; registry?: string }>;
 };
 
-const categoryVariant: Record<MarketplaceCategory, AgentCelestialVariant> = {
-  Rebalancing: 'core',
-  'Grid Trading': 'tech',
-  'Yield Optimisation': 'income',
-  'Health Factor Monitoring': 'alpha',
-};
+function compact(value: string) {
+  return `${value.slice(0, 8)}…${value.slice(-4)}`;
+}
 
 function shortName(name: string) {
   return name.replace(/^Brain on BNB\s*[—-]\s*/i, '');
@@ -33,65 +31,43 @@ export default async function ActivatePage({ searchParams }: ActivatePageProps) 
   const query = await searchParams;
   const tokenId = query.registry || (query.agent ? getRegistryIdForLegacySlug(query.agent) : undefined);
   const selected = getCandidateByTokenId(tokenId) || marketplaceCandidates[0];
-  const variant = categoryVariant[selected.category];
+  const profile = agentProfiles[selected.category];
+  const ladder = ladderState(candidateEvidence());
 
   return (
-    <main className={`grabit-terminal-page grabit-product-${variant}`}>
-      <section className="grabit-terminal-shell" aria-label="Grabit Agent Testnet terminal">
-        <header className="grabit-terminal-topbar">
-          <Link className="grabit-terminal-brand" href="/" aria-label="Return to Agent Store">
-            <span>G</span>
-            <strong>GRABIT<small>AGENT OBSERVATORY</small></strong>
-          </Link>
-          <nav aria-label="Current location">
-            <Link href="/">AGENT STORE</Link>
-            <i aria-hidden="true">/</i>
-            <b>TESTNET TERMINAL</b>
-          </nav>
-          <div className="grabit-terminal-network"><i /> BSC TESTNET · CHAIN 97</div>
+    <main className="agent-detail">
+      <div className="agent-detail-frame">
+        <header className="agent-detail-bar">
+          <div className="agent-detail-bar-left">
+            <Link className="detail-back" href="/">
+              <span aria-hidden="true">←</span> ALL AGENTS
+            </Link>
+            <p className="agent-detail-crumb">
+              {profile.crumb} / #{selected.tokenId} · {shortName(selected.name).toUpperCase()}
+            </p>
+          </div>
+          <span className="network-badge">TEST NETWORK · CHAIN {ERC8183_TESTNET.chainId}</span>
         </header>
 
-        <section className="grabit-terminal-hero">
-          <div className="grabit-terminal-agent">
-            <p>SELECTED AGENT / ERC-8004 #{selected.tokenId}</p>
-            <h1>{shortName(selected.name)}</h1>
-            <span>{selected.category} · {selected.price} PER JOB · TEST TOKENS ONLY</span>
-          </div>
-
-          <div className="grabit-terminal-celestial" aria-hidden="true">
-            <AgentCelestial variant={variant} />
-          </div>
-
-          <ol className="grabit-terminal-flow" aria-label="Agent test flow">
-            <li className="is-current"><span>01</span><b>PREVIEW</b><small>NO WALLET</small></li>
-            <li><span>02</span><b>HIRE</b><small>5 TESTNET TX</small></li>
-            <li><span>03</span><b>RESULT</b><small>VERIFY PROOF</small></li>
-          </ol>
-        </section>
-
-        <details className="grabit-terminal-guide">
-          <summary><span>?</span><b>WHAT SHOULD I TEST?</b><small>OPEN 3-MIN GUIDE</small></summary>
-          <div>
-            <p><b>01 / PREVIEW</b> Run the Agent without a wallet. Check its verdict, four metrics and source block.</p>
-            <p><b>02 / HIRE</b> Connect chain 97, run preflight and approve exactly five visible Testnet transactions.</p>
-            <p><b>03 / RESULT</b> Submit the read-only result, inspect its evidence and settle the Testnet job.</p>
-          </div>
-        </details>
-
-        <div className="grabit-terminal-console">
-          <HireExecutionConsole
-            tokenId={selected.tokenId}
-            agentName={selected.name}
-            defaultTask={CANARY_TASKS[selected.tokenId]}
-          />
-        </div>
-
-        <footer className="grabit-terminal-footer">
-          <span>TESTNET / PRE-LAUNCH</span>
-          <p>PREVIEW FIRST · SIGN TESTNET ONLY · VERIFY EVERY RESULT</p>
-          <Link href="/dashboard">OPEN DASHBOARD ↗</Link>
-        </footer>
-      </section>
+        <AgentDetail
+          chainId={ERC8183_TESTNET.chainId}
+          explorerUrl={ERC8183_TESTNET.explorerUrl}
+          ladder={ladder}
+          agent={{
+            tokenId: selected.tokenId,
+            crumb: profile.crumb,
+            name: shortName(selected.name),
+            headline: profile.headline,
+            price: selected.price.replace('$U', 'test $U'),
+            owner: compact(selected.owner),
+            observedAt: selected.observedAt,
+            demoTask: profile.demoTask,
+            siblings: marketplaceCandidates
+              .filter((entry) => entry.tokenId !== selected.tokenId)
+              .map((entry) => ({ tokenId: entry.tokenId, name: shortName(entry.name) })),
+          }}
+        />
+      </div>
     </main>
   );
 }

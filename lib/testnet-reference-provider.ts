@@ -181,10 +181,22 @@ function uintWord(value: string | number | bigint) {
   return BigInt(value).toString(16).padStart(64, '0');
 }
 
-export async function buildTestnetProviderPlan(candidate: CandidateSnapshot, task: string) {
+/**
+ * The Job description the reference provider will accept.
+ *
+ * `parseReferenceDescription` rejects anything that is not this envelope, and
+ * the provider's allowlist runs that parse before it will submit a result. A
+ * Job created with the bare task string is funded and permanently
+ * undeliverable: the escrow sits until expiry and only `claimRefund` gets it
+ * back. Both hire paths therefore build the description here rather than each
+ * writing their own.
+ *
+ * `quote` is the hash of the negotiated terms, signed by the provider, so the
+ * Job carries the agreement it was created under rather than a loose string.
+ */
+export async function buildReferenceJobDescription(candidate: CandidateSnapshot, task: string) {
   const account = getTestnetProviderAccount();
-  const now = Math.floor(Date.now() / 1000);
-  const expiresAt = now + 2 * 60 * 60;
+  const expiresAt = Math.floor(Date.now() / 1000) + 2 * 60 * 60;
   const quoteTerms = {
     version: 1,
     chainId: CONFIG.chainId,
@@ -197,13 +209,25 @@ export async function buildTestnetProviderPlan(candidate: CandidateSnapshot, tas
   };
   const negotiationHash = keccak256(toBytes(JSON.stringify(quoteTerms)));
   const providerSignature = await account.signMessage({ message: { raw: negotiationHash } });
-  const description = JSON.stringify({
-    task,
-    service: candidate.serviceId,
-    registry: candidate.tokenId,
-    via: 'grabit-testnet-reference-provider',
-    quote: negotiationHash,
-  });
+  return {
+    description: JSON.stringify({
+      task,
+      service: candidate.serviceId,
+      registry: candidate.tokenId,
+      via: 'grabit-testnet-reference-provider',
+      quote: negotiationHash,
+    }),
+    negotiationHash,
+    providerSignature,
+    expiresAt,
+    provider: account.address,
+  };
+}
+
+export async function buildTestnetProviderPlan(candidate: CandidateSnapshot, task: string) {
+  const account = getTestnetProviderAccount();
+  const { description, negotiationHash, providerSignature, expiresAt } =
+    await buildReferenceJobDescription(candidate, task);
   const createData = encodeFunctionData({
     abi: testnetKernelAbi,
     functionName: 'createJob',

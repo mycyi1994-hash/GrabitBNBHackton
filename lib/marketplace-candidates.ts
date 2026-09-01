@@ -26,6 +26,14 @@ export const verificationGate = {
   jobSettled: false,
 } as const;
 
+/** Display order, and the order the profile lookup is indexed against. */
+export const marketplaceCategoryOrder: MarketplaceCategory[] = [
+  'Rebalancing',
+  'Grid Trading',
+  'Yield Optimisation',
+  'Health Factor Monitoring',
+];
+
 export const marketplaceCandidates: CandidateSnapshot[] = [
   {
     category: 'Rebalancing',
@@ -77,6 +85,97 @@ export const marketplaceCandidates: CandidateSnapshot[] = [
     price: '0.10 $U',
     endpoint: 'https://agent.brainonbnb.com/a2a',
     agentCard: 'https://agent.brainonbnb.com/.well-known/agent-card.json',
+    observedAt: '2026-08-29T13:52:42Z',
+  },
+];
+
+/**
+ * Candidates found during discovery that have NOT passed the marketplace gate.
+ *
+ * These are listed so the verification ladder is visible rather than implied:
+ * discovery on 8004scan is cheap and turned up hundreds of thousands of BSC
+ * registrations, and what separates the four anchors above from these is the
+ * endpoint and negotiation checks, not the registration.
+ *
+ * They are deliberately not hireable and carry no price. Each records the exact
+ * check that stopped it, observed on 2026-08-29. Under DATA_METHODOLOGY.md a
+ * candidate needs TASK_TESTED to reach the marketplace, so none of these
+ * qualifies today; several would with an endpoint fix by their owner.
+ */
+export type DiscoveredCandidate = {
+  category: MarketplaceCategory;
+  tokenId: string;
+  name: string;
+  owner: string | null;
+  /** Where the candidate currently sits on the DATA_METHODOLOGY.md ladder. */
+  level: 'REGISTERED' | 'METADATA_VALID' | 'REACHABLE';
+  /** The specific check that stopped it. */
+  blocker: string;
+  observedAt: string;
+};
+
+export const discoveredCandidates: DiscoveredCandidate[] = [
+  {
+    category: 'Rebalancing',
+    tokenId: '293902',
+    name: 'Mandate Rebalance',
+    owner: null,
+    level: 'METADATA_VALID',
+    blocker: 'Healthy Agent Card advertising ERC-8183, but invocation needs operator-issued OAuth credentials.',
+    observedAt: '2026-08-29T13:52:42Z',
+  },
+  {
+    category: 'Rebalancing',
+    tokenId: '315944',
+    name: 'AiKi LP Rebalancer',
+    owner: null,
+    level: 'REACHABLE',
+    blocker: 'Public JSON endpoint answers, but it is read-only advice with no execution path.',
+    observedAt: '2026-08-29T13:52:42Z',
+  },
+  {
+    category: 'Rebalancing',
+    tokenId: '171927',
+    name: 'DeFiMatrix.agent',
+    owner: null,
+    level: 'REGISTERED',
+    blocker: 'Claims rebalancing and yield strategy; no endpoint, feedback or validation observed.',
+    observedAt: '2026-08-29T13:52:42Z',
+  },
+  {
+    category: 'Grid Trading',
+    tokenId: '269224',
+    name: 'ChainHelix Grid',
+    owner: null,
+    level: 'METADATA_VALID',
+    blocker: 'Agent Card advertises ERC-8183, but its runtime URL points at localhost.',
+    observedAt: '2026-08-29T13:52:42Z',
+  },
+  {
+    category: 'Yield Optimisation',
+    tokenId: '293012',
+    name: 'TermiX Yield Optimizer',
+    owner: null,
+    level: 'REGISTERED',
+    blocker: 'Registered A2A service, but the 8004scan health check returned HTTP 404.',
+    observedAt: '2026-08-29T13:52:42Z',
+  },
+  {
+    category: 'Yield Optimisation',
+    tokenId: '6441',
+    name: 'DeFi Trading Agent SperaxOS',
+    owner: null,
+    level: 'REGISTERED',
+    blocker: 'Claims yield optimisation, swaps and farming; endpoint and category task untested.',
+    observedAt: '2026-08-29T13:52:42Z',
+  },
+  {
+    category: 'Health Factor Monitoring',
+    tokenId: '292058',
+    name: 'BNB Lending Guardian',
+    owner: null,
+    level: 'REGISTERED',
+    blocker: 'Relevant Venus description, but the 8004scan health check returned HTTP 404.',
     observedAt: '2026-08-29T13:52:42Z',
   },
 ];

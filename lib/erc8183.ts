@@ -1,3 +1,4 @@
+import advantageTasks from '@/docs/advantage/tasks.json';
 import type { CandidateSnapshot } from '@/lib/marketplace-candidates';
 
 export const ERC8183 = {
@@ -50,6 +51,18 @@ export const ERC8183_TESTNET = {
   router: '0xd7d36d66d2f1b608a0f943f722d27e3744f66f25',
   routerImplementation: '0x40c0254610D92F1Eb9c2D7D5d2114bC4c99d935e',
   policy: '0xd6a4217588f6b1f5657a92a3e94e6422ad771cea',
+  /**
+   * The Altana SDK ships a different OptimisticPolicy for chain 97 than the one
+   * above, while agreeing on the kernel, router and payment token (and on all
+   * five for chain 56). Only the router knows which is real, so both are
+   * checked at runtime and the readiness route reports whichever it
+   * whitelists. Reconcile `policy` to that answer before the hand-rolled and
+   * Altana hire paths are demonstrated together. See docs/ALTANA_SESSION.md.
+   */
+  policyCandidates: [
+    '0xd6a4217588f6b1f5657a92a3e94e6422ad771cea',
+    '0x4F4678D4439feC812Ac7674Bb3Efb4C8f5Fb78A6',
+  ],
   paymentToken: '0xc70B8741B8B07A6d61E54fd4B20f22Fa648E5565',
   paymentTokenSymbol: '$U test token',
   amountAtomic: '100000000000000000',
@@ -69,12 +82,33 @@ export const ERC8183_TESTNET = {
   },
 } as const;
 
-export const CANARY_TASKS: Record<string, string> = {
-  '304494': 'Price a read-only rebalance plan for a WBNB/USDT position. Include the proposed weights, estimated pool costs and source block. Do not move funds.',
-  '302258': 'Build a read-only WBNB grid plan with 10 levels across a 15% band and 1000 USD notional. Include fees, break-even spacing and source block. Do not trade.',
-  '304493': 'Rank current Venus supply yields for USDT on BNB Chain, include net APY, gas break-even and source block. Do not move funds.',
-  '302257': 'Calculate health factor and liquidation distance for a sample Venus position, include stress cases and source block. Do not move funds.',
-};
+/**
+ * What one Job escrows, per chain. This is the amount the buyer moves into the
+ * kernel — deliberately distinct from the session key's daily ceiling, which is
+ * a limit on how many such jobs a leaked key could open before the account
+ * stops honouring it. Passing the ceiling where this belongs would escrow the
+ * whole day's allowance into a single job.
+ */
+export function jobBudgetAtomic(chainId: number): bigint {
+  return BigInt(chainId === ERC8183.chainId ? ERC8183.amountAtomic : ERC8183_TESTNET.amountAtomic);
+}
+
+/** The same amount, for display. */
+export function jobBudgetDisplay(chainId: number): string {
+  return chainId === ERC8183.chainId ? ERC8183.amountDisplay : ERC8183_TESTNET.amountDisplay;
+}
+
+/**
+ * The category task each Agent is asked to perform.
+ *
+ * Derived from `docs/advantage/tasks.json` rather than written here, because
+ * the Agent Advantage Report times a human against the same wording. Keeping
+ * one string means the comparison cannot quietly drift into two different
+ * questions, which is the failure mode that would make the report worthless.
+ */
+export const CANARY_TASKS: Record<string, string> = Object.fromEntries(
+  advantageTasks.tasks.map((task) => [task.id, task.prompt]),
+);
 
 export type ProviderCall = {
   step: number;

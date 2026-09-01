@@ -1,0 +1,24 @@
+{
+  "taskId": "304493",
+  "side": "manual",
+  "prompt": "Rank current Venus supply yields for USDT on BNB Chain, include net APY, gas break-even and source block. Do not move funds.",
+  "startedAt": "2026-09-01T03:00:54.826Z",
+  "finishedAt": "2026-09-01T03:10:03.153Z",
+  "elapsedSeconds": 548,
+  "cost": {
+    "onchain": null,
+    "operatorSeconds": 548,
+    "operatorRateUsdPerHour": 60,
+    "totalUsd": 9.13
+  },
+  "outputPath": "docs/advantage/outputs/304493.manual.md",
+  "rubric": {
+    "answers_the_ask": true,
+    "numbers_sourced": true,
+    "assumptions_stated": true,
+    "risks_named": true,
+    "reproducible": true
+  },
+  "notes": "blocks-per-year is derived from the observed 0.45s block time and stated, so a reader who disagrees with it can recompute; the gas break-even is the finding, and it is about holding period rather than size",
+  "scoredAt": "2026-09-01T03:10:28.429Z"
+}

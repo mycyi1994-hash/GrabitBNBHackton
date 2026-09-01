@@ -177,6 +177,15 @@ function StrategyResultCard({ result, preview = false }: { result: StrategyResul
   );
 }
 
+/** The buyer's five calls, named before a quote exists to fill in their targets. */
+const PLACEHOLDER_CALLS: ProviderCall[] = [
+  'Create the job',
+  'Bind dispute policy',
+  'Set the budget',
+  'Approve exact test $U',
+  'Fund the escrow',
+].map((what, index) => ({ step: index + 1, what, to: '', data: null }));
+
 export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
   const wallet = useBscWallet();
   const [task, setTask] = useState(defaultTask);
@@ -666,14 +675,20 @@ export function TestnetHireConsole({ tokenId, agentName, defaultTask }: Props) {
           <span>Each click opens exactly one Testnet wallet confirmation.</span>
         </div>
         <div className="transaction-step-list">
-          {(plan?.calls || []).map((call: ProviderCall, index: number) => {
+          {/* Before a plan is quoted there is nothing to enumerate, and an empty
+              list left this panel as a large blank. Show the five steps that are
+              coming, greyed out, so the panel says what will happen. */}
+          {(plan?.calls || PLACEHOLDER_CALLS).map((call: ProviderCall, index: number) => {
             const runtime = steps[index] || { status: 'idle' as const };
             return (
-              <article className={`transaction-step is-${runtime.status}`} key={call.step}>
+              <article
+                className={`transaction-step is-${runtime.status}${plan ? '' : ' is-placeholder'}`}
+                key={call.step}
+              >
                 <div className="transaction-step-index">{String(call.step).padStart(2, '0')}</div>
                 <div className="transaction-step-copy">
                   <strong>{call.what}</strong>
-                  <small>to {compact(call.to)} | value 0</small>
+                  <small>{call.to ? `to ${compact(call.to)} | value 0` : 'awaiting a verified quote'}</small>
                   {runtime.txHash ? (
                     <a href={`${CONFIG.explorerUrl}/tx/${runtime.txHash}`} target="_blank" rel="noreferrer">
                       {compact(runtime.txHash)} OPEN

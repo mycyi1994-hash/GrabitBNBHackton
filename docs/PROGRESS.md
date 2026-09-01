@@ -1,6 +1,6 @@
 # Grabit delivery progress
 
-Last updated: **2026-08-30 02:52 UTC**
+Last updated: **2026-08-31 15:10 UTC**
 
 ## Overall: 4 / 6 complete
 
@@ -10,7 +10,7 @@ Last updated: **2026-08-30 02:52 UTC**
 | 2 | Four-category live Agent discovery and preflight | COMPLETE | Four chain-56 identities, reachable A2A, four accepted negotiations |
 | 3 | Replace mock UI with evidence-backed data | COMPLETE | Shared source model, evidence board, verification dashboard, locked execution gate |
 | 4 | Real ERC-8183 Hire and result | IN PROGRESS · 2 / 5 | Mainnet contracts and live quote verified; guarded five-signature console built; no funded Grabit Job |
-| 5 | One-screen Store, Leaderboard and Active Agents | COMPLETE | Main command center embeds all three surfaces with anchor navigation and one action per Agent |
+| 5 | One-screen Store, Leaderboard and Active Agents | COMPLETE | Leaderboard and Active Agents restored into the store workspace with AGENTS / LEADERBOARD / ACTIVE anchors; readiness and the next action now render on first paint |
 | 6 | QA, public deployment and submission | PENDING | Anonymous access and release tests not recorded |
 
 Completion means the planned step produced its internal deliverable. It does not mean the submission is ready.
@@ -33,7 +33,13 @@ Completion means the planned step produced its internal deliverable. It does not
 | Live quote and call allowlist checks | 21 / 21 |
 | Sequential wallet execution console | 1 / 1 |
 | Evidence-backed production performance values | 0 / required set |
+| Discovered-but-ineligible tier published | 7 identities across 4 categories |
+| Licence selected | Apache-2.0 |
 | Silent mock fallback removed | 1 / 1 |
+| Altana session scope built (allowlist, cap, expiry) | 1 / 1 |
+| Altana session registered in public KeyStore | CODE COMPLETE · UNEXECUTED |
+| Altana session-signed onchain transaction | 0 / 1 minimum |
+| In-product permission view and revoke control | 1 / 1 |
 | Single-screen primary flow implemented | 1 / 1 |
 | Anonymous production access recorded | 0 / 1 |
 | Repeated release demo passed | 0 / 10 |
@@ -65,15 +71,39 @@ The known provider self-test Job `#56657` is `SUBMITTED`, but its client is the 
 
 The Testnet screen now builds its own signed chain-97 plan. It never rewrites the external Agent's chain-56 quote. Every client call is separately confirmed; provider submission and settlement are separate user-triggered actions.
 
-## Stage 5 completion: 4 / 4
+## Stage 5 status: 4 / 4 — reopened and restored 2026-08-31
 
-1. Dashboard readiness and next action visible in the first workspace: COMPLETE.
+The observatory redesign (commits `95ade5b`..`8096b11`) had replaced the single
+workspace this stage delivered. Restored on 2026-08-31 without reverting the
+redesign, and verified in Chromium against a production build:
+
+1. Dashboard readiness and next action visible in the first workspace: COMPLETE — the landing carries an identity / endpoint / delivered / settled readiness strip and the next action on first paint, and Active Agents carries the live version inside the workspace.
 2. Four-category Agent Store embedded in the same screen: COMPLETE.
-3. Evidence-only Leaderboard and Active Agents state embedded below it: COMPLETE.
-4. Primary navigation reduced to three anchor tabs with one detail action per Agent: COMPLETE.
+3. Evidence-only Leaderboard and Active Agents embedded below it: COMPLETE — both render inline; the gate summary, four-category table and provider-concentration warning moved in from /compare.
+4. Primary navigation reduced to three anchor tabs: COMPLETE — AGENTS / LEADERBOARD / ACTIVE scroll within the workspace and no longer leave the page.
+
+`/dashboard` and `/compare` still resolve for direct links.
+
+Item 1 was closed by putting the readiness numbers on the landing itself rather
+than by making the store the first paint, which would have cost the hero the
+redesign introduced.
+
+## Altana session gate: 4 / 5
+
+The published prize gate requires live on-chain transactions through an Altana
+session key. See `docs/ALTANA_SESSION.md`.
+
+1. Agent holds its own Altana wallet: COMPLETE — smart account at the admin signer's address.
+2. Session carries a call allowlist, spend cap and expiry: COMPLETE — eight ERC-8183 signatures, 1.00 $U per day, one-hour expiry.
+3. Session registered in the public KeyStore: CODE COMPLETE — `register: true` on every grant; no grant has run.
+4. User-facing permission view and revoke: COMPLETE — reads the enforced expiry from the account and verifiability from KeyStore.
+5. A real transaction signed by the session key: PENDING — requires a tBNB-funded chain-97 agent wallet.
 
 ## Immediate next work
 
+0. Fund the Altana agent wallet with tBNB, grant the session, and record the
+   grant, session-signed hire and revoke transaction hashes. This is the only
+   outstanding item on the prize gate.
 1. Open Testnet mode and connect the intended client wallet.
 2. Obtain tBNB and at least 0.10 test $U, then pass all five wallet checks.
 3. Send faucet tBNB to the registered provider public address.

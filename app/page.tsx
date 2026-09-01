@@ -1,5 +1,6 @@
 import { SlashHome } from '@/app/slash-home';
 import { loadMarketplaceRecords } from '@/lib/marketplace-data';
+import { discoveredCandidates, verificationGate } from '@/lib/marketplace-candidates';
 
 const categoryCode: Record<string, string> = {
   Rebalancing: 'REBALANCE',
@@ -21,7 +22,27 @@ export default async function Home() {
     feedbacks: agent.feedbacks,
     validations: agent.validations,
     endpointVerified: agent.endpointVerified,
+    observedAt: agent.observedAt,
   }));
 
-  return <SlashHome agents={agents} />;
+  // How many of the surfaced identities share one provider wallet. The
+  // leaderboard states this instead of letting four cards imply four suppliers.
+  const owners = new Set(records.map((agent) => agent.owner.toLowerCase()));
+  const ownerConcentration = owners.size === 1 ? records.length : 0;
+
+  return (
+    <SlashHome
+      agents={agents}
+      gate={{ ...verificationGate }}
+      ownerConcentration={ownerConcentration}
+      discovered={discoveredCandidates.map((candidate) => ({
+        category: candidate.category,
+        tokenId: candidate.tokenId,
+        name: candidate.name,
+        level: candidate.level,
+        blocker: candidate.blocker,
+        observedAt: candidate.observedAt,
+      }))}
+    />
+  );
 }
