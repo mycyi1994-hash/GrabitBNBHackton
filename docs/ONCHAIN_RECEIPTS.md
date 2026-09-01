@@ -29,7 +29,41 @@ The key was already carried by KeyStore from an earlier grant, so this one
 re-authorised it rather than publishing it a second time — registration in
 KeyStore is permanent, validity is not. See `docs/ALTANA_SESSION.md`.
 
-## 2. Session-signed hires
+## 2. Session revoke
+
+| | |
+| --- | --- |
+| Transaction | [`0xa4869432164f8b7dbb6f23321b5b161f9011d12e18759beff0b8d884d7454c25`](https://testnet.bscscan.com/tx/0xa4869432164f8b7dbb6f23321b5b161f9011d12e18759beff0b8d884d7454c25) |
+| Status | Success |
+| Block | 128,415,050 |
+| Timestamp | 2026-09-01 03:27:55 UTC |
+| Fee | 0.0000096811 BNB |
+| Logs | 2 |
+
+Revoking is an ordinary action, not a failure state, and it takes effect on the
+next block. This one ended the session granted above so it could be re-granted
+with a permission it was missing.
+
+## 3. Session re-grant, with the fee allowance
+
+| | |
+| --- | --- |
+| Transaction | [`0xdd7a189e00aa0d8260fa5dcd9e2cd0a75b18756951af8c5e8e8473a3cd358efa`](https://testnet.bscscan.com/tx/0xdd7a189e00aa0d8260fa5dcd9e2cd0a75b18756951af8c5e8e8473a3cd358efa) |
+| Status | Success |
+| Block | 128,415,080 |
+| Timestamp | 2026-09-01 03:28:08 UTC |
+| Expiry | 2026-09-01 04:28:08 UTC |
+| Paid by the agent wallet | 0.0001813312 BNB |
+| Fee | 0.0000805189 BNB |
+| Logs | **13** |
+
+Thirteen logs against the first grant's twelve. The extra one is the native-token
+spend allowance the session was missing, which is why the first hire attempt was
+rejected with `NoSpendPermissions` before it reached any ERC-8183 call. The
+count is the on-chain evidence that the permission was actually written rather
+than merely passed to the SDK.
+
+## 4. Session-signed hires
 
 Pending.
 
