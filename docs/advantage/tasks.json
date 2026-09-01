@@ -2,12 +2,17 @@
   "note": "Single source of truth for the Agent Advantage Report. lib/erc8183.ts derives CANARY_TASKS from this file, so the prompt the product sends an agent and the prompt a human is timed against are provably the same string.",
   "costModel": {
     "operatorRateUsdPerHour": 60,
-    "rationale": "A mid-level DeFi analyst rate. It is stated rather than hidden because the manual side has no out-of-pocket cost, only labour, and a comparison that prices labour at zero would flatter the agent."
+    "rationale": "A mid-level DeFi analyst rate. It is stated rather than assumed because a comparison that prices human labour at zero flatters the agent by construction."
   },
   "manualBaseline": {
     "description": "An operator working from BscScan with a general-purpose AI assistant.",
     "rationale": "This is the realistic alternative to hiring an agent in 2026, and it is a harder baseline than an operator working alone, so any advantage the marketplace shows is measured against the stronger comparison. It is still 'without an agent hired through this marketplace', which is what the requirement asks. Naming it matters: a reader who assumed 'manual' meant unaided would be reading the wrong comparison.",
     "caveat": "Task 302258 is the exception on timing. Its method was derived in conversation before the clock was started, so its recorded time covers verification and write-up only and understates the manual cost. That error runs against the agent, not for it. Every later task was timed from before the first question was asked."
+  },
+  "networks": {
+    "analysis": "BNB Smart Chain mainnet (chain 56)",
+    "settlement": "BNB Smart Chain testnet (chain 97)",
+    "rationale": "The tasks ask for live market state \u2014 pool prices, Venus collateral factors, real positions \u2014 and that state only exists on mainnet. A testnet pool with no real liquidity would make every number meaningless. Payment is a different question: ERC-8183 and the Altana session key are exercised on chain 97, where the $U token is a valueless test token, because no part of this demonstration should move real funds. So each task reads mainnet and escrows on testnet, and both sides of the comparison read the same mainnet state."
   },
   "rubric": [
     {

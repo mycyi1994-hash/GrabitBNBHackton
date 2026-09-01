@@ -22,7 +22,7 @@
 import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
 import { mkdirSync, readFileSync, rmSync, writeFileSync, existsSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -76,6 +76,25 @@ function task(id) {
 
 const runPath = (id, side) => join(RUNS, `${id}.${side}.json`);
 const outputPath = (id, side) => join(OUTPUTS, `${id}.${side}.md`);
+
+/**
+ * Repo-relative, forward-slashed, on every platform.
+ *
+ * These strings are stored in the run files and then printed into the report as
+ * markdown links, so they have to be portable. Stripping `ROOT + '/'` by hand
+ * silently did nothing on Windows, where the separator is a backslash: the full
+ * local path was stored instead, `score` then reported the answer file missing,
+ * and `render` would have published `D:\hackton\...` as a link.
+ */
+const rel = (abs) => relative(ROOT, abs).split(sep).join('/');
+
+/** Normalises a stored path, repairing absolute ones written before the fix. */
+function storedPath(value) {
+  if (!value) return value;
+  const forward = value.split('\\').join('/').replace(/\/{2,}/g, '/');
+  const marker = forward.indexOf('docs/advantage/');
+  return marker === -1 ? forward : forward.slice(marker);
+}
 
 function loadRun(id, side) {
   const path = runPath(id, side);
@@ -133,10 +152,10 @@ async function manual(action, id) {
     if (!existsSync(out)) {
       mkdirSync(OUTPUTS, { recursive: true });
       writeFileSync(out, template(entry));
-      console.log(`\nA skeleton is waiting at ${out.replace(ROOT + '/', '')} — replace every`);
+      console.log(`\nA skeleton is waiting at ${out} — replace every`);
       console.log(`"${TODO}" with your own work.`);
     } else {
-      console.log(`\nWrite your answer into ${out.replace(ROOT + '/', '')}`);
+      console.log(`\nWrite your answer into ${out}`);
     }
     console.log(`\nWhen done:   node scripts/advantage-report.mjs manual stop ${entry.id}`);
     console.log(`Mis-started: node scripts/advantage-report.mjs manual cancel ${entry.id}\n`);
@@ -169,11 +188,11 @@ async function manual(action, id) {
   const left = written.split(TODO).length - 1;
   if (left > 0) {
     throw new Error(
-      `${out.replace(ROOT + '/', '')} still has ${left} unfilled "${TODO}" marker(s). Fill them in, or cancel the clock with: node scripts/advantage-report.mjs manual cancel ${entry.id}`,
+      `${out} still has ${left} unfilled "${TODO}" marker(s). Fill them in, or cancel the clock with: node scripts/advantage-report.mjs manual cancel ${entry.id}`,
     );
   }
   if (written.trim().length < 120) {
-    throw new Error(`${out.replace(ROOT + '/', '')} is too short to be an answer. Write the task up before stopping the timer.`);
+    throw new Error(`${out} is too short to be an answer. Write the task up before stopping the timer.`);
   }
 
   const finishedAt = new Date();
@@ -188,7 +207,7 @@ async function manual(action, id) {
       operatorRateUsdPerHour: SPEC.costModel.operatorRateUsdPerHour,
       totalUsd: Number(operatorCostUsd(elapsedSeconds).toFixed(2)),
     },
-    outputPath: out.replace(ROOT + '/', ''),
+    outputPath: rel(out),
   });
   console.log(`\nManual ${entry.id} recorded: ${elapsedSeconds}s, $${operatorCostUsd(elapsedSeconds).toFixed(2)} of operator time.`);
   console.log(`Next: node scripts/advantage-report.mjs score ${entry.id} manual\n`);
@@ -260,7 +279,7 @@ async function agent(id, base) {
       operatorRateUsdPerHour: SPEC.costModel.operatorRateUsdPerHour,
       totalUsd: 0,
     },
-    outputPath: outputPath(entry.id, 'agent').replace(ROOT + '/', ''),
+    outputPath: rel(outputPath(entry.id, 'agent')),
   });
 
   console.log(`Agent ${entry.id} recorded: ${elapsedSeconds}s, Job ${payload.job?.id ?? '?'}, ${payload.job?.budgetDisplay ?? '?'} escrowed.`);
@@ -270,33 +289,53 @@ async function agent(id, base) {
 
 const score = (run) => SPEC.rubric.filter((c) => run.rubric?.[c.id]).length;
 
+/** A markdown link to an output file, relative to the report's own directory. */
+function link(stored) {
+  const path = storedPath(stored);
+  return `[\`${path}\`](${path.replace(/^docs\//, '')})`;
+}
+
+/**
+ * Accepts the Hangul characters a Korean IME produces for the y and n keys.
+ * Scoring is the one place the operator has to type, and being told to answer
+ * "y" while the keyboard emits "ㅛ" is a loop with no visible way out.
+ */
+function readYesNo(raw) {
+  const value = raw.trim().toLowerCase();
+  if (['y', 'yes', 'ㅛ'].includes(value)) return true;
+  if (['n', 'no', 'ㅜ'].includes(value)) return false;
+  return null;
+}
+
 async function scoreRun(id, side) {
   const entry = task(id);
   if (!SIDES.includes(side)) throw new Error(`side must be one of ${SIDES.join(', ')}.`);
   const run = loadRun(entry.id, side);
   if (!run?.finishedAt) throw new Error(`No finished ${side} run for ${entry.id}.`);
 
-  const out = join(ROOT, run.outputPath);
+  const stored = storedPath(run.outputPath);
+  const out = resolve(ROOT, stored);
   console.log(`\nScoring ${entry.id} (${entry.category}) — ${side} side.`);
-  console.log(`Read ${run.outputPath} before answering. Same five questions for both sides.\n`);
+  console.log(`Read ${stored} before answering. Same five questions for both sides.\n`);
 
   const rl = createInterface({ input: stdin, output: stdout });
   const rubric = {};
   try {
     for (const criterion of SPEC.rubric) {
-      let answer = '';
-      while (!['y', 'n'].includes(answer)) {
-        answer = (await rl.question(`  ${criterion.text}  [y/n] `)).trim().toLowerCase();
+      let answer = null;
+      while (answer === null) {
+        answer = readYesNo(await rl.question(`  ${criterion.text}  [y/n] `));
+        if (answer === null) console.log('    Answer y or n.');
       }
-      rubric[criterion.id] = answer === 'y';
+      rubric[criterion.id] = answer;
     }
     const notes = (await rl.question('\n  One line on what decided it: ')).trim();
-    saveRun({ ...run, rubric, notes, scoredAt: new Date().toISOString() });
+    saveRun({ ...run, outputPath: stored, rubric, notes, scoredAt: new Date().toISOString() });
     console.log(`\n  ${entry.id} ${side}: ${SPEC.rubric.filter((c) => rubric[c.id]).length}/5\n`);
   } finally {
     rl.close();
   }
-  if (!existsSync(out)) console.warn(`  Note: ${run.outputPath} is missing.`);
+  if (!existsSync(out)) console.warn(`  Note: ${stored} is missing.`);
 }
 
 function render() {
@@ -337,8 +376,10 @@ function render() {
     `- **Cost** on the agent side is what the Job escrowed on chain, with the transaction linked.`,
     `  On the manual side there is no out-of-pocket cost, only labour, priced at`,
     `  $${SPEC.costModel.operatorRateUsdPerHour}/hour. ${SPEC.costModel.rationale}`,
-    `- **The manual side** is ${SPEC.manualBaseline.description.replace(/^An? /, 'a ')}`,
+    `- **The manual side** is ${SPEC.manualBaseline.description.replace(/^A /, 'a ').replace(/^An /, 'an ')}`,
     `  ${SPEC.manualBaseline.rationale}`,
+    `- **Networks.** Analysis reads ${SPEC.networks.analysis}; settlement runs on`,
+    `  ${SPEC.networks.settlement}. ${SPEC.networks.rationale}`,
     `- **Output quality** is five binary criteria, fixed before any run and applied`,
     `  identically to both sides:`,
     '',
@@ -375,7 +416,7 @@ function render() {
       `| Time | ${manual.elapsedSeconds}s | ${agent.elapsedSeconds}s |`,
       `| Cost | $${manual.cost.totalUsd.toFixed(2)} of operator time | ${agent.cost.onchain?.budgetDisplay ?? 'n/a'} escrowed |`,
       `| Quality | ${score(manual)}/5 | ${score(agent)}/5 |`,
-      `| Output | [\`${manual.outputPath}\`](${manual.outputPath.replace('docs/', '')}) | [\`${agent.outputPath}\`](${agent.outputPath.replace('docs/', '')}) |`,
+      `| Output | ${link(manual.outputPath)} | ${link(agent.outputPath)} |`,
       '',
     );
     if (agent.cost.onchain?.explorerUrl) {
@@ -396,7 +437,7 @@ function render() {
   }
 
   writeFileSync(REPORT, `${lines.join('\n')}\n`);
-  console.log(`\nWrote ${REPORT.replace(ROOT + '/', '')} from ${rows.length} tasks.\n`);
+  console.log(`\nWrote ${REPORT} from ${rows.length} tasks.\n`);
 }
 
 const [command, ...rest] = process.argv.slice(2);
