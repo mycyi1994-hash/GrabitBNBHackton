@@ -12,7 +12,6 @@
  * daily ceiling. The two were briefly the same number, which hid the fact that
  * passing the ceiling here would sink a whole day's allowance into one job.
  */
-import { hireErc8183Agent } from '@altananetwork/sdk';
 import {
   DEFAULT_ALTANA_CHAIN_ID,
   altanaConfigurationError,
@@ -22,6 +21,7 @@ import {
   resolveAgentSession,
 } from '@/lib/altana';
 import { CANARY_TASKS, jobBudgetAtomic, jobBudgetDisplay } from '@/lib/erc8183';
+import { hireWithVerifiedPolicy } from '@/lib/erc8183-hire';
 import { marketplaceCandidates } from '@/lib/marketplace-candidates';
 import { candidateEvidence, HIRE_OPENS_AT, ladderState } from '@/lib/verification-ladder';
 import { getTestnetProviderAccount } from '@/lib/testnet-reference-provider';
@@ -166,7 +166,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = await hireErc8183Agent(
+    // Not hireErc8183Agent: it hardcodes an OptimisticPolicy address the
+    // chain-97 router does not whitelist, so every hire through it reverts at
+    // registerJob with PolicyNotWhitelisted(). See lib/erc8183-hire.ts.
+    const result = await hireWithVerifiedPolicy(
       session,
       {
         provider,
@@ -194,6 +197,7 @@ export async function POST(request: Request) {
           budgetDisplay: jobBudgetDisplay(chainId),
           expiredAt: Number(result.expiredAt),
         },
+        policy: result.policy,
         transaction: {
           callsId: result.callsId,
           status: result.status,
