@@ -8,8 +8,9 @@
  * estimated, so this script measures them:
  *
  *   node scripts/advantage-report.mjs list
- *   node scripts/advantage-report.mjs manual start <taskId>
- *   node scripts/advantage-report.mjs manual stop  <taskId>
+ *   node scripts/advantage-report.mjs manual start  <taskId>
+ *   node scripts/advantage-report.mjs manual stop   <taskId>
+ *   node scripts/advantage-report.mjs manual cancel <taskId>
  *   node scripts/advantage-report.mjs agent <taskId> [--base http://localhost:3000]
  *   node scripts/advantage-report.mjs score <taskId> <manual|agent>
  *   node scripts/advantage-report.mjs render
@@ -20,7 +21,7 @@
  */
 import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -30,6 +31,40 @@ const RUNS = join(ROOT, 'docs/advantage/runs');
 const OUTPUTS = join(ROOT, 'docs/advantage/outputs');
 const REPORT = join(ROOT, 'docs/AGENT_ADVANTAGE_REPORT.md');
 const SIDES = ['manual', 'agent'];
+const TODO = '<!-- fill this in -->';
+
+/**
+ * The skeleton `manual start` drops on disk, so the operator is filling in a
+ * page rather than facing a blank one. It asks for exactly what the task
+ * prompt asks for — the agent receives the same instruction in the same
+ * words — so it sets expectations for both sides equally rather than
+ * advantaging the human. `manual stop` refuses while any marker survives.
+ */
+function template(entry) {
+  return [
+    `# ${entry.category} — manual`,
+    '',
+    `Task: ${entry.prompt}`,
+    '',
+    '## Source',
+    '',
+    `Block height: ${TODO}`,
+    `Read from: ${TODO}`,
+    '',
+    '## Answer',
+    '',
+    TODO,
+    '',
+    '## Assumptions',
+    '',
+    TODO,
+    '',
+    '## Risks',
+    '',
+    TODO,
+    '',
+  ].join('\n');
+}
 
 function task(id) {
   const found = SPEC.tasks.find((entry) => entry.id === String(id));
@@ -63,8 +98,14 @@ function list() {
   for (const entry of SPEC.tasks) {
     const manual = loadRun(entry.id, 'manual');
     const agent = loadRun(entry.id, 'agent');
-    const mark = (run) =>
-      !run ? 'not run' : run.finishedAt ? `${run.elapsedSeconds}s${run.rubric ? ` · ${score(run)}/5` : ' · unscored'}` : 'running';
+    const mark = (run) => {
+      if (!run) return 'not run';
+      if (!run.finishedAt) {
+        const mins = Math.round((Date.now() - new Date(run.startedAt)) / 60000);
+        return `CLOCK RUNNING ${mins}m`;
+      }
+      return `${run.elapsedSeconds}s${run.rubric ? ` · ${score(run)}/5` : ' · unscored'}`;
+    };
     console.log(`  ${entry.id}  ${entry.category.padEnd(26)} [${entry.domain}]`);
     console.log(`          manual: ${mark(manual).padEnd(20)} agent: ${mark(agent)}`);
   }
@@ -88,20 +129,51 @@ async function manual(action, id) {
     console.log(`  ${entry.prompt}\n`);
     console.log('Procedure:');
     entry.manualProcedure.forEach((step, i) => console.log(`  ${i + 1}. ${step}`));
-    console.log(`\nWrite your answer into ${outputPath(entry.id, 'manual').replace(ROOT + '/', '')}`);
-    console.log(`Then: node scripts/advantage-report.mjs manual stop ${entry.id}\n`);
-    console.log(`Started at ${run.startedAt}. Do not close this to keep the timer — it is on disk.\n`);
+    const out = outputPath(entry.id, 'manual');
+    if (!existsSync(out)) {
+      mkdirSync(OUTPUTS, { recursive: true });
+      writeFileSync(out, template(entry));
+      console.log(`\nA skeleton is waiting at ${out.replace(ROOT + '/', '')} — replace every`);
+      console.log(`"${TODO}" with your own work.`);
+    } else {
+      console.log(`\nWrite your answer into ${out.replace(ROOT + '/', '')}`);
+    }
+    console.log(`\nWhen done:   node scripts/advantage-report.mjs manual stop ${entry.id}`);
+    console.log(`Mis-started: node scripts/advantage-report.mjs manual cancel ${entry.id}\n`);
+    console.log(`Clock started ${run.startedAt}. It runs on disk, so closing this window`);
+    console.log(`does not stop it — cancel if you are not actually working on the task.\n`);
     return;
   }
-  if (action !== 'stop') throw new Error('manual takes "start" or "stop".');
+  if (action === 'cancel') {
+    const pending = loadRun(entry.id, 'manual');
+    if (!pending) throw new Error(`No manual run started for ${entry.id}.`);
+    if (pending.finishedAt) {
+      throw new Error(
+        `Manual run for ${entry.id} already stopped at ${pending.finishedAt}. Cancel only discards a running clock; delete the run file by hand to redo a finished one.`,
+      );
+    }
+    rmSync(runPath(entry.id, 'manual'));
+    const elapsed = Math.round((Date.now() - new Date(pending.startedAt)) / 1000);
+    console.log(`\nDiscarded the ${elapsed}s clock on ${entry.id}. Your answer file was left alone.`);
+    console.log(`Start again when you are actually ready.\n`);
+    return;
+  }
+  if (action !== 'stop') throw new Error('manual takes "start", "stop" or "cancel".');
 
   const run = loadRun(entry.id, 'manual');
   if (!run) throw new Error(`No manual run started for ${entry.id}.`);
   if (run.finishedAt) throw new Error(`Manual run for ${entry.id} already stopped at ${run.finishedAt}.`);
 
   const out = outputPath(entry.id, 'manual');
-  if (!existsSync(out) || readFileSync(out, 'utf8').trim().length < 40) {
-    throw new Error(`Write your answer into ${out.replace(ROOT + '/', '')} before stopping the timer.`);
+  const written = existsSync(out) ? readFileSync(out, 'utf8') : '';
+  const left = written.split(TODO).length - 1;
+  if (left > 0) {
+    throw new Error(
+      `${out.replace(ROOT + '/', '')} still has ${left} unfilled "${TODO}" marker(s). Fill them in, or cancel the clock with: node scripts/advantage-report.mjs manual cancel ${entry.id}`,
+    );
+  }
+  if (written.trim().length < 120) {
+    throw new Error(`${out.replace(ROOT + '/', '')} is too short to be an answer. Write the task up before stopping the timer.`);
   }
 
   const finishedAt = new Date();

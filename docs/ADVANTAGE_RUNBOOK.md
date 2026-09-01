@@ -43,10 +43,14 @@ and the clock was not started by whoever wanted a particular answer. So:
 ```
 npm run advantage list                     # what is done and what is left
 
-npm run advantage manual start 302258      # prints the prompt and the procedure
-#   ... do the task by hand, write the answer into
-#   docs/advantage/outputs/302258.manual.md ...
+npm run advantage manual start 302258      # prints the prompt and the procedure,
+                                           # and drops a skeleton answer file
+#   ... do the task by hand, replacing every "<!-- fill this in -->" in
+#   docs/advantage/outputs/302258.manual.md with your own work ...
 npm run advantage manual stop 302258       # stops the clock, prices the labour
+
+npm run advantage manual cancel 302258     # discards a clock you started by
+                                           # mistake; your answer file is kept
 
 npm run advantage agent 302258             # hires through Grabit, times it,
                                            # captures the deliverable and the
@@ -58,6 +62,16 @@ npm run advantage score 302258 agent
 
 Do the manual side first. Doing it after you have seen the agent's answer is
 not a manual run, it is a transcription, and the timing would be meaningless.
+
+**The clock lives on disk, not in the terminal.** Closing the window does not
+stop it, and `list` shows `CLOCK RUNNING <n>m` for anything still going. If you
+started a task and then walked away, `manual cancel` discards that clock rather
+than letting the idle minutes land in the report as work.
+
+`manual start` writes a skeleton with the headings the task asks for. It asks
+for exactly what the prompt asks for, and the agent receives that same prompt
+in the same words, so it sets the same expectations for both sides rather than
+advantaging the human. `manual stop` refuses while any marker is unfilled.
 
 ## Producing the report
 
