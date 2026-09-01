@@ -108,8 +108,17 @@ export function AltanaSessionPanel({ chainId = 97 }: { chainId?: number }) {
         const payload = (await response.json()) as {
           error?: string;
           reason?: string;
+          state?: string;
           transactionUrl?: string | null;
         };
+        // Grant and revoke spend the wallet, so they are operator-gated. On the
+        // public deployment that gate is always closed, and a raw 403 would read
+        // as a broken button rather than as the design. Say which it is.
+        if (payload.state === 'LOCKED' || payload.state === 'FORBIDDEN') {
+          throw new Error(
+            'This deployment is read-only: granting and revoking spend the agent wallet, so they run from the operator\u2019s machine. The receipts for the grants, revokes and hires already made are in docs/ONCHAIN_RECEIPTS.md, and the scope shown above is read live from the chain either way.',
+          );
+        }
         if (!response.ok) throw new Error(payload.error || payload.reason || `The ${action} failed.`);
         setNotice(
           payload.transactionUrl

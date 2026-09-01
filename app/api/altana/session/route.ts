@@ -8,6 +8,7 @@
  * Following the repository data rules: when the server-only keys are absent the
  * route answers UNAVAILABLE with the reason. It never invents a session.
  */
+import { operatorGuard } from '@/lib/operator-auth';
 import {
   DEFAULT_ALTANA_CHAIN_ID,
   SESSION_TTL_SECONDS,
@@ -149,6 +150,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const refusal = operatorGuard(request);
+  if (refusal) return refusal;
+
   let body: { action?: string; chainId?: number | string };
   try {
     body = (await request.json()) as typeof body;

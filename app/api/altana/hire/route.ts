@@ -12,6 +12,7 @@
  * daily ceiling. The two were briefly the same number, which hid the fact that
  * passing the ceiling here would sink a whole day's allowance into one job.
  */
+import { operatorGuard } from '@/lib/operator-auth';
 import {
   DEFAULT_ALTANA_CHAIN_ID,
   altanaConfigurationError,
@@ -51,6 +52,9 @@ function relayMessage(error: unknown, fallback: string) {
 type HireMode = 'canary' | 'marketplace';
 
 export async function POST(request: Request) {
+  const refusal = operatorGuard(request);
+  if (refusal) return refusal;
+
   let body: {
     registry?: string;
     chainId?: number | string;

@@ -32,6 +32,20 @@ const RUNS = join(ROOT, 'docs/advantage/runs');
 const OUTPUTS = join(ROOT, 'docs/advantage/outputs');
 const REPORT = join(ROOT, 'docs/AGENT_ADVANTAGE_REPORT.md');
 const SIDES = ['manual', 'agent'];
+
+/**
+ * The write routes are operator-gated, so the harness has to present the same
+ * token the server holds. Read from .env.local rather than the environment,
+ * because that is where the operator already keeps it and asking them to
+ * export it before every run is a step that will be forgotten.
+ */
+function operatorHeaders() {
+  const envFile = join(ROOT, '.env.local');
+  if (!existsSync(envFile)) return {};
+  const match = readFileSync(envFile, 'utf8').match(/^GRABIT_OPERATOR_TOKEN=(.+)$/m);
+  const token = match?.[1].trim();
+  return token ? { 'x-grabit-operator': token } : {};
+}
 const TODO = '<!-- fill this in -->';
 
 /**
@@ -226,7 +240,7 @@ async function agent(id, base) {
   try {
     response = await fetch(url, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', ...operatorHeaders() },
       body: JSON.stringify({ registry: entry.id, mode: 'canary' }),
     });
     payload = await response.json();
@@ -311,7 +325,7 @@ async function deliver(id, base) {
   const startedAt = new Date();
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', ...operatorHeaders() },
     body: JSON.stringify({ action: 'submit', jobId: Number(jobId) }),
   }).catch((error) => {
     throw new Error(`Could not reach ${url}. Is the dev server running? ${error.message}`);

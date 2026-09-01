@@ -181,6 +181,8 @@ function keys() {
   // so omitting it here left the whole hire path unreachable with a 503 that
   // only appeared at the moment of use.
   const providerKey = generatePrivateKey();
+  // Not a chain key — the shared secret every write route requires.
+  const operatorToken = generatePrivateKey().slice(2);
   const admin = privateKeyToAccount(adminKey);
   const session = privateKeyToAccount(sessionKey);
   const provider = privateKeyToAccount(providerKey);
@@ -190,6 +192,7 @@ function keys() {
   console.log(`GRABIT_ALTANA_ADMIN_PRIVATE_KEY=${adminKey}`);
   console.log(`GRABIT_ALTANA_SESSION_PRIVATE_KEY=${sessionKey}`);
   console.log(`GRABIT_TESTNET_PROVIDER_PRIVATE_KEY=${providerKey}`);
+  console.log(`GRABIT_OPERATOR_TOKEN=${operatorToken}`);
   console.log(`\nAgent wallet address — this is the one you fund: ${admin.address}`);
   console.log(`Session key address (no funding needed):        ${session.address}`);
   console.log(`Provider address (no funding needed):          ${provider.address}`);
@@ -257,7 +260,14 @@ async function check() {
   const providerKey = env.GRABIT_TESTNET_PROVIDER_PRIVATE_KEY;
   const providerOk = /^0x[0-9a-fA-F]{64}$/.test(providerKey || '');
 
+  const operatorToken = env.GRABIT_OPERATOR_TOKEN;
+
   const rows = [
+    ['operator token set', Boolean(operatorToken),
+      operatorToken
+        ? 'every write route is gated on it'
+        : 'GRABIT_OPERATOR_TOKEN missing from .env.local — every write route refuses',
+      ''],
     ['testnet provider key set', providerOk,
       providerOk
         ? `provider ${privateKeyToAccount(providerKey).address}`

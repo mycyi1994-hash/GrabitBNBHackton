@@ -30,15 +30,34 @@ submission form.
 
 ## 3. Set the server-only secrets
 
-Three keys must never be build-time variables, never appear in the client
-bundle, and never be committed. Set them as Worker secrets, which are encrypted
-at rest and injected at runtime:
+Set these as Worker secrets, which are encrypted at rest and injected at
+runtime. None may be a build-time variable, appear in the client bundle, or be
+committed:
 
 ```bash
 npx wrangler secret put GRABIT_ALTANA_ADMIN_PRIVATE_KEY   -c dist/server/wrangler.json
 npx wrangler secret put GRABIT_ALTANA_SESSION_PRIVATE_KEY -c dist/server/wrangler.json
 npx wrangler secret put GRABIT_TESTNET_PROVIDER_PRIVATE_KEY -c dist/server/wrangler.json
 ```
+
+### Leave the operator token unset in production
+
+`GRABIT_OPERATOR_TOKEN` gates every write route — grant, revoke, hire, provider
+submission. All of them spend the agent wallet's gas and the session's budget,
+and none of them is authenticated by anything else, so an ungated public deploy
+lets any visitor drain the wallet, burn the day's $U ceiling, and leave judges
+looking at a dead demo.
+
+Do not set it on the public Worker. With it unset every write route answers
+`LOCKED` and refuses, which is the correct posture for a public read-only
+demonstration: discovery, agent status, readiness and the free strategy preview
+all still work, and the authority screen still reads the live session scope off
+the chain. The proof that grants, revokes and hires actually ran is
+`docs/ONCHAIN_RECEIPTS.md`, and those transactions are verifiable by anyone
+without this site being able to make more.
+
+Set it in `.env.local` on the operator's machine, where the harness reads it and
+sends it as `x-grabit-operator`.
 
 Each prompts for the value on stdin. Nothing is echoed and nothing is written to
 a file. Use Testnet-only keys — the same ones from `.env.local`, never a
