@@ -341,8 +341,22 @@ export type SessionAuthority = {
   walletAddress: Address;
   sessionPublicKey: Hex;
   keyId: Hex;
-  /** True when KeyStore holds this key as registered, unexpired and unrevoked. */
+  /**
+   * `isValidKey`: KeyStore holds this key AND it is unexpired and unrevoked.
+   * This is what a third-party verifier checks before trusting a signature.
+   */
   active: boolean;
+  /**
+   * `getKeys` lists this key id, regardless of whether it is still valid.
+   *
+   * Registration and validity are separate facts and this pair was previously
+   * collapsed into one. Registration is permanent and happens once; validity
+   * lapses at the grant's expiry. A key that was granted an hour ago is
+   * registered and not active — which is why re-granting must not re-register,
+   * and why a screen reading only `active` reports "not registered" about a
+   * key the registry plainly holds.
+   */
+  registered: boolean;
   /** Key ids KeyStore currently lists for the wallet, session key included. */
   registeredKeyIds: readonly Hex[];
   keyStore: Address;
@@ -355,6 +369,10 @@ export type SessionAuthority = {
  * same `isValidKey` check a third-party verifier runs. Nothing here trusts
  * application state: if the grant never landed, or the key was revoked or has
  * expired, this returns active: false.
+ *
+ * It reports registration separately, because the two answer different
+ * questions: `registered` is whether the public registry carries this key at
+ * all, `active` is whether it may currently be used.
  */
 export async function readSessionAuthority(chainId: number): Promise<SessionAuthority> {
   const network = altanaNetwork(chainId);
@@ -384,6 +402,7 @@ export async function readSessionAuthority(chainId: number): Promise<SessionAuth
     sessionPublicKey,
     keyId,
     active,
+    registered: registeredKeyIds.some((id) => id.toLowerCase() === keyId.toLowerCase()),
     registeredKeyIds,
     keyStore: network.keyStore,
     keyStoreUrl: `${network.explorer}/address/${network.keyStore}`,

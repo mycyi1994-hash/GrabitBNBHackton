@@ -36,6 +36,7 @@ type SessionStatus = {
     secondsRemaining: number | null;
     expired: boolean;
     registeredInKeyStore: boolean;
+    validInKeyStore?: boolean;
     keyStoreUrl: string;
   };
   permissions?: {
@@ -174,11 +175,24 @@ export function AltanaSessionPanel({ chainId = 97 }: { chainId?: number }) {
 
         <article className="authority-card">
           <span>PUBLIC VERIFICATION</span>
-          <p className="authority-figure">{status?.session?.registeredInKeyStore ? 'Verifiable' : 'Not registered'}</p>
+          <p className="authority-figure">
+            {status?.session?.validInKeyStore
+              ? 'Verifiable'
+              : status?.session?.registeredInKeyStore
+                ? 'Published, not current'
+                : 'Not registered'}
+          </p>
           <p>
             Permissions are published to the Altana KeyStore, a registry anyone can read. You do not
             have to take our word for what this agent may do.
           </p>
+          {status?.session?.registeredInKeyStore && !status?.session?.validInKeyStore ? (
+            <p>
+              The registry carries this key from an earlier grant. Registration is permanent; what
+              lapsed is the grant behind it. A new grant makes it current again without publishing
+              it twice.
+            </p>
+          ) : null}
           {status?.session?.keyStoreUrl ? (
             <a className="registry-link" href={status.session.keyStoreUrl} target="_blank" rel="noreferrer">
               open the public registry ↗

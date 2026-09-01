@@ -61,6 +61,32 @@ Spend: **1.00 $U per day**, on the chain's $U token only. One job escrows
 the four-task Agent Advantage Report.
 Expiry: **3600 seconds** per grant.
 
+## Registration and validity are different things
+
+KeyStore answers two questions and they are easy to conflate:
+
+- `getKeys(wallet)` — does the registry carry this key at all. **Permanent.**
+  Registering happens once and cannot be repeated; `registerKey` reverts with
+  `KeyStore: key already registered` rather than accepting a no-op.
+- `isValidKey(wallet, keyId)` — would a verifier accept it right now. **Lapses**
+  at the grant's expiry, and on revoke.
+
+So a key granted an hour ago is registered and not valid. Every grant after the
+first must therefore pass `register: false`: it re-authorises the same
+published key rather than publishing it again.
+
+Collapsing the two is what broke the first live grant. The status panel and the
+setup script both reported `isValidKey`, so an expired-but-registered key read
+as "not registered", the grant asked to register it, and KeyStore reverted. The
+error was accurate and the screen was wrong.
+
+    npm run altana keyids
+
+prints what the registry holds for the wallet beside every candidate key-id
+derivation, and marks the one that matches. The answer for this deployment is
+`keccak256(sec1PublicKey)`, the 65-byte uncompressed key — which is what
+`deriveKeyId` already used.
+
 A leaked session key can therefore replay the capped job lifecycle against
 allowlisted contracts and can do nothing else. No transfers, no unbounded
 approvals, no other contract.

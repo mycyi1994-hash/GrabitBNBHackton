@@ -183,6 +183,10 @@ async function check() {
   const { client, url } = await firstReachableClient();
   console.log(`RPC            ${url}\n`);
 
+  // Registration is permanent; validity lapses at the grant's expiry. Reporting
+  // only `isValidKey` made an expired-but-registered key read as "not
+  // registered", which is what sent a grant into KeyStore's non-idempotent
+  // registerKey and got it reverted.
   const keyId = keccak256(session.publicKey);
   const [gas, token, registeredKeys, keyValid] = await Promise.all([
     client.getBalance({ address: admin.address }),
@@ -195,7 +199,13 @@ async function check() {
     ['tBNB for gas', gas >= MIN_GAS_WEI, `${formatEther(gas)} tBNB (need ${formatEther(MIN_GAS_WEI)})`, NETWORK.faucetGas],
     ['test $U for one hire', token !== null && token >= HIRE_BUDGET, token === null ? 'could not read balance' : `${formatUnits(token, 18)} $U (need ${formatUnits(HIRE_BUDGET, 18)})`, NETWORK.faucetToken],
     ['test $U for the 4-task report', token !== null && token >= REPORT_BUDGET, token === null ? 'could not read balance' : `${formatUnits(token, 18)} $U (want ${formatUnits(REPORT_BUDGET, 18)})`, NETWORK.faucetToken],
-    ['session registered in KeyStore', Boolean(keyValid), keyValid ? 'valid' : `${registeredKeys.length} key(s) on this wallet, none matching this session`, ''],
+    ['session key valid in KeyStore', Boolean(keyValid),
+      keyValid
+        ? 'registered and valid'
+        : registeredKeys.some((id) => id.toLowerCase() === keyId.toLowerCase())
+          ? `registered but not valid — an earlier grant expired or was revoked (${registeredKeys.length} key(s) on this wallet)`
+          : `not registered — ${registeredKeys.length} key(s) on this wallet, none is this session key`,
+      ''],
   ];
 
   let blocked = false;

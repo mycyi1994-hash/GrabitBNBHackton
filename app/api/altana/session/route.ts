@@ -124,8 +124,14 @@ export async function GET(request: Request) {
           expiresAt: accountKey.expiresAt,
           secondsRemaining: accountKey.secondsRemaining,
           expired: accountKey.expired,
-          /** Publicly verifiable through the Altana KeyStore registry. */
-          registeredInKeyStore: authority.active,
+          /**
+           * Two separate facts, previously collapsed into one.
+           * `registeredInKeyStore` is whether the public registry carries this
+           * key at all — permanent once done. `validInKeyStore` is whether a
+           * verifier would accept it right now, which lapses at the expiry.
+           */
+          registeredInKeyStore: authority.registered,
+          validInKeyStore: authority.active,
           registeredKeyCount: authority.registeredKeyIds.length,
           keyStore: authority.keyStore,
           keyStoreUrl: authority.keyStoreUrl,
@@ -222,25 +228,28 @@ export async function POST(request: Request) {
     };
 
     /*
-     * KeyStore registration is not idempotent: it reverts with "KeyStore: key
-     * already registered" rather than accepting a no-op. That is reachable
-     * here even when the status panel reports the key as unregistered, because
-     * `isValidKey` is asked for `keccak256(sec1PublicKey)` and KeyStore may
-     * hold the same key under a different id — `npm run altana keyids` prints
-     * what it actually holds beside each candidate derivation.
+     * KeyStore registration is permanent and happens once. It is not
+     * idempotent: registering a key the registry already holds reverts with
+     * "KeyStore: key already registered" rather than accepting a no-op.
      *
-     * Until that is settled, the revert is not a failure worth surfacing: it
-     * says the key is already published, which is the outcome `register: true`
-     * was asking for. So grant again without it. Nothing about the session's
-     * scope changes — only whether this call re-publishes a key the registry
-     * already carries.
+     * Expiry is a separate fact. A key granted an hour ago is still registered
+     * and no longer valid, so every grant after the first must publish nothing
+     * and only re-authorise. Asking the registry first is what decides that;
+     * `npm run altana keyids` shows the same answer from the command line.
+     *
+     * The catch stays as a backstop for the race where registration lands
+     * between the read and the write. It only ever downgrades to
+     * `register: false`, which is the state the revert is reporting anyway, so
+     * it cannot mask a real failure — and nothing about the session's scope
+     * depends on it.
      */
-    let registeredNow = true;
+    const before = await readSessionAuthority(chainId).catch(() => null);
+    let registeredNow = !before?.registered;
     let session;
     try {
-      session = await client.grantSession({ ...grant, register: true });
+      session = await client.grantSession({ ...grant, register: registeredNow });
     } catch (error) {
-      if (!isAlreadyRegistered(error)) throw error;
+      if (!registeredNow || !isAlreadyRegistered(error)) throw error;
       registeredNow = false;
       session = await client.grantSession({ ...grant, register: false });
     }
