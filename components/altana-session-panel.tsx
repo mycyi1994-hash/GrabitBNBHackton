@@ -42,6 +42,7 @@ type SessionStatus = {
   permissions?: {
     calls: PermissionCall[];
     spend: { limitDisplay: string; period: string; token: string };
+    gas?: { limitDisplay: string; period: string; token: string };
     ttlSeconds: number;
   };
 };
@@ -154,6 +155,13 @@ export function AltanaSessionPanel({ chainId = 97 }: { chainId?: number }) {
             In any 24 hours, on the payment token only. It resets at 00:00 UTC and does not roll
             over. Nothing the agent does can raise it.
           </p>
+          {permissions?.gas ? (
+            <p>
+              Separately, up to {permissions.gas.limitDisplay} a day for its own transaction fees.
+              A key that pays for its own execution needs a gas allowance, and that allowance is
+              bounded for the same reason the budget is.
+            </p>
+          ) : null}
           <p className="authority-source">
             source · allowance in the session permission ·{' '}
             {status?.observedAt ? `read ${status.observedAt.slice(11, 16)} UTC` : 'not read'}

@@ -50,6 +50,24 @@ export const DEFAULT_ALTANA_CHAIN_ID = BNB_TESTNET.chainId;
 export const SESSION_BUDGET_ATOMIC = BigInt('1000000000000000000');
 /** Decimals of the $U payment token on both BNB networks. */
 export const SESSION_BUDGET_DECIMALS = 18;
+
+/** The relay's fee token for a session-signed intent: the chain's native coin. */
+export const NATIVE_TOKEN: Address = '0x0000000000000000000000000000000000000000';
+
+/**
+ * The session key's daily gas ceiling, in wei: 0.01 BNB.
+ *
+ * A session-signed intent pays its own relay fee, and the SDK settles that fee
+ * in the native token unless told otherwise. Porto checks spend permissions for
+ * whatever token is being spent, so a session holding an allowance for $U alone
+ * cannot pay for its own execution: the account rejects the intent with
+ * `NoSpendPermissions` before any ERC-8183 call is reached.
+ *
+ * So the session carries two allowances, and both are bounded. This one is
+ * roughly 250 times what the grant transaction cost, which covers a run of
+ * hires without being an open tap on the wallet's balance.
+ */
+export const SESSION_GAS_BUDGET_ATOMIC = BigInt('10000000000000000');
 export const SESSION_SPEND_PERIOD = 'day' as const;
 export const SESSION_TTL_SECONDS = 3_600;
 
@@ -144,6 +162,14 @@ export function agentSessionPermissions(chainId: number): SessionPermissions {
         period: SESSION_SPEND_PERIOD,
         token: lifecycleTarget(chainId, 'paymentToken'),
       },
+      // Its own relay fees. Without this the account rejects every
+      // session-signed intent with NoSpendPermissions, because the fee is
+      // settled in the native token and no allowance covers it.
+      {
+        limit: SESSION_GAS_BUDGET_ATOMIC,
+        period: SESSION_SPEND_PERIOD,
+        token: NATIVE_TOKEN,
+      },
     ],
   };
 }
@@ -169,6 +195,14 @@ export function describeSessionPermissions(chainId: number) {
       tokenSymbol: chainId === BNB.chainId ? '$U' : 'test $U',
       limitAtomic: SESSION_BUDGET_ATOMIC.toString(),
       limitDisplay: `${formatUnits(SESSION_BUDGET_ATOMIC, SESSION_BUDGET_DECIMALS)} ${chainId === BNB.chainId ? '$U' : 'test $U'}`,
+      period: SESSION_SPEND_PERIOD,
+    },
+    /** Separate from the job budget: what the key may spend running itself. */
+    gas: {
+      token: NATIVE_TOKEN,
+      tokenSymbol: chainId === BNB.chainId ? 'BNB' : 'tBNB',
+      limitAtomic: SESSION_GAS_BUDGET_ATOMIC.toString(),
+      limitDisplay: `${formatUnits(SESSION_GAS_BUDGET_ATOMIC, 18)} ${chainId === BNB.chainId ? 'BNB' : 'tBNB'}`,
       period: SESSION_SPEND_PERIOD,
     },
     ttlSeconds: SESSION_TTL_SECONDS,

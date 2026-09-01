@@ -56,8 +56,18 @@ Calls — nothing outside this list can be signed by the session:
 | `dispute(uint256)` | policy | Contest a deliverable inside the window |
 | `claimRefund(uint256)` | commerce | Reclaim escrow when nothing is delivered |
 
-Spend: **1.00 $U per day**, on the chain's $U token only. One job escrows
-0.10 $U, so the ceiling is ten jobs a day, sized to leave retry headroom for
+Spend: **1.00 $U per day** on the payment token, and **0.01 BNB per day** for
+the key's own relay fees. Both are bounded and both are enforced by the account.
+
+The second one is not optional. A session-signed intent pays its own fee, the
+SDK settles that fee in the native token, and Porto checks spend permissions
+against whatever token is being spent. A session holding an allowance for $U
+alone cannot pay for its own execution: the account rejects the intent with
+`NoSpendPermissions` before any ERC-8183 call is reached. That is what the
+first live hire hit.
+
+One job escrows
+0.10 $U, so the payment ceiling is ten jobs a day, sized to leave retry headroom for
 the four-task Agent Advantage Report.
 Expiry: **3600 seconds** per grant.
 
