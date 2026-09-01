@@ -29,6 +29,17 @@ import {
 const NO_STORE = { 'cache-control': 'no-store' };
 
 /**
+ * KeyStore's own revert string, reached either as a plain message or as the
+ * ABI-encoded Error(string) the relay hands back inside a hex blob.
+ */
+function isAlreadyRegistered(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  if (/key already registered/i.test(message)) return true;
+  // "KeyStore: key already registered" as ASCII inside the encoded revert.
+  return message.toLowerCase().includes('4b657953746f72653a206b657920616c7265616479');
+}
+
+/**
  * Relay failures arrive with the entire prepared-call payload appended — a
  * multi-kilobyte hex dump that buries the one line describing what went wrong.
  * Keep the message and drop the transcript.
@@ -201,16 +212,38 @@ export async function POST(request: Request) {
     }
 
     const expiry = Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS;
-    const session = await client.grantSession({
+    const grant = {
       wallet,
       signer: adminSigner,
       chainId,
       permissions: agentSessionPermissions(chainId),
       expiry,
       sessionSigner: getAltanaSessionSigner(),
-      // Registered in KeyStore so a third party can verify this key on-chain.
-      register: true,
-    });
+    };
+
+    /*
+     * KeyStore registration is not idempotent: it reverts with "KeyStore: key
+     * already registered" rather than accepting a no-op. That is reachable
+     * here even when the status panel reports the key as unregistered, because
+     * `isValidKey` is asked for `keccak256(sec1PublicKey)` and KeyStore may
+     * hold the same key under a different id — `npm run altana keyids` prints
+     * what it actually holds beside each candidate derivation.
+     *
+     * Until that is settled, the revert is not a failure worth surfacing: it
+     * says the key is already published, which is the outcome `register: true`
+     * was asking for. So grant again without it. Nothing about the session's
+     * scope changes — only whether this call re-publishes a key the registry
+     * already carries.
+     */
+    let registeredNow = true;
+    let session;
+    try {
+      session = await client.grantSession({ ...grant, register: true });
+    } catch (error) {
+      if (!isAlreadyRegistered(error)) throw error;
+      registeredNow = false;
+      session = await client.grantSession({ ...grant, register: false });
+    }
 
     return Response.json(
       {
@@ -223,6 +256,7 @@ export async function POST(request: Request) {
         session: {
           publicKey: session.publicKey,
           walletAddress: session.walletAddress,
+          keyStore: registeredNow ? 'REGISTERED_NOW' : 'ALREADY_REGISTERED',
         },
         transactionHash: session.transactionHash ?? null,
         transactionUrl: session.transactionHash

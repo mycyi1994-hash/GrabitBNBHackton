@@ -4,13 +4,16 @@
  *
  *   node scripts/altana-setup.mjs keys    generate the two server-only keys
  *   node scripts/altana-setup.mjs check   report whether the agent can act yet
+ *   node scripts/altana-setup.mjs keyids  show what KeyStore holds, and which
+ *                                         key-id derivation actually matches
  *
  * Keys are generated locally and printed once. Nothing is transmitted, and
  * nothing is written to disk by this script — paste the lines into .env.local
  * yourself so the keys never pass through a tool that logs its output.
  */
 import { readFileSync } from 'node:fs';
-import { createPublicClient, formatEther, formatUnits, http, keccak256 } from 'viem';
+import { createPublicClient, formatEther, formatUnits, http, keccak256, padHex, toHex } from 'viem';
+import { secp256k1 } from '@noble/curves/secp256k1';
 import { bscTestnet } from 'viem/chains';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 
@@ -56,6 +59,67 @@ function readEnv() {
     }
   }
   return null;
+}
+
+/**
+ * Every plausible key-id derivation, checked against what KeyStore actually
+ * holds.
+ *
+ * `check` reports "none matching this session" from `keccak256(sec1PublicKey)`
+ * while KeyStore rejects a grant with "key already registered". Both cannot be
+ * true of the same key, so one of them is computing the wrong id. Rather than
+ * guess which, this prints the registered ids beside each candidate and says
+ * which one lands.
+ */
+function keyIdCandidates(account) {
+  const sec1 = account.publicKey;
+  const compressed = toHex(secp256k1.ProjectivePoint.fromHex(sec1.slice(2)).toRawBytes(true));
+  const padded = padHex(account.address, { size: 32 });
+  return [
+    ['keccak256(sec1 publicKey, 65B)', keccak256(sec1)],
+    ['keccak256(compressed publicKey, 33B)', keccak256(compressed)],
+    ['keccak256(padHex(address, 32))', keccak256(padded)],
+    ['padHex(address, 32) unhashed', padded],
+    ['keccak256(address)', keccak256(account.address)],
+  ];
+}
+
+async function keyids() {
+  const loaded = readEnv();
+  if (!loaded) {
+    console.error('\nNo .env.local found. Run: node scripts/altana-setup.mjs keys\n');
+    process.exit(1);
+  }
+  const { env } = loaded;
+  const admin = privateKeyToAccount(env.GRABIT_ALTANA_ADMIN_PRIVATE_KEY);
+  const session = privateKeyToAccount(env.GRABIT_ALTANA_SESSION_PRIVATE_KEY);
+
+  const { client, url } = await firstReachableClient();
+  const registered = await client
+    .readContract({ address: NETWORK.keyStore, abi: KEYSTORE_ABI, functionName: 'getKeys', args: [admin.address] })
+    .catch(() => []);
+
+  console.log(`\nRPC        ${url}`);
+  console.log(`KeyStore   ${NETWORK.keyStore}`);
+  console.log(`Wallet     ${admin.address}`);
+  console.log(`\nKeyStore holds ${registered.length} key id(s):`);
+  for (const [i, id] of registered.entries()) console.log(`  [${i}] ${id}`);
+
+  const held = new Set(registered.map((id) => id.toLowerCase()));
+  for (const [label, account] of [['ADMIN', admin], ['SESSION', session]]) {
+    console.log(`\n${label}  ${account.address}`);
+    for (const [name, id] of keyIdCandidates(account)) {
+      const hit = held.has(id.toLowerCase());
+      console.log(`  ${hit ? 'MATCH ' : '      '} ${name.padEnd(38)} ${id}`);
+    }
+  }
+
+  const anyMatch = [admin, session].some((a) => keyIdCandidates(a).some(([, id]) => held.has(id.toLowerCase())));
+  console.log(
+    anyMatch
+      ? '\nAt least one derivation lands. Use the one marked MATCH in lib/altana.ts.\n'
+      : '\nNo candidate matches. KeyStore is indexing by something else — read its\nregisterKey source on the explorer before changing deriveKeyId.\n',
+  );
 }
 
 function keys() {
@@ -154,15 +218,20 @@ async function check() {
 }
 
 const command = process.argv[2];
-if (command === 'keys') keys();
-else if (command === 'check') {
-  // A helper should report a problem, not dump a stack at whoever ran it.
-  await check().catch((error) => {
+// A helper should report a problem, not dump a stack at whoever ran it.
+const guard = (fn) =>
+  fn().catch((error) => {
     console.error(`\n${error instanceof Error ? error.message : String(error)}\n`);
     process.exit(1);
   });
-} else {
+
+if (command === 'keys') keys();
+else if (command === 'check') await guard(check);
+else if (command === 'keyids') await guard(keyids);
+else {
   console.log('\nUsage:\n  node scripts/altana-setup.mjs keys    generate the two server-only keys');
-  console.log('  node scripts/altana-setup.mjs check   report whether the agent can act yet\n');
+  console.log('  node scripts/altana-setup.mjs check   report whether the agent can act yet');
+  console.log('  node scripts/altana-setup.mjs keyids  show what KeyStore holds and which\n' +
+              '                                        key-id derivation matches\n');
   process.exit(1);
 }
