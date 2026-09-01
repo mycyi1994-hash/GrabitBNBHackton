@@ -27,6 +27,7 @@ import {
   type Wallet,
 } from '@altananetwork/sdk';
 import { createPublicClient, formatUnits, http, keccak256, padHex, type Address, type Hex } from 'viem';
+import { ERC8183_TESTNET } from '@/lib/erc8183';
 
 export const ALTANA_NETWORKS: Record<number, NetworkConfig> = {
   [BNB_TESTNET.chainId]: BNB_TESTNET,
@@ -142,8 +143,25 @@ const LIFECYCLE_CALLS: readonly LifecycleCall[] = [
   },
 ];
 
+/**
+ * The address a lifecycle call targets.
+ *
+ * Straight from the SDK's deployment table, except for the policy on chain 97,
+ * where that table is wrong: the router whitelists the address in
+ * `lib/erc8183.ts` and returns false for the SDK's. `/api/hire/testnet-readiness`
+ * asks the router and reports the disagreement under `policyResolution`.
+ *
+ * It matters here as well as in the hire. `dispute(uint256)` is granted against
+ * the policy, so taking the SDK's address would authorise the session key
+ * against a contract the router does not use — a permission that looks correct
+ * on the authority screen and would do nothing if a deliverable ever had to be
+ * contested.
+ */
 function lifecycleTarget(chainId: number, contract: LifecycleContract): Address {
   const addresses = erc8183Addresses(chainId);
+  if (contract === 'policy' && chainId === ERC8183_TESTNET.chainId) {
+    return ERC8183_TESTNET.policy as Address;
+  }
   return addresses[contract];
 }
 
@@ -562,6 +580,9 @@ export function altanaNetworkSummary(chainId: number) {
     keyStore: network.keyStore,
     keyStoreController: network.keyStoreController,
     relayUrl: network.relayUrl ?? null,
-    erc8183: erc8183Addresses(chainId),
+    // Same correction as lifecycleTarget: publishing the SDK's chain-97 policy
+    // would have this route report an address the router does not whitelist,
+    // beside a permission set that no longer uses it.
+    erc8183: { ...erc8183Addresses(chainId), policy: lifecycleTarget(chainId, 'policy') },
   };
 }
