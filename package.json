@@ -12,7 +12,8 @@
     "start": "vinext start",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "advantage": "node scripts/advantage-report.mjs",
-    "altana": "node scripts/altana-setup.mjs"
+    "altana": "node scripts/altana-setup.mjs",
+    "deploy": "npm run build && wrangler deploy -c dist/server/wrangler.json"
   },
   "dependencies": {
     "@altananetwork/sdk": "^0.8.0",

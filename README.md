@@ -189,6 +189,7 @@ These are enforced in code, not just documented:
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
+- [Deploying](docs/DEPLOY.md)
 - [Requirements matrix](docs/REQUIREMENTS_MATRIX.md)
 - [Delivery progress](docs/PROGRESS.md)
 - [Altana session gate](docs/ALTANA_SESSION.md)
